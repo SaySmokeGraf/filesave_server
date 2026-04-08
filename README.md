@@ -3,9 +3,9 @@
 ## Заметки для разработчика ##
 
 Запуск виртуального окружения:
-    - ```_venv\Scripts\activate```
+- ```_venv\Scripts\activate```
 
 Запуск сервиса:
-    - ```fastapi dev service.py``` - режим разработчика.
-    - ```fastapi run service.py``` - режим продукта.
+- ```fastapi dev service.py``` - режим разработчика.
+- ```fastapi run service.py``` - режим продукта.
     
