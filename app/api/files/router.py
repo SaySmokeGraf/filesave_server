@@ -5,7 +5,7 @@ import os
 from fastapi import APIRouter, HTTPException, status, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
-from app.api.files.config import STORAGE_PATH
+from app.api.files.config import PATH_STORAGE
 from app.api.files.models import FileDataModel
 from app.api.files.utils import write_uploadfile
 
@@ -24,7 +24,7 @@ async def get_files_data() -> list[FileDataModel]:
         list[FileDataModel]: Список с данными о файлах.
     """
     resp = []
-    dir_path = STORAGE_PATH
+    dir_path = PATH_STORAGE
     try:
         for filename in os.listdir(dir_path):
             resp.append(FileDataModel(
@@ -51,7 +51,7 @@ async def download_file(filename: str) -> FileResponse:
     Returns:
         FileResponse: Файл для скачивания.
     """
-    dir_path = STORAGE_PATH
+    dir_path = PATH_STORAGE
     file_path = f'{dir_path}/{filename}'
     if not filename or not os.path.exists(file_path):
         raise HTTPException(
@@ -70,7 +70,7 @@ async def upload_single_file(file: UploadFile) -> JSONResponse:
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
-    dir_path = STORAGE_PATH
+    dir_path = PATH_STORAGE
     write_uploadfile(file, dir_path)
     return JSONResponse(
         content={'message': f'File {file.filename} uploaded successfully!'}
@@ -86,7 +86,7 @@ async def upload_many_files(files: list[UploadFile]) -> JSONResponse:
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
-    dir_path = STORAGE_PATH
+    dir_path = PATH_STORAGE
     for file in files:
         write_uploadfile(file, dir_path)
     return JSONResponse(
@@ -107,7 +107,7 @@ async def delete_file(filename: str) -> JSONResponse:
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
-    dir_path = STORAGE_PATH
+    dir_path = PATH_STORAGE
     file_path = f'{dir_path}/{filename}'
     if not filename or not os.path.exists(file_path):
         raise HTTPException(
