@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search Bar</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+                   initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="file-hub.css">
+
+</head>
+
+<body>
+
+    <img src="i.jpg" class="center-image">
+    <!-- Navbar items -->
+    <div class="main_window">
+        <div class="file-window">
+
+            <div class="file-header">Список файлов</div>
+            <ul class="file-list" id="loaded-file-list">
+                <!-- <li class="file-item">
+                    <div class="file-info">
+                        <a href="#" class="file-link">document.pdf</a>
+                    </div>
+                    <div class="file-actions">
+                        <button class="download-btn">Скачать</button>
+                        <button class="delete-btn">Удалить</button>
+                    </div>
+                </li> -->
+            </ul>
+
+        </div>
+        <div class="upload_area">
+            <input type="file" id="fileInput" multiple style="display:none" />
+            <button id="upload_btn" class="upload_btn">Загрузка файлов вручную</button>
+
+            <div class="file_uploader" id="drop-zone">
+                <!-- <div id="drop-zone"> </div> -->
+                <div class="file_loader_header">Перетащите файлы</div>
+                 <ul class="uploader_file_list">
+                    <!-- <li class="upload_file_item"> -->
+                   <!-- <div class="upload_file-info">
+                            <a href="#" class="upload_file-link">document.pdf</a>
+                        </div>
+                        <div class="upload_file_actions">
+                            <button class="upload_download-btn">Upload</button>
+                            <button class="upload_delete-btn">Delete</button>
+                        </div> -->
+                    <!-- </li> -->
+                </ul> 
+            </div>
+        </div>
+
+    </div>
+    <footer>
+        Это подвал, он нужен иногда
+    </footer>
+    <script src="main.js"></script>
+</body>
+
+</html>

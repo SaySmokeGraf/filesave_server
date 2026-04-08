@@ -1,0 +1,324 @@
+/* Общие настройки для всего документа */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    background-color: #1e2a38;
+    /* тёмный синий/серый фон */
+    color: #f0f0f0;
+    /* светлый текст */
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Основной контейнер — гибкий флекс для вертикальной раскладки */
+.main_window {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Шапка с изображением — стильный и современный */
+.center-image {
+    width: 100%;
+    height: 25vh;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.center-image:hover {
+    transform: scale(1.02);
+}
+
+/* Контейнер файла — аккуратный и современный */
+.file-window {
+    flex: 3;
+    padding: 20px;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #3a4f55, #4a6572);
+    /* мягкий градиент в синевато-зеленых тонах */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Область загрузки файла с эффектами */
+.file_loader,
+.file_uploader {
+    margin-top: 20px;
+    /* flex: 1; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 2px dashed #606060;
+    /* тёмный серый */
+    border-radius: 12px;
+    background-color: #d0d0d0;
+    /* светлый серый */
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.file_loader:hover,
+.file_uploader:hover {
+    background-color: #c0c0c0;
+    border-color: #808080;
+}
+
+/* Заголовок внутри области загрузки — полупрозрачный и центрированный */
+.file_loader_header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #222;
+    /* тёмный */
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.file_loader_header:hover {
+    background: rgba(255, 255, 255, 0.4);
+    /* transform: scale(1.5); */
+}
+
+/* Область для скачивания и список файлов */
+.upload_area {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 15px;
+}
+
+/* Кнопка скачивания — современная и интерактивная */
+.upload_btn {
+    width: 100%;
+    max-width: 150px;
+    height: 45px;
+    background: linear-gradient(135deg, #006064, #004D40);
+    /* тёмный бирюзовый градиент */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    align-self: center;
+}
+
+.upload_btn:hover {
+    background: linear-gradient(135deg, #0097a7, #006064);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    text-decoration: underline;
+}
+
+/* Стиль для элементов файла */
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #2c3e50, #1a252f);
+    /* тёмный синий градиент */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.upload_file_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #2c3e50, #1a252f);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.file-item:hover,
+.upload_file_item:hover {
+    background: linear-gradient(90deg, #34495e, #2c3e50);
+    transform: translateY(-2px);
+}
+
+/* Ссылки — современный стиль */
+.file-link,
+.upload_file-link {
+    font-weight: 600;
+    color: #cfd8dc;
+    /* светлый голубой/серый */
+    font-size: 16px;
+    text-decoration: none;
+    transition: color 0.3s, text-shadow 0.3s;
+}
+
+.file-link:hover,
+.upload_file-link:hover {
+    color: #ffca28;
+    /* тёплый жёлтый при наведении */
+    text-shadow: 0 0 8px rgba(255, 202, 40, 0.8);
+}
+
+.file-info{
+    display: flex;
+    align-items: start;
+}
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3; /* светлая рамка */
+  border-top: 2px solid #3498db; /* цвет спиннера */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px; /* отступ справа, чтобы было удобно */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* Заголовки и названия внутри файла */
+.file-header {
+    font-weight: bold;
+    padding-left: 50%;
+    /* flex: center; */
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #b0bec5;
+    /* нежный серо-голубой */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Стилизация полосы прокрутки для WebKit */
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px;
+    height: 75%;
+    overflow-y: auto;
+      scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
+}
+
+.uploader_file_list {
+    list-style: none;
+    padding: 0;
+    margin: 10px;
+    height: 600px;
+    width: 100%;
+
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.file-list::-webkit-scrollbar,
+.uploader_file_list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track,
+.uploader_file_list::-webkit-scrollbar-track {
+    background: #4a6572;
+    /* оттенок градиента или фона */
+    border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb,
+.uploader_file_list::-webkit-scrollbar-thumb {
+    background-color: #555;
+    /* нейтральный серый */
+    border-radius: 4px;
+    border: 2px solid #b0bec5;
+    /* светлый градиент */
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+}
+
+/* Общий стиль для ссылок */
+a {
+    text-decoration: none;
+    color: #eceff1;
+    /* очень светлый серо-голубой */
+    transition: color 0.3s, text-shadow 0.3s;
+}
+
+a:hover {
+    color: #ffd700;
+    /* золотой при наведении */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+}
+
+/* Футер — минимализм и современность */
+footer {
+    margin-top: auto;
+    padding: 15px 20px;
+    background-color: #f8f8f8;
+    /* светлый фон */
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    /* тёмно-серый текст */
+    border-top: 1px solid #ddd;
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s;
+}
+
+.file-actions {
+    flex-direction: row;
+    width: 150px;
+
+}
+
+.delete-btn,
+.download-btn {
+    margin-left: 1%;
+    /* width: 52%; */
+    max-width: 65px;
+    height: 30px;
+    background: linear-gradient(135deg, #006064, #004D40);
+    /* тёмный бирюзовый градиент */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    align-self: center;
+}
+
+footer:hover {
+    background-color: #ececec;
+}

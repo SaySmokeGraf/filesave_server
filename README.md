@@ -7,5 +7,5 @@
 
 Запуск сервиса:
     - ```fastapi dev service.py``` - режим разработчика.
-    - ```fastapi service.py``` - режим продукта.
+    - ```fastapi run service.py``` - режим продукта.
     
