@@ -97,19 +97,18 @@ function deleteUploadFile(file) {
  * 
  * Загрузка файла на сервер из списка Upload.
  */
-function uploadFileOnServer(file,upload_btn) {
-    upload_btn.disabled = true;
+function uploadFileOnServer(file,btn) {
     const formData = new FormData();
     console.log(file)
     formData.append('file', file.file);
     const xhr = new XMLHttpRequest();
+    btn.disable = true;
     xhr.open('POST', '/files/upload/single', true);
     // xhr.setRequestHeader('Content-Type','multipart/form-data');
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
-
-            upload_btn.textContent =percentComplete+'%';
+            // upload_btn.textContent =percentComplete+'%'
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
         }
     };
@@ -118,14 +117,13 @@ function uploadFileOnServer(file,upload_btn) {
             // const result = JSON.parse(xhr.responseText);
             console.log('Успешно:', xhr.responseText);
             deleteUploadFile(file);
-            upload_btn.disabled = false;
         } else {
             console.error('Ошибка при загрузке');
         }
     };
     xhr.onerror = () => {
         console.error('Ошибка сети');
-        upload_btn.disabled = true;
+        btn.disable=false;
     };
     xhr.send(formData);
 }
