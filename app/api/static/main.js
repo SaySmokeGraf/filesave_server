@@ -78,7 +78,7 @@ function createUploadElement(file) {
     });
 
     uploadBtn.addEventListener('click', () => {
-        uploadFileOnServer(file,uploadBtn);
+        uploadFileOnServer(file, uploadBtn);
     })
 }
 /**
@@ -97,7 +97,7 @@ function deleteUploadFile(file) {
  * 
  * Загрузка файла на сервер из списка Upload.
  */
-function uploadFileOnServer(file,btn) {
+function uploadFileOnServer(file, btn) {
     const formData = new FormData();
     console.log(file)
     formData.append('file', file.file);
@@ -123,7 +123,7 @@ function uploadFileOnServer(file,btn) {
     };
     xhr.onerror = () => {
         console.error('Ошибка сети');
-        btn.disabled=false;
+        btn.disabled = false;
     };
     xhr.send(formData);
 }
@@ -265,3 +265,68 @@ function updateContent(data) {
 
     })
 }
+const obj = document.getElementById('flyingObject');
+
+// Задаем зону перемещения (например, центральная часть окна)
+const zone = {
+    xMin: 100,
+    yMin: 100,
+    xMax: window.innerWidth - 150, // учитываем ширину картинки
+    yMax: window.innerHeight - 150 // учитываем высоту картинки
+};
+
+// Начальные координаты
+let position = {
+    x: Math.random() * (zone.xMax - zone.xMin) + zone.xMin,
+    y: Math.random() * (zone.yMax - zone.yMin) + zone.yMin
+};
+
+// Целевая точка
+let target = {
+    x: 0,
+    y: 0
+};
+
+// Скорость перемещения
+const speed = 1.5; // пикселей за кадр, можно регулировать
+
+// Функция для выбора новой цели внутри зоны
+function setNewTarget() {
+    target.x = Math.random() * (zone.xMax - zone.xMin) + zone.xMin;
+    target.y = Math.random() * (zone.yMax - zone.yMin) + zone.yMin;
+}
+
+// Изначально задаем первую цель
+setNewTarget();
+
+function animate() {
+    // Вычисляем разницу до цели
+    const dx = target.x - position.x;
+    const dy = target.y - position.y;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < speed) {
+        // Достигли цели, выбираем новую
+        setNewTarget();
+    } else {
+        // Двигаемся к цели
+        position.x += (dx / distance) * speed;
+        position.y += (dy / distance) * speed;
+    }
+
+    // Обновляем позицию картинки
+    obj.style.left = position.x + 'px';
+    obj.style.top = position.y + 'px';
+
+    requestAnimationFrame(animate);
+}
+
+// Обновляем зону при изменении размера окна
+window.addEventListener('resize', () => {
+    zone.xMax = window.innerWidth - 150;
+    zone.yMax = window.innerHeight - 150;
+});
+
+// Запускаем анимацию
+animate();
+

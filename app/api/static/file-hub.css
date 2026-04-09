@@ -187,25 +187,35 @@ body {
     text-shadow: 0 0 8px rgba(255, 202, 40, 0.8);
 }
 
-.file-info{
+.file-info {
     display: flex;
     align-items: start;
 }
+
 .spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #f3f3f3; /* светлая рамка */
-  border-top: 2px solid #3498db; /* цвет спиннера */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-right: 8px; /* отступ справа, чтобы было удобно */
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    /* светлая рамка */
+    border-top: 2px solid #3498db;
+    /* цвет спиннера */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+    /* отступ справа, чтобы было удобно */
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
 /* Заголовки и названия внутри файла */
 .file-header {
     font-weight: bold;
@@ -225,7 +235,7 @@ body {
     margin: 10px;
     height: 75%;
     overflow-y: auto;
-      scroll-behavior: smooth;
+    scroll-behavior: smooth;
     /* scroll-behavior: smooth; */
 }
 
@@ -317,6 +327,19 @@ footer {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     align-self: center;
+}
+
+
+
+#flyingObject {
+    position: absolute;
+    width: 50px;
+    /* ширина картинки */
+    height: 50px;
+    /* высота картинки */
+    pointer-events: none;
+    user-select: none;
+    z-index: 1000;
 }
 
 footer:hover {
