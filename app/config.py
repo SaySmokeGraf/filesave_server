@@ -1,3 +1,3 @@
 """Конфигурационный скрипт основного приложения."""
 
-PATH_STATIC = 'app/api/static'
+PATH_STATIC = 'app/static'
