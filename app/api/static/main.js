@@ -17,7 +17,6 @@ function handleDropFiles(files) {
     updateUploaderFileList();
 }
 
-
 /**
  * 
  * Обновляет список файлов в разделе Upload.
@@ -25,8 +24,6 @@ function handleDropFiles(files) {
 function updateUploaderFileList() {
 
     fileListContainer.innerHTML = '';
-
-    // Создаем элементы для каждого файла
     fileToUpload.forEach((file) => {
         createUploadElement(file);
     });
@@ -81,7 +78,7 @@ function createUploadElement(file) {
     });
 
     uploadBtn.addEventListener('click', () => {
-        uploadFileOnServer(file);
+        uploadFileOnServer(file,uploadBtn);
     })
 }
 /**
@@ -100,7 +97,8 @@ function deleteUploadFile(file) {
  * 
  * Загрузка файла на сервер из списка Upload.
  */
-function uploadFileOnServer(file) {
+function uploadFileOnServer(file,upload_btn) {
+    upload_btn.disabled = true;
     const formData = new FormData();
     console.log(file)
     formData.append('file', file.file);
@@ -110,6 +108,8 @@ function uploadFileOnServer(file) {
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
+
+            upload_btn.textContent =percentComplete+'%';
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
         }
     };
@@ -118,12 +118,14 @@ function uploadFileOnServer(file) {
             // const result = JSON.parse(xhr.responseText);
             console.log('Успешно:', xhr.responseText);
             deleteUploadFile(file);
+            upload_btn.disabled = false;
         } else {
             console.error('Ошибка при загрузке');
         }
     };
     xhr.onerror = () => {
         console.error('Ошибка сети');
+        upload_btn.disabled = true;
     };
     xhr.send(formData);
 }
