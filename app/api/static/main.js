@@ -102,7 +102,7 @@ function uploadFileOnServer(file,btn) {
     console.log(file)
     formData.append('file', file.file);
     const xhr = new XMLHttpRequest();
-    btn.disable = true;
+    btn.disabled = true;
     xhr.open('POST', '/files/upload/single', true);
     // xhr.setRequestHeader('Content-Type','multipart/form-data');
     xhr.upload.onprogress = function (event) {
@@ -123,7 +123,7 @@ function uploadFileOnServer(file,btn) {
     };
     xhr.onerror = () => {
         console.error('Ошибка сети');
-        btn.disable=false;
+        btn.disabled=false;
     };
     xhr.send(formData);
 }
