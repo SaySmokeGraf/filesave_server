@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, status, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.api.files.config import PATH_STORAGE
+from app.api.files.dependencies import ManyFilesDep, SingleFileDep
 from app.api.files.models import FileDataModel
 from app.api.files.utils import write_uploadfile
 
@@ -61,7 +62,7 @@ async def download_file(filename: str) -> FileResponse:
     return FileResponse(path=file_path, filename=filename)
 
 @router.post('/upload/single', status_code=status.HTTP_201_CREATED)
-async def upload_single_file(file: UploadFile) -> JSONResponse:
+async def upload_single_file(file: SingleFileDep) -> JSONResponse:
     """Загрузить на сервер один файл.
 
     Args:
@@ -77,7 +78,7 @@ async def upload_single_file(file: UploadFile) -> JSONResponse:
     )
 
 @router.post('/upload/many', status_code=status.HTTP_201_CREATED)
-async def upload_many_files(files: list[UploadFile]) -> JSONResponse:
+async def upload_many_files(files: ManyFilesDep) -> JSONResponse:
     """Загрузить на сервер несколько файлов.
 
     Args:
