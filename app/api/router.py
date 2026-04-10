@@ -1,13 +1,16 @@
 """Общий роутер API."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 
+from app.api.auth.router import router as auth_router, get_current_user
 from app.api.files.router import router as files_router
 
 
 router = APIRouter()
-router.include_router(files_router, prefix='/files', tags=['files'])
+router.include_router(files_router, prefix='/files', tags=['files'],
+                      dependencies=[Depends(get_current_user)])
+router.include_router(auth_router, prefix='/auth', tags=['authorization'])
 
 
 @router.get('/', tags=['common'])
