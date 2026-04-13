@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 
+from app.config import ENDPOINT_STATIC
 from app.api.auth.router import router as auth_router, get_current_user
 from app.api.files.router import router as files_router
 
@@ -22,4 +23,4 @@ async def get_root() -> RedirectResponse:
     Returns:
         RedirectResponse: Перенаправление на фронтенд.
     """
-    return RedirectResponse('/file-manager')
+    return RedirectResponse(ENDPOINT_STATIC)
