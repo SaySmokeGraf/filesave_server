@@ -6,13 +6,24 @@ const myFiles = document.getElementById('loaded-file-list');
 window.loadLibraryData();
 let fileToUpload = [];
 
+/**
+ * Выгрузка куки из базы куки браузера.
+ * */
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return null;
+}
+
+const token = getCookie('auth_token');
+
 
 /**
  * 
  * Метод выполняет действие когда файлы драг-энд-дропом сброшены
  */
 function handleDropFiles(files) {
-
     addFilesInCollections(files);
     updateUploaderFileList();
 }
@@ -22,12 +33,12 @@ function handleDropFiles(files) {
  * Обновляет список файлов в разделе Upload.
  */
 function updateUploaderFileList() {
-
     fileListContainer.innerHTML = '';
     fileToUpload.forEach((file) => {
         createUploadElement(file);
     });
 }
+
 /**
  * 
  * Создание одного элемента в списке upload
@@ -98,40 +109,36 @@ function deleteUploadFile(file) {
  * Загрузка файла на сервер из списка Upload.
  */
 function uploadFileOnServer(file, btn) {
-    const formData = new FormData();
-    console.log(file)
-    formData.append('file', file.file);
     const xhr = new XMLHttpRequest();
     btn.disabled = true;
     xhr.open('POST', '/files/upload/single', true);
-    // xhr.setRequestHeader('Content-Type','multipart/form-data');
+    xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
-            // upload_btn.textContent =percentComplete+'%'
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
         }
     };
+
     xhr.onload = () => {
         if (xhr.status === 200) {
-            // const result = JSON.parse(xhr.responseText);
             console.log('Успешно:', xhr.responseText);
             deleteUploadFile(file);
         } else {
-            console.error('Ошибка при загрузке');
+            console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
+        btn.disabled = false; // Разблокируем кнопку после завершения запроса
     };
+
     xhr.onerror = () => {
         console.error('Ошибка сети');
         btn.disabled = false;
     };
+
     xhr.send(formData);
 }
 
-/**
- * 
- * Добавляет файлы в коллекцию "Сайта" внутри браузера
- */
+
 function addFilesInCollections(files) {
     Array.from(files).forEach(file => {
         const key = `${file.name}_${file.size}_${file.type}`;
@@ -147,12 +154,8 @@ function addFilesInCollections(files) {
         }
     });
 }
-/**
- * 
- * Вешает слушатель на действие добавления файла с компьютера в браузер(сайт)
- */
-fileInput.addEventListener('change', () => {
 
+fileInput.addEventListener('change', () => {
     addFilesInCollections(fileInput.files);
     updateUploaderFileList();
     fileInput.value = '';
@@ -184,7 +187,8 @@ dropZone.addEventListener('drop', e => {
 
 
 function loadLibraryData() {
-    fetch('/files')
+
+    apiRequest('/files', {}, 'GET', 'application/json')
         .then(response => response.json())
         .then(data => updateContent(data))
         .catch(error => console.error('Ошибка запроса:', error));
@@ -222,8 +226,8 @@ function updateContent(data) {
         // myFiles.appendChild(myFileInfoDiv);
 
         deleteBtn.addEventListener('click', () => {
-            fetch(`/files/delete?filename=${element.filename}`, { method: 'DELETE' })
-                .then(() => loadLibraryData());
+            apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
+                'application/json').then(() => loadLibraryData());
         })
 
         downloadButton.addEventListener('click', () => {
@@ -238,9 +242,8 @@ function updateContent(data) {
             // Показываем спиннер внутри кнопки
             downloadButton.textContent = '';
             downloadButton.appendChild(spinner);
-
-            fetch('/files/download/?filename=' + encodeURIComponent(element.filename))
-                .then(response => {
+            apiRequest('/files/download/?filename=' + encodeURIComponent(element.filename), {}, 'GET',
+                'multipart/file').then(response => {
                     if (!response.ok) throw new Error('Ошибка при загрузке файла');
                     return response.blob();
                 })
@@ -330,3 +333,28 @@ window.addEventListener('resize', () => {
 // Запускаем анимацию
 animate();
 
+async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
+    const token = getCookie('auth_token');
+
+    if (!token) {
+        throw new Error('No authentication token found. Please log in.');
+    }
+
+    const config = {
+        method: method,
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': contentType,
+            ...options.headers
+        },
+        ...options
+    };
+
+    const response = await fetch(url, config);
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+}
