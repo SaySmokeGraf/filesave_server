@@ -334,27 +334,31 @@ window.addEventListener('resize', () => {
 animate();
 
 async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
-    const token = getCookie('auth_token');
-
     if (!token) {
-        throw new Error('No authentication token found. Please log in.');
+        return {
+            error: 'No authentication token found. Please log in.'
+        };
+    } else {
+        const config = {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': contentType,
+                ...options.headers
+            },
+            ...options
+        };
+
+        const response = await fetch(url, config);
+
+        if (!response.ok) {
+            return {
+                error: `HTTP error! status: ${response.status}`,
+                status: response.status,
+                body: await response.text()
+            };
+        }
+
+        return response.json();
     }
-
-    const config = {
-        method: method,
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': contentType,
-            ...options.headers
-        },
-        ...options
-    };
-
-    const response = await fetch(url, config);
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
 }
