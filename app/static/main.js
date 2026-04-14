@@ -189,8 +189,18 @@ dropZone.addEventListener('drop', e => {
 function loadLibraryData() {
 
     apiRequest('/files', {}, 'GET', 'application/json')
-        .then(response => response.json())
-        .then(data => updateContent(data))
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '/site/registration.html';
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data != null) {
+                updateContent(data);
+            }
+        })
         .catch(error => console.error('Ошибка запроса:', error));
 }
 
@@ -334,9 +344,12 @@ window.addEventListener('resize', () => {
 animate();
 
 async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
+    const token = getCookie('auth_token');
     if (!token) {
         return {
-            error: 'No authentication token found. Please log in.'
+            error: 'No authentication token found. Please log in.',
+            status: 401,
+            body: null
         };
     } else {
         const config = {
@@ -359,6 +372,6 @@ async function apiRequest(url, options = {}, method = 'GET', contentType = 'appl
             };
         }
 
-        return response.json();
+        return response;
     }
 }

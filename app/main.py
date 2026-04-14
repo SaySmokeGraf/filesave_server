@@ -9,4 +9,4 @@ from app.api.router import router
 
 app = FastAPI()
 app.include_router(router)
-app.mount('/file-manager', StaticFiles(directory=PATH_STATIC, html=True))
+app.mount('/site', StaticFiles(directory=PATH_STATIC, html=True))
