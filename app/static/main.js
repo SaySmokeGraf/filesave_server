@@ -9,12 +9,7 @@ let fileToUpload = [];
 /**
  * Выгрузка куки из базы куки браузера.
  * */
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
-    return null;
-}
+
 
 const token = getCookie('auth_token');
 
@@ -189,8 +184,18 @@ dropZone.addEventListener('drop', e => {
 function loadLibraryData() {
 
     apiRequest('/files', {}, 'GET', 'application/json')
-        .then(response => response.json())
-        .then(data => updateContent(data))
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '/site/registration.html';
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data != null) {
+                updateContent(data);
+            }
+        })
         .catch(error => console.error('Ошибка запроса:', error));
 }
 
@@ -335,26 +340,33 @@ animate();
 
 async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
     const token = getCookie('auth_token');
-
     if (!token) {
-        throw new Error('No authentication token found. Please log in.');
+        return {
+            error: 'No authentication token found. Please log in.',
+            status: 401,
+            body: null
+        };
+    } else {
+        const config = {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': contentType,
+                ...options.headers
+            },
+            ...options
+        };
+
+        const response = await fetch(url, config);
+
+        if (!response.ok) {
+            return {
+                error: `HTTP error! status: ${response.status}`,
+                status: response.status,
+                body: await response.text()
+            };
+        }
+
+        return response;
     }
-
-    const config = {
-        method: method,
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': contentType,
-            ...options.headers
-        },
-        ...options
-    };
-
-    const response = await fetch(url, config);
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
 }
