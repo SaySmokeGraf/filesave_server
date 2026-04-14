@@ -1,3 +1,5 @@
+
+
 const login_form = document.getElementById('login_form');
 login_form.addEventListener('submit', handleFormSubmit)
 
@@ -18,36 +20,18 @@ function handleFormSubmit(event) {
             body: formData
         })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .then(token => {
-                setSecureCookie('auth_token', token, 7, false);
-            })
+            .then(data => {
+                const accessToken = data.access_token;
+                setSecureCookie('auth_token', accessToken, 7, false);
+            }) // и})
             .catch(error => console.error('Ошибка запроса:', error));
     }
 
     function serializeForm(formNode) {
+
         return new FormData(formNode);
     }
 
-
-
-    function setSecureCookie(name, value, days, isSecure = false) {
-        let cookieString = `${name}=${encodeURIComponent(value)}; path=/`;
-
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            cookieString += `; expires=${date.toUTCString()}`;
-        }
-
-        if (isSecure && window.location.protocol === 'http:') {
-            cookieString += '; Secure';
-        }
-
-        cookieString += '; SameSite=Strict'; // или Lax, в зависимости от требований
-
-        document.cookie = cookieString;
-    }
 
 
 }
