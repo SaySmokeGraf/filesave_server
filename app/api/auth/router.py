@@ -1,4 +1,4 @@
-"""Роутер под API авторизации-аутентификации."""
+"""Роутер под API аутентификации-авторизации."""
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -12,8 +12,19 @@ router = APIRouter()
 
 @router.post('/token')
 async def login_for_access_token(form_data: OAuth2FormDep) -> Token:
+    """Вход пользователя.
+
+    Args:
+        form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
+
+    Raises:
+        HTTPException: Неправильный логин или пароль. Статус-код: 401.
+
+    Returns:
+        Token: Токен для данного пользователя типа bearer.
+    """
     user = user_manager.authenticate_user(form_data.username, form_data.password)
-    if not user:
+    if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect username or password',
@@ -24,6 +35,14 @@ async def login_for_access_token(form_data: OAuth2FormDep) -> Token:
 
 @router.post('/register')
 async def register_for_access_token(form_data: OAuth2FormDep) -> Token:
-    user_manager.save_user(form_data.username, form_data.password)
+    """Регистрация пользователя.
+
+    Args:
+        form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
+
+    Returns:
+        Token: Токен для данного пользователя типа bearer.
+    """
+    user_manager.create_user(form_data.username, form_data.password)
     access_token = token_manager.create_token(data={'sub': form_data.username})
     return Token(access_token=access_token, token_type='bearer')

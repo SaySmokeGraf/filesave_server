@@ -10,12 +10,24 @@ from app.api.auth.managers import token_manager, user_manager
 from app.api.auth.models import TokenData, UserInDB
 
 
+# базовые зависимости для OAuth2 аутентификации по паролю bearer типа
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 OAuth2SchemeDep = Annotated[str, Depends(oauth2_scheme)]
 OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
 async def get_current_user(token: OAuth2SchemeDep) -> UserInDB:
+    """Получить текущего пользователя по токену.
+
+    Args:
+        token (OAuth2SchemeDep): Токен.
+
+    Raises:
+        HTTPException: Невалидные данные для входа.
+
+    Returns:
+        UserInDB: Данные о пользователе.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',

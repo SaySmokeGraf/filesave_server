@@ -2,7 +2,7 @@
 
 import os
 
-from fastapi import APIRouter, HTTPException, status, UploadFile
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.api.files.config import PATH_STORAGE

@@ -3,10 +3,10 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 
-from app.config import ENDPOINT_STATIC
-from app.api.auth.router import router as auth_router
 from app.api.auth.dependencies import get_current_user
+from app.api.auth.router import router as auth_router
 from app.api.files.router import router as files_router
+from app.config import ENDPOINT_STATIC
 
 
 router = APIRouter()

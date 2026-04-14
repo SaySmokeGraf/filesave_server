@@ -2,31 +2,64 @@
 
 from pwdlib import PasswordHash
 
-from app.api.auth.models import UserInDB
-from app.api.auth.managers.config import DUMMY_PASSWORD, PATH_DB
+from app.api.auth.managers.config import DUMMY_PASSWORD
 from app.api.auth.managers.dbmanager import DBManager
+from app.api.auth.models import UserInDB
 
 
 class UserManager:
-    def __init__(self):
-        self._pwd_hasher = PasswordHash.recommended()
-        self._db_manager = DBManager(PATH_DB)
+    """Менеджер пользователей.
+    
+    Включает в себя менеджер БД с пользователями и хэшер паролей. Отвечает за
+    все взаимодействия с пользователями как элементами БД и их учетными и
+    вспомогательными данными.
+    """
 
+    def __init__(self):
+        """Инициализация экземпляра менеджера пользователей."""
+        self._pwd_hasher = PasswordHash.recommended()
+        self._db_manager = DBManager()
+
+        # нужен далее для "пустой" верификации для защиты от тайминговых атак
         self._DUMMY_HASH = self._pwd_hasher.hash(DUMMY_PASSWORD)
     
-    def authenticate_user(self, username: str, password: str):
+    def authenticate_user(self, username: str, password: str) -> UserInDB | None:
+        """Аутентифицировать пользователя по логину и паролю.
+
+        Args:
+            username (str): Логин.
+            password (str): Пароль.
+
+        Returns:
+            UserInDB | None: Данные о пользователе или None в случае
+                непрохождения аутентификации.
+        """
         user = self._db_manager.get_user(username)
         if not user:
             self._pwd_hasher.verify(password, self._DUMMY_HASH)
-            return False
+            return None
         if not self._pwd_hasher.verify(password, user.hashed_password):
-            return False
+            return None
         return user
     
     def get_user(self, username: str) -> UserInDB:
+        """Получить данные о пользователе.
+
+        Args:
+            username (str): Логин.
+
+        Returns:
+            UserInDB: Данные о пользователе.
+        """
         return self._db_manager.get_user(username)
 
-    def save_user(self, username: str, password: str):
+    def create_user(self, username: str, password: str) -> None:
+        """Создать пользователя.
+
+        Args:
+            username (str): Логин.
+            password (str): Пароль.
+        """
         user = UserInDB(
             username=username,
             hashed_password=self._pwd_hasher.hash(password)
