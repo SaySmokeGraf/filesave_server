@@ -62,34 +62,40 @@ async def download_file(filename: str) -> FileResponse:
     return FileResponse(path=file_path, filename=filename)
 
 @router.post('/upload/single', status_code=status.HTTP_201_CREATED)
-async def upload_single_file(file: SingleFileDep) -> JSONResponse:
+async def upload_single_file(file: SingleFileDep,
+                             overwrite: bool = False) -> JSONResponse:
     """Загрузить на сервер один файл.
 
     Args:
         file (UploadFile): Файл для загрузки.
+        overwrite (bool): Флаг перезаписи файла в случае совпадения
+            имен. По умолчанию False.
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
     dir_path = PATH_STORAGE
-    write_uploadfile(file, dir_path)
+    write_uploadfile(file, dir_path, overwrite)
     return JSONResponse(
         content={'message': f'File {file.filename} uploaded successfully!'}
     )
 
 @router.post('/upload/many', status_code=status.HTTP_201_CREATED)
-async def upload_many_files(files: ManyFilesDep) -> JSONResponse:
+async def upload_many_files(files: ManyFilesDep,
+                            overwrite: bool = False) -> JSONResponse:
     """Загрузить на сервер несколько файлов.
 
     Args:
         files (list[UploadFile]): Список файлов.
+        overwrite (bool): Флаг перезаписи файла в случае совпадения
+            имен. По умолчанию False.
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
     dir_path = PATH_STORAGE
     for file in files:
-        write_uploadfile(file, dir_path)
+        write_uploadfile(file, dir_path, overwrite)
     return JSONResponse(
         content={'message': 'Files uploaded successfully!'}
     )
