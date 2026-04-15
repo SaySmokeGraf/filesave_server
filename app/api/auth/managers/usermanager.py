@@ -4,7 +4,7 @@ from pwdlib import PasswordHash
 
 from app.api.auth.managers.config import DUMMY_PASSWORD
 from app.api.auth.managers.dbmanager import DBManager
-from app.api.auth.models import UserInDB
+from app.api.auth.models import User, UserInDB
 
 
 class UserManager:
@@ -23,7 +23,7 @@ class UserManager:
         # нужен далее для "пустой" верификации для защиты от тайминговых атак
         self._DUMMY_HASH = self._pwd_hasher.hash(DUMMY_PASSWORD)
     
-    def authenticate_user(self, username: str, password: str) -> UserInDB | None:
+    def authenticate_user(self, username: str, password: str) -> User | None:
         """Аутентифицировать пользователя по логину и паролю.
 
         Args:
@@ -31,7 +31,7 @@ class UserManager:
             password (str): Пароль.
 
         Returns:
-            UserInDB | None: Данные о пользователе или None в случае
+            User | None: Данные о пользователе или None в случае
                 непрохождения аутентификации.
         """
         user = self._db_manager.get_user(username)
@@ -40,18 +40,19 @@ class UserManager:
             return None
         if not self._pwd_hasher.verify(password, user.hashed_password):
             return None
-        return user
+        return User(username=user.username)
     
-    def get_user(self, username: str) -> UserInDB:
+    def get_user(self, username: str) -> User:
         """Получить данные о пользователе.
 
         Args:
             username (str): Логин.
 
         Returns:
-            UserInDB: Данные о пользователе.
+            User: Данные о пользователе.
         """
-        return self._db_manager.get_user(username)
+        user = self._db_manager.get_user(username)
+        return User(username=user.username)
 
     def create_user(self, username: str, password: str) -> None:
         """Создать пользователя.

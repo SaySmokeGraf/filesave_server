@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 
 from app.api.auth.managers import token_manager, user_manager
-from app.api.auth.models import TokenData, UserInDB
+from app.api.auth.models import TokenData, User
 
 
 # базовые зависимости для OAuth2 аутентификации по паролю bearer типа
@@ -16,7 +16,7 @@ OAuth2SchemeDep = Annotated[str, Depends(oauth2_scheme)]
 OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
-async def get_current_user(token: OAuth2SchemeDep) -> UserInDB:
+async def get_current_user(token: OAuth2SchemeDep) -> User:
     """Получить текущего пользователя по токену.
 
     Args:
@@ -26,7 +26,7 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserInDB:
         HTTPException: Невалидные данные для входа.
 
     Returns:
-        UserInDB: Данные о пользователе.
+        User: Данные о пользователе.
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
