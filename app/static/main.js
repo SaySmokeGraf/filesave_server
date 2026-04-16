@@ -13,7 +13,6 @@ let fileToUpload = [];
 
 const token = getCookie('auth_token');
 
-
 /**
  * 
  * Метод выполняет действие когда файлы драг-энд-дропом сброшены
@@ -106,8 +105,17 @@ function deleteUploadFile(file) {
 function uploadFileOnServer(file, btn) {
     const xhr = new XMLHttpRequest();
     btn.disabled = true;
-    xhr.open('POST', '/files/upload/single', true);
+
+    // Создаем FormData и добавляем файл
+    const formData = new FormData();
+    formData.append('file', file.file); // 'file' - имя поля, которое ожидает сервер
+
+    xhr.open('POST', '/files/upload/single', false);
+
+    // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
     xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
+
+   // Отслеживание прогресса
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
@@ -115,6 +123,7 @@ function uploadFileOnServer(file, btn) {
         }
     };
 
+    // Обработка успешного ответа
     xhr.onload = () => {
         if (xhr.status === 200) {
             console.log('Успешно:', xhr.responseText);
@@ -122,14 +131,16 @@ function uploadFileOnServer(file, btn) {
         } else {
             console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
-        btn.disabled = false; // Разблокируем кнопку после завершения запроса
+        btn.disabled = false; // Разблокируем кнопку после завершения
     };
 
+    // Обработка ошибок сети
     xhr.onerror = () => {
         console.error('Ошибка сети');
         btn.disabled = false;
     };
 
+  //  Отправляем запрос с файлом
     xhr.send(formData);
 }
 
@@ -183,7 +194,9 @@ dropZone.addEventListener('drop', e => {
 
 function loadLibraryData() {
 
-    apiRequest('/files', {}, 'GET', 'application/json')
+
+
+    apiRequest('/files', {}, 'GET', 'application/json', {})
         .then(response => {
             if (response.status === 401) {
                 window.location.href = '/site/registration.html';
