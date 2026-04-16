@@ -19,10 +19,20 @@ function handleFormSubmit(event) {
             method: 'POST',
             body: formData
         })
-            .then(response => response.json())
+            .then(response => {
+                if (response.status === 401) {
+                    window.location.href = '/site/registration.html';
+                    return null;
+                }
+                else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 const accessToken = data.access_token;
                 setSecureCookie('auth_token', accessToken, 7, false);
+                window.location.href = '/site/';
+                return data.json();
             }) // и})
             .catch(error => console.error('Ошибка запроса:', error));
     }

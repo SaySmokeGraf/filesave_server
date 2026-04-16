@@ -115,7 +115,7 @@ function uploadFileOnServer(file, btn) {
     // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
     xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
 
-   // Отслеживание прогресса
+    // Отслеживание прогресса
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
@@ -140,7 +140,7 @@ function uploadFileOnServer(file, btn) {
         btn.disabled = false;
     };
 
-  //  Отправляем запрос с файлом
+    //  Отправляем запрос с файлом
     xhr.send(formData);
 }
 
@@ -201,15 +201,14 @@ function loadLibraryData() {
             if (response.status === 401) {
                 window.location.href = '/site/registration.html';
                 return null;
+            } else {
+                return response.json();
             }
-            return response.json();
-        })
-        .then(data => {
+        }).then(data => {
             if (data != null) {
                 updateContent(data);
             }
-        })
-        .catch(error => console.error('Ошибка запроса:', error));
+        }).catch(error => console.error('Ошибка запроса:', error));
 }
 
 function updateContent(data) {
