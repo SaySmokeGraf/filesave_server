@@ -5,4 +5,4 @@ PATH_STORAGE = 'app/api/files/storage'
 PATH_DISK = 'C:'
 
 # константы
-RESERVED_DISK_SPACE = 20 << 30  # [байты]
+RESERVED_DISK_SPACE = 0  # [байты]
