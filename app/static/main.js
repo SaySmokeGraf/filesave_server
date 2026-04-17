@@ -193,9 +193,6 @@ dropZone.addEventListener('drop', e => {
 
 
 function loadLibraryData() {
-
-
-
     apiRequest('/files', {}, 'GET', 'application/json', {})
         .then(response => {
             if (response.status === 401) {
@@ -261,7 +258,12 @@ function updateContent(data) {
             downloadButton.appendChild(spinner);
             apiRequest('/files/download/?filename=' + encodeURIComponent(element.filename), {}, 'GET',
                 'multipart/file').then(response => {
-                    if (!response.ok) throw new Error('Ошибка при загрузке файла');
+                    // if (!response.ok) throw new Error('Ошибка при загрузке файла');
+                    if (response.status == 401) {
+                        window.location.href = '/site/registration.html';
+                    } else if (!response.ok) {
+                        window.location.href = '/site/error.html';
+                    }
                     return response.blob();
                 })
                 .then(blob => {
