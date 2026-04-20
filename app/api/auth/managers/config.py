@@ -1,8 +1,7 @@
 """Конфигурационный скрипт для API аут.-авт."""
 
 # пути
-PATH_DB = 'app/api/auth/managers/res/fake_db.txt'
-PATH_SECRET_USERS = 'app/api/auth/managers/res/secret_users.txt'
+PATH_SECRET_USERS = 'app/api/auth/managers/resources/secret_users.txt'
 
 # константы
 ALGORITHM = 'HS256'
