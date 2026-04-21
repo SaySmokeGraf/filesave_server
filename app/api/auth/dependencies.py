@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 
 from app.api.auth.managers import token_manager, user_manager
-from app.api.auth.managers.dbmanager import UserPublic
+from app.api.auth.managers.dbmanager import RoleToID, UserPublic
 from app.api.auth.models import TokenData
 
 
@@ -17,6 +17,7 @@ OAuth2SchemeDep = Annotated[str, Depends(oauth2_scheme)]
 OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
+# основная универсальная зависимость
 async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
     """Получить текущего пользователя по токену.
 
@@ -24,7 +25,7 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
         token (OAuth2SchemeDep): Токен.
 
     Raises:
-        HTTPException: Невалидные данные для входа.
+        HTTPException: (401) Невалидные данные для входа.
 
     Returns:
         UserPublic: Данные о пользователе.
@@ -46,3 +47,34 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
     if user is None:
         raise credentials_exception
     return user
+
+
+# зависимость в более компактном формате для объявления через аннотирование
+GetCurrentUserDep = Annotated[UserPublic, Depends(get_current_user)]
+
+
+# дополнительные зависимости с параметрами доступа по роли
+async def get_user_directory(user: GetCurrentUserDep) -> str:
+    """Получить имя папки пользователя.
+
+    Args:
+        user (GetCurrentUserDep): Пользователь.
+
+    Raises:
+        HTTPException: (403) Нет доступа из-за неподходящей роли пользователя.
+
+    Returns:
+        str: Имя папки пользователя в хранилище.
+    """
+    if user.role == RoleToID.USER or user.role == RoleToID.ADMIN:
+        return str(user.id)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Access denied due to user role permissions',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+
+
+# зависимость в более компактном формате для объявления через аннотирование
+GetUserDirectoryDep = Annotated[str, Depends(get_user_directory)]

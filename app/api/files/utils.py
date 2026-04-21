@@ -5,6 +5,24 @@ from shutil import copyfileobj
 
 from fastapi import UploadFile
 
+from app.api.files.config import PATH_STORAGE
+
+
+def get_user_dir_path(user_dir: str) -> str:
+    """Получить путь до папки пользователя.
+
+    Проверяет ее существование и создает, если папки нет.
+
+    Args:
+        user_dir (str): Имя папки пользователя.
+
+    Returns:
+        str: Путь до папки пользователя.
+    """
+    dir_path = f'{PATH_STORAGE}/{user_dir}'
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    return dir_path
 
 def get_unique_filename(filename: str, directory_path: str) -> str:
     """Получить уникальное имя файла.
