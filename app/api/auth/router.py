@@ -18,7 +18,7 @@ async def login_for_access_token(form_data: OAuth2FormDep) -> Token:
         form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
 
     Raises:
-        HTTPException: Неправильный логин или пароль. Статус-код: 401.
+        HTTPException: (401) Неправильный логин или пароль.
 
     Returns:
         Token: Токен для данного пользователя типа bearer.
@@ -39,10 +39,19 @@ async def register_for_access_token(form_data: OAuth2FormDep) -> Token:
 
     Args:
         form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
+    
+    Raises:
+        HTTPException: (403) Пользователь с таким логином уже существует.
 
     Returns:
         Token: Токен для данного пользователя типа bearer.
     """
-    user_manager.create_user(form_data.username, form_data.password)
-    access_token = token_manager.create_token(data={'sub': form_data.username})
+    user = user_manager.create_user(form_data.username, form_data.password)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='User already exists',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    access_token = token_manager.create_token(data={'sub': user.username})
     return Token(access_token=access_token, token_type='bearer')

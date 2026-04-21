@@ -49,22 +49,32 @@ class UserManager:
 
         Returns:
             UserPublic | None: Данные о пользователе или None, если такого
-                пользователя нет..
+                пользователя нет.
         """
         user = self._db_manager.get_user(username)
         if user is None:
             return None
         return UserPublic(id=user.id, username=user.username, role=user.role)
 
-    def create_user(self, username: str, password: str) -> None:
+    def create_user(self, username: str, password: str) -> UserPublic | None:
         """Создать пользователя.
 
         Args:
             username (str): Логин.
             password (str): Пароль.
+        
+        Returns:
+            UserPublic | None: Результат попытки создания пользователя: либо
+                данные пользователя, либо None в случае, когда пользователь не
+                был создан по причине наличия пользователя с таким логином.
         """
-        user = UserCreate(
+        create_user = UserCreate(
             username=username,
             hashed_password=self._pwd_hasher.hash(password)
         )
-        self._db_manager.create_user(user)
+        db_user = self._db_manager.create_user(create_user)
+        if db_user is None:
+            return None
+        return UserPublic(
+            id=db_user.id, username=db_user.username, role=db_user.role
+        )

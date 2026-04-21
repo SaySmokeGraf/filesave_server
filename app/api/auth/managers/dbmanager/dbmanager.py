@@ -49,15 +49,19 @@ class DBManager:
             user = result.first()
         return user
     
-    def create_user(self, user: UserCreate) -> User:
+    def create_user(self, user: UserCreate) -> User | None:
         """Создание нового пользователя в БД.
 
         Args:
             user (UserCreate): Данные пользователя для создания.
 
         Returns:
-            User: Данные пользователя из БД.
+            User | None: Результат попытки создания пользователя: либо данные
+                пользователя, либо None в случае, когда пользователь не был
+                создан по причине наличия пользователя с таким логином.
         """
+        if self.get_user(user.username) is not None:
+            return None
         with Session(self._engine) as session:
             db_user = User.model_validate(user)
             session.add(db_user)
