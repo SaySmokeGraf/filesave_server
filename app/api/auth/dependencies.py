@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 
 from app.api.auth.managers import token_manager, user_manager
-from app.api.auth.managers.dbmanager import RoleToID, UserPublic
+from app.api.auth.managers.dbmanager import UserPublic
 from app.api.auth.models import TokenData
 
 
@@ -53,27 +53,52 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
 GetCurrentUserDep = Annotated[UserPublic, Depends(get_current_user)]
 
 
-# дополнительные зависимости с параметрами доступа по роли
-async def get_user_directory(user: GetCurrentUserDep) -> str:
-    """Получить имя папки пользователя.
+# зависимости по проверке прав доступа
+async def get_allowed_user(user: GetCurrentUserDep) -> UserPublic:
+    """Получить пользователя, которому разрешено пользоваться сервисом.
+
+    Проверка на наличие верификации от модератора и отсутствие бана.
 
     Args:
         user (GetCurrentUserDep): Пользователь.
 
     Raises:
-        HTTPException: (403) Нет доступа из-за неподходящей роли пользователя.
+        HTTPException: (403) Пользователь забанен.
+        HTTPException: (403) Пользователь не верифицирован модератором.
+
+    Returns:
+        UserPublic: Пользователь.
+    """
+    if user.is_banned:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='User is banned by moderator',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    elif not user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='User is not verified by moderator',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    return user
+
+
+# зависимость в более компактном формате для объявления через аннотирование
+GetAllowedUserDep = Annotated[UserPublic, Depends(get_allowed_user)]
+
+
+# дополнительные зависимости для получения определенных пар-ров
+async def get_user_directory(user: GetAllowedUserDep) -> str:
+    """Получить имя папки пользователя.
+
+    Args:
+        user (GetAllowedUserDep): Пользователь.
 
     Returns:
         str: Имя папки пользователя в хранилище.
     """
-    if user.role == RoleToID.USER or user.role == RoleToID.ADMIN:
-        return str(user.id)
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail='Access denied due to user role permissions',
-            headers={'WWW-Authenticate': 'Bearer'}
-        )
+    return str(user.id)
 
 
 # зависимость в более компактном формате для объявления через аннотирование

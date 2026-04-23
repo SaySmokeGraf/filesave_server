@@ -22,7 +22,8 @@ class UserManager:
         # нужен далее для "пустой" верификации для защиты от тайминговых атак
         self._DUMMY_HASH = self._pwd_hasher.hash(DUMMY_PASSWORD)
     
-    def authenticate_user(self, username: str, password: str) -> UserPublic | None:
+    def authenticate_user(self, username: str,
+                          password: str) -> UserPublic | None:
         """Аутентифицировать пользователя по логину и паролю.
 
         Args:
@@ -39,7 +40,7 @@ class UserManager:
             return None
         if not self._pwd_hasher.verify(password, user.hashed_password):
             return None
-        return UserPublic(id=user.id, username=user.username, role=user.role)
+        return UserPublic.model_validate(user)
     
     def get_user(self, username: str) -> UserPublic | None:
         """Получить данные о пользователе.
@@ -54,7 +55,7 @@ class UserManager:
         user = self._db_manager.get_user(username)
         if user is None:
             return None
-        return UserPublic(id=user.id, username=user.username, role=user.role)
+        return UserPublic.model_validate(user)
 
     def create_user(self, username: str, password: str) -> UserPublic | None:
         """Создать пользователя.
@@ -72,9 +73,7 @@ class UserManager:
             username=username,
             hashed_password=self._pwd_hasher.hash(password)
         )
-        db_user = self._db_manager.create_user(create_user)
-        if db_user is None:
+        user = self._db_manager.create_user(create_user)
+        if user is None:
             return None
-        return UserPublic(
-            id=db_user.id, username=db_user.username, role=db_user.role
-        )
+        return UserPublic.model_validate(user)

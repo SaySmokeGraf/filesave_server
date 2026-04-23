@@ -2,14 +2,6 @@
 
 from sqlmodel import Field, SQLModel
 
-from app.api.auth.managers.dbmanager.config import RoleToID
-
-
-class Role(SQLModel, table=True):
-    """Модель-таблица ролей."""
-    id: int | None = Field(default=None, primary_key=True)
-    name: str = Field(max_length=20)
-
 
 class AbscractUser(SQLModel):
     """Абстрактная модель пользователя."""
@@ -21,13 +13,17 @@ class User(AbscractUser, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(unique=True)
     hashed_password: str
-    role: int = Field(default=RoleToID.UNVERIFIED, foreign_key="role.id")
+    is_verified: bool = Field(default=False)
+    is_moderator: bool = Field(default=False)
+    is_banned: bool = Field(default=False)
 
 
 class UserPublic(AbscractUser):
     """Модель публичных данных о пользователе."""
     id: int
-    role: int
+    is_verified: bool
+    is_moderator: bool
+    is_banned: bool
 
 
 class UserCreate(AbscractUser):
