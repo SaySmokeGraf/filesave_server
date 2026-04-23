@@ -3,14 +3,26 @@ const selectionFileBtn = document.getElementById('upload_btn');
 const fileListContainer = document.querySelector('.uploader_file_list');
 const dropZone = document.getElementById('drop-zone');
 const myFiles = document.getElementById('loaded-file-list');
+const overlay = document.getElementById('messageOverlay');
+const alert_ok_btn = document.getElementById('alert_btn_ok');
+const alert_btn_close = document.getElementById('alert_btn_no');
+const closeAlertBtn = document.getElementById('closeBtn');
 window.loadLibraryData();
 let fileToUpload = [];
+
+closeAlertBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+})
+
+window.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+        overlay.style.display = 'none';
+    }
+});
 
 /**
  * Выгрузка куки из базы куки браузера.
  * */
-
-
 const token = getCookie('auth_token');
 
 /**
@@ -64,11 +76,11 @@ function createUploadElement(file) {
 
     const uploadBtn = document.createElement('button');
     uploadBtn.className = 'upload_download-btn';
-    uploadBtn.textContent = 'Upload';
+    uploadBtn.textContent = 'Загрузить';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'upload_delete-btn';
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.textContent = 'Удалить';
 
     fileActionsDiv.appendChild(uploadBtn);
     fileActionsDiv.appendChild(deleteBtn);
@@ -128,6 +140,8 @@ function uploadFileOnServer(file, btn) {
         if (xhr.status === 200) {
             console.log('Успешно:', xhr.responseText);
             deleteUploadFile(file);
+        } else if (xhr.status === 401) {
+            window.location.href = '/site/registration.html';
         } else {
             console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
@@ -214,6 +228,7 @@ function updateContent(data) {
     myFiles.innerHTML = ''
     data.forEach(element => {
 
+        // const closeBtn = document.getElementById('closeBtn');
         const li = document.createElement('li');
         li.className = 'file-item';
         const myFileInfoDiv = document.createElement('div');
@@ -240,8 +255,15 @@ function updateContent(data) {
         // myFiles.appendChild(myFileInfoDiv);
 
         deleteBtn.addEventListener('click', () => {
-            apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
-                'application/json').then(() => loadLibraryData());
+            overlay.style.display = 'block';
+            alert_ok_btn.addEventListener('click', () => {
+                apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
+                    'application/json').then(() => loadLibraryData());
+                overlay.style.display = 'none';
+            });
+            alert_btn_close.addEventListener('click', () => {
+                overlay.style.display = 'none';
+            })
         })
 
         downloadButton.addEventListener('click', () => {
@@ -261,8 +283,10 @@ function updateContent(data) {
                     // if (!response.ok) throw new Error('Ошибка при загрузке файла');
                     if (response.status == 401) {
                         window.location.href = '/site/registration.html';
+                        return response;
                     } else if (!response.ok) {
                         window.location.href = '/site/error.html';
+                        return response;
                     }
                     return response.blob();
                 })
@@ -384,3 +408,7 @@ async function apiRequest(url, options = {}, method = 'GET', contentType = 'appl
         return response;
     }
 }
+
+
+
+

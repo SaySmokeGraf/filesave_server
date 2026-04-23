@@ -64,7 +64,7 @@ body {
     border: 2px dashed #606060;
     /* тёмный серый */
     border-radius: 12px;
-    background-color: #d0d0d0;
+    background-color: linear-gradient(135deg, #3a4f55, #4a6572);
     /* светлый серый */
     transition: background-color 0.3s, border-color 0.3s;
 }
@@ -119,7 +119,7 @@ body {
     height: 45px;
     background: linear-gradient(135deg, #006064, #004D40);
     /* тёмный бирюзовый градиент */
-    color: #ffffff;
+    color: #95dab7;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -167,6 +167,7 @@ body {
 .upload_file_item:hover {
     background: linear-gradient(90deg, #34495e, #2c3e50);
     transform: translateY(-2px);
+    align-items: baseline;
 }
 
 /* Ссылки — современный стиль */
@@ -180,7 +181,8 @@ body {
     transition: color 0.3s, text-shadow 0.3s;
 }
 
-.file-link:hover,
+.upload_download-btn,
+.download-delete-btn .file-link:hover,
 .upload_file-link:hover {
     color: #ffca28;
     /* тёплый жёлтый при наведении */
@@ -228,6 +230,12 @@ body {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+.upload_file-actions {
+    display: flex;
+    gap: 8px;
+    flex-direction: row;
+}
+
 /* Стилизация полосы прокрутки для WebKit */
 .file-list {
     list-style: none;
@@ -240,12 +248,14 @@ body {
 }
 
 .uploader_file_list {
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
     list-style: none;
     padding: 0;
     margin: 10px;
     height: 600px;
     width: 100%;
-
     overflow-y: auto;
     scroll-behavior: smooth;
 }
@@ -311,10 +321,13 @@ footer {
 }
 
 .delete-btn,
-.download-btn {
+.download-btn,
+.upload_download-btn,
+.download-delete-btn,
+.upload_delete-btn {
     margin-left: 1%;
     /* width: 52%; */
-    max-width: 65px;
+    max-width: 73px;
     height: 30px;
     background: linear-gradient(135deg, #006064, #004D40);
     /* тёмный бирюзовый градиент */
@@ -326,7 +339,7 @@ footer {
     font-weight: 200px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-    align-self: center;
+    align-self: right;
 }
 
 
@@ -344,4 +357,86 @@ footer {
 
 footer:hover {
     background-color: #ececec;
+}
+
+.overlay {
+    display: none;
+    /* скрыто по умолчанию */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Само окно */
+.popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Ключевое центрирование */
+    background: linear-gradient(135deg, #642800, #4d1800);
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.close-btn {
+    cursor: pointer;
+    float: right;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.alert-buttons-container {
+    position: absolute;
+    bottom: 5px;
+    left: 0%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.alert_btn_ok,
+.alert_btn_no {
+    /* flex: 1; */
+    min-width: 10px;
+    padding: 10px 20px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+
+.alert_btn_ok {
+    background-color: #28a745;
+
+    color: #fff;
+}
+
+.alert_btn_no {
+    background-color: #dc3545;
+
+    color: #fff;
+}
+
+
+.alert_btn_ok:hover {
+    background-color: #218838;
+}
+
+.alert_btn_no:hover {
+    background-color: #c82333;
 }
