@@ -8,6 +8,11 @@ from fastapi import UploadFile
 from app.api.files.config import PATH_STORAGE
 
 
+def create_storage_directory() -> None:
+    """Создать папку хранилища, если нужно."""
+    if not os.path.exists(PATH_STORAGE):
+        os.makedirs(PATH_STORAGE)
+
 def get_user_dir_path(user_dir: str) -> str:
     """Получить путь до папки пользователя.
 
@@ -21,7 +26,7 @@ def get_user_dir_path(user_dir: str) -> str:
     """
     dir_path = f'{PATH_STORAGE}/{user_dir}'
     if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+        os.mkdir(dir_path)
     return dir_path
 
 def get_unique_filename(filename: str, directory_path: str) -> str:

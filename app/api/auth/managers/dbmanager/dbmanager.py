@@ -1,19 +1,27 @@
 """Менеджер БД для аут.-авт."""
 
+import os
+
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.api.auth.managers.dbmanager.config import SQLITE_URL
+from app.api.auth.managers.dbmanager.config import PATH_DB_DIR, SQLITE_URL
 from app.api.auth.managers.dbmanager.models import User, UserCreate
 
 
 class DBManager:
     def __init__(self):
         """Инициализация экземпляра менеджера БД."""
+        self._create_db_directory()
         self._engine = create_engine(SQLITE_URL,
                                      connect_args={'check_same_thread': False})
         self._create_db_and_tables()
     
-    def _create_db_and_tables(self):
+    def _create_db_directory(self) -> None:
+        """Создать папку хранения БД, если нужно."""
+        if not os.path.exists(PATH_DB_DIR):
+            os.makedirs(PATH_DB_DIR)
+
+    def _create_db_and_tables(self) -> None:
         """Создать БД и таблицы, если нужно."""
         SQLModel.metadata.create_all(self._engine)
     

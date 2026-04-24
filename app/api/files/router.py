@@ -8,10 +8,13 @@ from fastapi.responses import FileResponse, JSONResponse
 from app.api.auth.dependencies import GetUserDirectoryDep
 from app.api.files.dependencies import ManyFilesDep, SingleFileDep
 from app.api.files.models import FileDataModel
-from app.api.files.utils import get_user_dir_path, write_uploadfile
+from app.api.files.utils import (
+    create_storage_directory, get_user_dir_path, write_uploadfile
+)
 
 
 router = APIRouter()
+create_storage_directory()
 
 
 @router.get('/', response_model=list[FileDataModel])
