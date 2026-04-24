@@ -5,7 +5,8 @@ from datetime import datetime, timedelta, timezone
 import jwt
 
 from app.api.auth.managers.config import (
-    ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, PATH_SECRET_USERS
+    ACCESS_TOKEN_EXPIRE_DAYS, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
+    PATH_SECRET_USERS
 ) 
 
 
@@ -37,10 +38,10 @@ class TokenManager:
             str: Токен.
         """
         to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
-        else:
-            expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        if not expires_delta:
+            expires_delta = timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS,
+                                      minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({'exp': expire})
         encoded_jwt = jwt.encode(to_encode, self._key, algorithm=ALGORITHM)
         return encoded_jwt
