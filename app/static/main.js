@@ -53,6 +53,12 @@ function createUploadElement(file) {
     const li = document.createElement('li');
     li.className = 'upload_file_item';
 
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.className = 'progress-container';
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressBar.id = 'progress-bar';
+    progressBarContainer.appendChild(progressBar);
     const uploadedFileInfoDiv = document.createElement('div');
     uploadedFileInfoDiv.className = 'upload_file-info';
 
@@ -86,7 +92,9 @@ function createUploadElement(file) {
     fileActionsDiv.appendChild(deleteBtn);
 
     li.appendChild(uploadedFileInfoDiv);
+    li.appendChild(progressBarContainer);
     li.appendChild(fileActionsDiv);
+
 
     fileListContainer.appendChild(li);
 
@@ -122,16 +130,19 @@ function uploadFileOnServer(file, btn) {
     const formData = new FormData();
     formData.append('file', file.file); // 'file' - имя поля, которое ожидает сервер
 
-    xhr.open('POST', '/files/upload/single', false);
+    xhr.open('POST', '/files/upload/single', true);
 
     // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
     xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
-
+    const progressBar = document.getElementById('progress-bar');
     // Отслеживание прогресса
+    // const progressResult;
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
+            // progressResult = percentComplete;
+            progressBar.style.width = `${percentComplete.toFixed(2)}%`;
         }
     };
 
@@ -139,6 +150,7 @@ function uploadFileOnServer(file, btn) {
     xhr.onload = () => {
         if (xhr.status === 200) {
             console.log('Успешно:', xhr.responseText);
+            // progressBar.style.width = ``;
             deleteUploadFile(file);
         } else if (xhr.status === 401) {
             window.location.href = '/site/registration.html';
