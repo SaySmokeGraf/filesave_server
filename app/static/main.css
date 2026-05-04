@@ -1,0 +1,17 @@
+html,
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #006064, #004D40);
+    background: #1e2a38;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #f0f0f0;
+    background: linear-gradient(90deg, #32465a, #1a252f);
+    flex-direction: column;
+    margin: 0;
+}

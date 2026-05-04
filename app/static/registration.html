@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="registration.css">
+    <!-- <link rel="stylesheet" href="main.css"> -->
+</head>
+
+<body>
+    <form id="login_form">
+        <div class="main">
+            <h1 >File-hub</h1>
+            <h3 id="mainText">Введите логин и пароль</h3>
+            <label for="first">
+                Логин:
+            </label>
+            <input type="text" name="username" placeholder="Введите логин" required>
+
+            <label for="password">
+                Пароль:
+            </label>
+            <input type="password" name="password" placeholder="Введите пароль" required>
+
+            <div class="wrap">
+                <button type="submit">
+                    Вход
+                </button>
+            </div>
+        </div>
+    </form>
+    <p>Не зарегистрированы?<a href="#" style="text-decoration: none;">
+            Создать аккаунт
+        </a>
+    </p>
+    <script src="cookies.js"></script>
+    <script src="registration.js"></script>
+</body>
+
+</html>

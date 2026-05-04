@@ -3,34 +3,48 @@ const selectionFileBtn = document.getElementById('upload_btn');
 const fileListContainer = document.querySelector('.uploader_file_list');
 const dropZone = document.getElementById('drop-zone');
 const myFiles = document.getElementById('loaded-file-list');
+const overlay = document.getElementById('messageOverlay');
+const alert_ok_btn = document.getElementById('alert_btn_ok');
+const alert_btn_close = document.getElementById('alert_btn_no');
+const closeAlertBtn = document.getElementById('closeBtn');
 window.loadLibraryData();
 let fileToUpload = [];
 
+closeAlertBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+})
+
+window.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+        overlay.style.display = 'none';
+    }
+});
+
+/**
+ * Выгрузка куки из базы куки браузера.
+ * */
+const token = getCookie('auth_token');
 
 /**
  * 
  * Метод выполняет действие когда файлы драг-энд-дропом сброшены
  */
 function handleDropFiles(files) {
-
     addFilesInCollections(files);
     updateUploaderFileList();
 }
-
 
 /**
  * 
  * Обновляет список файлов в разделе Upload.
  */
 function updateUploaderFileList() {
-
     fileListContainer.innerHTML = '';
-
-    // Создаем элементы для каждого файла
     fileToUpload.forEach((file) => {
         createUploadElement(file);
     });
 }
+
 /**
  * 
  * Создание одного элемента в списке upload
@@ -39,6 +53,12 @@ function createUploadElement(file) {
     const li = document.createElement('li');
     li.className = 'upload_file_item';
 
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.className = 'progress-container';
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressBar.id = 'progress-bar';
+    progressBarContainer.appendChild(progressBar);
     const uploadedFileInfoDiv = document.createElement('div');
     uploadedFileInfoDiv.className = 'upload_file-info';
 
@@ -62,17 +82,19 @@ function createUploadElement(file) {
 
     const uploadBtn = document.createElement('button');
     uploadBtn.className = 'upload_download-btn';
-    uploadBtn.textContent = 'Upload';
+    uploadBtn.textContent = 'Загрузить';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'upload_delete-btn';
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.textContent = 'Удалить';
 
     fileActionsDiv.appendChild(uploadBtn);
     fileActionsDiv.appendChild(deleteBtn);
 
     li.appendChild(uploadedFileInfoDiv);
+    li.appendChild(progressBarContainer);
     li.appendChild(fileActionsDiv);
+
 
     fileListContainer.appendChild(li);
 
@@ -81,7 +103,7 @@ function createUploadElement(file) {
     });
 
     uploadBtn.addEventListener('click', () => {
-        uploadFileOnServer(file);
+        uploadFileOnServer(file, uploadBtn);
     })
 }
 /**
@@ -100,38 +122,55 @@ function deleteUploadFile(file) {
  * 
  * Загрузка файла на сервер из списка Upload.
  */
-function uploadFileOnServer(file) {
-    const formData = new FormData();
-    console.log(file)
-    formData.append('file', file.file);
+function uploadFileOnServer(file, btn) {
     const xhr = new XMLHttpRequest();
+    btn.disabled = true;
+
+    // Создаем FormData и добавляем файл
+    const formData = new FormData();
+    formData.append('file', file.file); // 'file' - имя поля, которое ожидает сервер
+
     xhr.open('POST', '/files/upload/single', true);
-    // xhr.setRequestHeader('Content-Type','multipart/form-data');
+
+    // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
+    xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
+    const progressBar = document.getElementById('progress-bar');
+    // Отслеживание прогресса
+    // const progressResult;
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
+            // progressResult = percentComplete;
+            progressBar.style.width = `${percentComplete.toFixed(2)}%`;
         }
     };
+
+    // Обработка успешного ответа
     xhr.onload = () => {
         if (xhr.status === 200) {
-            // const result = JSON.parse(xhr.responseText);
             console.log('Успешно:', xhr.responseText);
+            // progressBar.style.width = ``;
             deleteUploadFile(file);
+        } else if (xhr.status === 401) {
+            window.location.href = '/site/registration.html';
         } else {
-            console.error('Ошибка при загрузке');
+            console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
+        btn.disabled = false; // Разблокируем кнопку после завершения
     };
+
+    // Обработка ошибок сети
     xhr.onerror = () => {
         console.error('Ошибка сети');
+        btn.disabled = false;
     };
+
+    //  Отправляем запрос с файлом
     xhr.send(formData);
 }
 
-/**
- * 
- * Добавляет файлы в коллекцию "Сайта" внутри браузера
- */
+
 function addFilesInCollections(files) {
     Array.from(files).forEach(file => {
         const key = `${file.name}_${file.size}_${file.type}`;
@@ -147,12 +186,8 @@ function addFilesInCollections(files) {
         }
     });
 }
-/**
- * 
- * Вешает слушатель на действие добавления файла с компьютера в браузер(сайт)
- */
-fileInput.addEventListener('change', () => {
 
+fileInput.addEventListener('change', () => {
     addFilesInCollections(fileInput.files);
     updateUploaderFileList();
     fileInput.value = '';
@@ -184,10 +219,19 @@ dropZone.addEventListener('drop', e => {
 
 
 function loadLibraryData() {
-    fetch('/files')
-        .then(response => response.json())
-        .then(data => updateContent(data))
-        .catch(error => console.error('Ошибка запроса:', error));
+    apiRequest('/files', {}, 'GET', 'application/json', {})
+        .then(response => {
+            if (response.status === 401) {
+                window.location.href = '/site/registration.html';
+                return null;
+            } else {
+                return response.json();
+            }
+        }).then(data => {
+            if (data != null) {
+                updateContent(data);
+            }
+        }).catch(error => console.error('Ошибка запроса:', error));
 }
 
 function updateContent(data) {
@@ -196,6 +240,7 @@ function updateContent(data) {
     myFiles.innerHTML = ''
     data.forEach(element => {
 
+        // const closeBtn = document.getElementById('closeBtn');
         const li = document.createElement('li');
         li.className = 'file-item';
         const myFileInfoDiv = document.createElement('div');
@@ -222,8 +267,15 @@ function updateContent(data) {
         // myFiles.appendChild(myFileInfoDiv);
 
         deleteBtn.addEventListener('click', () => {
-            fetch(`/files/delete?filename=${element.filename}`, { method: 'DELETE' })
-                .then(() => loadLibraryData());
+            overlay.style.display = 'block';
+            alert_ok_btn.addEventListener('click', () => {
+                apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
+                    'application/json').then(() => loadLibraryData());
+                overlay.style.display = 'none';
+            });
+            alert_btn_close.addEventListener('click', () => {
+                overlay.style.display = 'none';
+            })
         })
 
         downloadButton.addEventListener('click', () => {
@@ -238,10 +290,16 @@ function updateContent(data) {
             // Показываем спиннер внутри кнопки
             downloadButton.textContent = '';
             downloadButton.appendChild(spinner);
-
-            fetch('/files/download/?filename=' + encodeURIComponent(element.filename))
-                .then(response => {
-                    if (!response.ok) throw new Error('Ошибка при загрузке файла');
+            apiRequest('/files/download/?filename=' + encodeURIComponent(element.filename), {}, 'GET',
+                'multipart/file').then(response => {
+                    // if (!response.ok) throw new Error('Ошибка при загрузке файла');
+                    if (response.status == 401) {
+                        window.location.href = '/site/registration.html';
+                        return response;
+                    } else if (!response.ok) {
+                        window.location.href = '/site/error.html';
+                        return response;
+                    }
                     return response.blob();
                 })
                 .then(blob => {
@@ -265,3 +323,104 @@ function updateContent(data) {
 
     })
 }
+const obj = document.getElementById('flyingObject');
+
+// Задаем зону перемещения (например, центральная часть окна)
+const zone = {
+    xMin: 100,
+    yMin: 100,
+    xMax: window.innerWidth - 150, // учитываем ширину картинки
+    yMax: window.innerHeight - 150 // учитываем высоту картинки
+};
+
+// Начальные координаты
+let position = {
+    x: Math.random() * (zone.xMax - zone.xMin) + zone.xMin,
+    y: Math.random() * (zone.yMax - zone.yMin) + zone.yMin
+};
+
+// Целевая точка
+let target = {
+    x: 0,
+    y: 0
+};
+
+// Скорость перемещения
+const speed = 1.5; // пикселей за кадр, можно регулировать
+
+// Функция для выбора новой цели внутри зоны
+function setNewTarget() {
+    target.x = Math.random() * (zone.xMax - zone.xMin) + zone.xMin;
+    target.y = Math.random() * (zone.yMax - zone.yMin) + zone.yMin;
+}
+
+// Изначально задаем первую цель
+setNewTarget();
+
+function animate() {
+    // Вычисляем разницу до цели
+    const dx = target.x - position.x;
+    const dy = target.y - position.y;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < speed) {
+        // Достигли цели, выбираем новую
+        setNewTarget();
+    } else {
+        // Двигаемся к цели
+        position.x += (dx / distance) * speed;
+        position.y += (dy / distance) * speed;
+    }
+
+    // Обновляем позицию картинки
+    obj.style.left = position.x + 'px';
+    obj.style.top = position.y + 'px';
+
+    requestAnimationFrame(animate);
+}
+
+// Обновляем зону при изменении размера окна
+window.addEventListener('resize', () => {
+    zone.xMax = window.innerWidth - 150;
+    zone.yMax = window.innerHeight - 150;
+});
+
+// Запускаем анимацию
+animate();
+
+async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
+    const token = getCookie('auth_token');
+    if (!token) {
+        return {
+            error: 'No authentication token found. Please log in.',
+            status: 401,
+            body: null
+        };
+    } else {
+        const config = {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': contentType,
+                ...options.headers
+            },
+            ...options
+        };
+
+        const response = await fetch(url, config);
+
+        if (!response.ok) {
+            return {
+                error: `HTTP error! status: ${response.status}`,
+                status: response.status,
+                body: await response.text()
+            };
+        }
+
+        return response;
+    }
+}
+
+
+
+

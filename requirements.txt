@@ -1,0 +1,90 @@
+# В случае, если версии библиотек не важны, раскомментить краткую установку и
+# закомментить подробную установку
+
+# # ***** Краткая установка *****
+
+# # Основное
+# fastapi[standard]
+# pyjwt[crypto]
+# pwdlib[argon2]
+# sqlmodel
+
+# # Линтер
+# flake8
+# flake8-builtins
+# flake8-docstrings
+# flake8-import-order
+# flake8-quotes
+
+# ***** Подробная установка *****
+
+# Стандартный пакет FastAPI 0.136.0
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.13.0
+certifi==2024.7.4
+click==8.3.3
+colorama==0.4.6
+dnspython==2.8.0
+email-validator==2.3.0
+fastapi==0.136.0
+fastapi-cli==0.0.24
+fastapi-cloud-cli==0.17.0
+fastar==0.11.0
+h11==0.16.0
+httpcore==1.0.9
+httptools==0.7.1
+httpx==0.28.1
+idna==3.7
+jinja2==3.1.6
+markdown-it-py==4.0.0
+MarkupSafe==2.1.5
+mdurl==0.1.2
+pydantic==2.13.2
+pydantic-core==2.46.2
+pydantic-extra-types==2.11.1
+pydantic-settings==2.14.0
+pygments==2.18.0
+python-dotenv==1.2.2
+python-multipart==0.0.26
+pyyaml==6.0.3
+rich==15.0.0
+rich-toolkit==0.19.7
+rignore==0.7.6
+sentry-sdk==2.58.0
+shellingham==1.5.4
+starlette==1.0.0
+typer==0.24.2
+typing-extensions==4.15.0
+typing-inspection==0.4.2
+urllib3==2.2.2
+uvicorn==0.46.0
+watchfiles==1.1.1
+websockets==16.0
+
+# Безопасность
+argon2-cffi==25.1.0
+argon2-cffi-bindings==25.1.0
+cffi==2.0.0
+cryptography==46.0.7
+pycparser==3.0
+pyjwt==2.12.1
+pwdlib==0.3.0
+
+# SQL
+greenlet==3.4.0
+SQLAlchemy==2.0.49
+sqlmodel==0.0.38
+
+# Линтер
+flake8==7.1.1
+flake8-builtins==2.5.0
+flake8-docstrings==1.7.0
+flake8-import-order==0.18.2
+flake8-quotes==3.4.0
+mccabe==0.7.0
+pycodestyle==2.12.1
+pydocstyle==6.3.0
+pyflakes==3.2.0
+setuptools==75.6.0
+snowballstemmer==2.2.0

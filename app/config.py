@@ -1,3 +1,7 @@
 """Конфигурационный скрипт основного приложения."""
 
-PATH_STATIC = 'app/api/static'
+# пути
+PATH_STATIC = 'app/static'
+
+# эндпоинты
+ENDPOINT_STATIC = '/site'
