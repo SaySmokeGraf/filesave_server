@@ -2,8 +2,9 @@
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.api.auth.dependencies import OAuth2FormDep
+from app.api.auth.dependencies import GetCurrentUserDep, OAuth2FormDep
 from app.api.auth.managers import token_manager, user_manager
+from app.api.auth.managers.dbmanager import UserPublic
 from app.api.auth.models import Token
 
 
@@ -55,3 +56,15 @@ async def register_for_access_token(form_data: OAuth2FormDep) -> Token:
         )
     access_token = token_manager.create_token(data={'sub': user.username})
     return Token(access_token=access_token, token_type='bearer')
+
+@router.get('/user-info', response_model=UserPublic)
+async def get_user_info(user: GetCurrentUserDep) -> UserPublic:
+    """Получить информацию о пользователе.
+
+    Args:
+        user (GetCurrentUserDep): Пользователь.
+
+    Returns:
+        UserPublic: Публичная информация о пользователе.
+    """
+    return user
