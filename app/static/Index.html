@@ -8,16 +8,27 @@
                    initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="file-hub.css">
+    <link rel="stylesheet" href="progressbar.css">
 
 </head>
 
 <body>
     <!-- <img src="lord.jpg";
         id="flyingObject" alt="Летающая картинка" /> -->
-
+    <div id="messageOverlay" class="overlay">
+        <div class="popup">
+            <span class="close-btn" id="closeBtn">&times</span>
+            <h2>Вы уверены , что хотите удалить этот файл?</h2>
+            <div class="alert-buttons-container">
+                <button class="alert_btn_ok" id="alert_btn_ok">Да</button>
+                <button class="alert_btn_no" id="alert_btn_no">Нет</button>
+            </div>
+        </div>
+    </div>
     <img src="i.jpg" class="center-image">
     <!-- Navbar items -->
     <div class="main_window">
+
         <div class="file-window">
 
             <div class="file-header">Список файлов</div>
@@ -36,8 +47,7 @@
         </div>
         <div class="upload_area">
             <input type="file" id="fileInput" multiple style="display:none" />
-            <button id="upload_btn" class="upload_btn">Загрузка файлов вручную</button>
-
+            <button id="upload_btn" class="upload_btn">Выбрать файлы</button>
             <div class="file_uploader" id="drop-zone">
                 <!-- <div id="drop-zone"> </div> -->
                 <div class="file_loader_header">Перетащите файлы</div>

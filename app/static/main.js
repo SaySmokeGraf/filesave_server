@@ -3,14 +3,26 @@ const selectionFileBtn = document.getElementById('upload_btn');
 const fileListContainer = document.querySelector('.uploader_file_list');
 const dropZone = document.getElementById('drop-zone');
 const myFiles = document.getElementById('loaded-file-list');
+const overlay = document.getElementById('messageOverlay');
+const alert_ok_btn = document.getElementById('alert_btn_ok');
+const alert_btn_close = document.getElementById('alert_btn_no');
+const closeAlertBtn = document.getElementById('closeBtn');
 window.loadLibraryData();
 let fileToUpload = [];
+
+closeAlertBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+})
+
+window.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+        overlay.style.display = 'none';
+    }
+});
 
 /**
  * Выгрузка куки из базы куки браузера.
  * */
-
-
 const token = getCookie('auth_token');
 
 /**
@@ -41,6 +53,12 @@ function createUploadElement(file) {
     const li = document.createElement('li');
     li.className = 'upload_file_item';
 
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.className = 'progress-container';
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    progressBar.id = 'progress-bar';
+    progressBarContainer.appendChild(progressBar);
     const uploadedFileInfoDiv = document.createElement('div');
     uploadedFileInfoDiv.className = 'upload_file-info';
 
@@ -64,17 +82,19 @@ function createUploadElement(file) {
 
     const uploadBtn = document.createElement('button');
     uploadBtn.className = 'upload_download-btn';
-    uploadBtn.textContent = 'Upload';
+    uploadBtn.textContent = 'Загрузить';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'upload_delete-btn';
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.textContent = 'Удалить';
 
     fileActionsDiv.appendChild(uploadBtn);
     fileActionsDiv.appendChild(deleteBtn);
 
     li.appendChild(uploadedFileInfoDiv);
+    li.appendChild(progressBarContainer);
     li.appendChild(fileActionsDiv);
+
 
     fileListContainer.appendChild(li);
 
@@ -110,16 +130,19 @@ function uploadFileOnServer(file, btn) {
     const formData = new FormData();
     formData.append('file', file.file); // 'file' - имя поля, которое ожидает сервер
 
-    xhr.open('POST', '/files/upload/single', false);
+    xhr.open('POST', '/files/upload/single', true);
 
     // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
     xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
-
+    const progressBar = document.getElementById('progress-bar');
     // Отслеживание прогресса
+    // const progressResult;
     xhr.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             const percentComplete = (event.loaded / event.total) * 100;
             console.log(`Загружено: ${percentComplete.toFixed(2)}%`);
+            // progressResult = percentComplete;
+            progressBar.style.width = `${percentComplete.toFixed(2)}%`;
         }
     };
 
@@ -127,7 +150,10 @@ function uploadFileOnServer(file, btn) {
     xhr.onload = () => {
         if (xhr.status === 200) {
             console.log('Успешно:', xhr.responseText);
+            // progressBar.style.width = ``;
             deleteUploadFile(file);
+        } else if (xhr.status === 401) {
+            window.location.href = '/site/registration.html';
         } else {
             console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
@@ -193,9 +219,6 @@ dropZone.addEventListener('drop', e => {
 
 
 function loadLibraryData() {
-
-
-
     apiRequest('/files', {}, 'GET', 'application/json', {})
         .then(response => {
             if (response.status === 401) {
@@ -217,6 +240,7 @@ function updateContent(data) {
     myFiles.innerHTML = ''
     data.forEach(element => {
 
+        // const closeBtn = document.getElementById('closeBtn');
         const li = document.createElement('li');
         li.className = 'file-item';
         const myFileInfoDiv = document.createElement('div');
@@ -243,8 +267,15 @@ function updateContent(data) {
         // myFiles.appendChild(myFileInfoDiv);
 
         deleteBtn.addEventListener('click', () => {
-            apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
-                'application/json').then(() => loadLibraryData());
+            overlay.style.display = 'block';
+            alert_ok_btn.addEventListener('click', () => {
+                apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
+                    'application/json').then(() => loadLibraryData());
+                overlay.style.display = 'none';
+            });
+            alert_btn_close.addEventListener('click', () => {
+                overlay.style.display = 'none';
+            })
         })
 
         downloadButton.addEventListener('click', () => {
@@ -261,7 +292,14 @@ function updateContent(data) {
             downloadButton.appendChild(spinner);
             apiRequest('/files/download/?filename=' + encodeURIComponent(element.filename), {}, 'GET',
                 'multipart/file').then(response => {
-                    if (!response.ok) throw new Error('Ошибка при загрузке файла');
+                    // if (!response.ok) throw new Error('Ошибка при загрузке файла');
+                    if (response.status == 401) {
+                        window.location.href = '/site/registration.html';
+                        return response;
+                    } else if (!response.ok) {
+                        window.location.href = '/site/error.html';
+                        return response;
+                    }
                     return response.blob();
                 })
                 .then(blob => {
@@ -382,3 +420,7 @@ async function apiRequest(url, options = {}, method = 'GET', contentType = 'appl
         return response;
     }
 }
+
+
+
+
