@@ -3,8 +3,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.auth.dependencies import GetCurrentUserDep, OAuth2FormDep
-from app.api.auth.managers import token_manager, user_manager
-from app.api.auth.managers.dbmanager import UserPublic
+from app.api.auth.managers import token_manager, user_manager, UserPublic
 from app.api.auth.models import Token
 
 
