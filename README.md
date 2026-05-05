@@ -30,7 +30,7 @@
 
 ### Бэкенд ###
 
-Пишется на Python + FastAPI, БД - SQLite.
+Пишется на Python + FastAPI, БД - SQLite (SQLModel ORM).
 
 - Корень - перенаправляет на статические файлы фронтенда.
 - Файловое API - для взаимодействия с файлами пользователя. Требуют
@@ -67,7 +67,7 @@
 ### Зависимости ###
 
 - Python 3.10+
-- Библиотеки из requirements.txt
+- Библиотеки из requirements.txt: `pip install -r requirements.txt`.
 
 ### Порядок ###
 

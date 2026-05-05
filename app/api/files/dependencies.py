@@ -1,11 +1,15 @@
 """Зависимости для файлового API."""
 
+from pathlib import Path
 from shutil import disk_usage
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, UploadFile
 
 from app.api.files.config import PATH_DISK, RESERVED_DISK_SPACE
+
+
+_path_disk = Path(PATH_DISK)
 
 
 # вспомогательные
@@ -18,7 +22,7 @@ def _check_size(size: int):
     Raises:
         HTTPException: Размер файла(ов) слишком велик.
     """
-    free_space = disk_usage(PATH_DISK).free - RESERVED_DISK_SPACE
+    free_space = disk_usage(_path_disk).free - RESERVED_DISK_SPACE
     if size > free_space:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

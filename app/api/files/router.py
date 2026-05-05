@@ -1,7 +1,5 @@
 """Роутер под файловый API."""
 
-import os
-
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
 
@@ -29,10 +27,10 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileDataModel]:
     """
     resp = []
     dir_path = get_user_dir_path(user_dir)
-    for filename in os.listdir(dir_path):
+    for file_path in dir_path.iterdir():
         resp.append(FileDataModel(
-            filename=filename,
-            size=os.path.getsize(f'{dir_path}/{filename}')
+            filename=file_path.name,
+            size=file_path.stat().st_size
         ))
     return resp
 
@@ -52,8 +50,8 @@ async def download_file(filename: str,
         FileResponse: Файл для скачивания.
     """
     dir_path = get_user_dir_path(user_dir)
-    file_path = f'{dir_path}/{filename}'
-    if not filename or not os.path.exists(file_path):
+    file_path = dir_path / filename
+    if not filename or not file_path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'File {filename} not found'
@@ -120,14 +118,14 @@ async def delete_file(filename: str,
         JSONResponse: Ответ об успешном выполнении.
     """
     dir_path = get_user_dir_path(user_dir)
-    file_path = f'{dir_path}/{filename}'
-    if not filename or not os.path.exists(file_path):
+    file_path = dir_path / filename
+    if not filename or not file_path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'File {filename} not found'
         )
     try:
-        os.remove(file_path)
+        file_path.unlink()
     except PermissionError:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

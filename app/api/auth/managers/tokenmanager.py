@@ -1,13 +1,17 @@
 """Менеджер токенов для аут.-авт."""
 
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import jwt
 
 from app.api.auth.managers.config import (
     ACCESS_TOKEN_EXPIRE_DAYS, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
     PATH_SECRET_USERS
-) 
+)
+
+
+_path_secret_users = Path(PATH_SECRET_USERS)
 
 
 class TokenManager:
@@ -22,7 +26,7 @@ class TokenManager:
 
     def _read_key(self) -> None:
         """Прочитать ключ шифрования токенов."""
-        with open(PATH_SECRET_USERS, 'r') as file:
+        with open(_path_secret_users, 'r') as file:
             self._key = file.read()
 
     def create_token(self, data: dict,
