@@ -4,9 +4,9 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.api.auth.dependencies import GetUserDirectoryDep
-from app.api.files.dependencies import ManyFilesDep, SingleFileDep
+from app.api.files.dependencies import SingleFileDep
 from app.api.files.models import FileDataModel
-from app.api.files.utils import (
+from app.api.files.utils.file_utils import (
     create_storage_directory, get_user_dir_path, write_uploadfile
 )
 
@@ -77,28 +77,6 @@ async def upload_single_file(file: SingleFileDep,
     write_uploadfile(file, dir_path, overwrite)
     return JSONResponse(
         content={'message': f'File {file.filename} uploaded successfully!'}
-    )
-
-@router.post('/upload/many', status_code=status.HTTP_201_CREATED)
-async def upload_many_files(files: ManyFilesDep,
-                            user_dir: GetUserDirectoryDep,
-                            overwrite: bool = False) -> JSONResponse:
-    """Загрузить на сервер несколько файлов.
-
-    Args:
-        files (list[UploadFile]): Список файлов.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
-        overwrite (bool): Флаг перезаписи файла в случае совпадения
-            имен. По умолчанию False.
-
-    Returns:
-        JSONResponse: Ответ об успешном выполнении.
-    """
-    dir_path = get_user_dir_path(user_dir)
-    for file in files:
-        write_uploadfile(file, dir_path, overwrite)
-    return JSONResponse(
-        content={'message': 'Files uploaded successfully!'}
     )
 
 @router.delete('/delete')

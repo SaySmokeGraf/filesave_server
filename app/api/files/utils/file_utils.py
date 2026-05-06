@@ -1,4 +1,4 @@
-"""Утилиты для файлового API."""
+"""Утилиты для работы с файлами, папками и путями."""
 
 from pathlib import Path
 from shutil import copyfileobj
@@ -67,6 +67,7 @@ def write_uploadfile(file: UploadFile, directory_path: Path,
         filename = file.filename
     else:
         filename = get_unique_filename(file.filename, directory_path)
+        file.filename = filename
     file_path = directory_path / filename
     with open(file_path, "wb") as buffer:
         copyfileobj(file.file, buffer)
