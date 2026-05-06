@@ -9,10 +9,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="file-hub.css">
     <link rel="stylesheet" href="progressbar.css">
+    <link rel="stylesheet" href="profileblock.css">
 
 </head>
 
 <body>
+    <div class="profile_window">
+        <div class="avatar"></div>
+        <label class="username_label">username</label>
+        <button class="moderator_btn" id="moderator_btn" hidden>Панель модератора</button>
+        <button class="exit_profile_btn" id="exit_profile_btn">Выйти из профиля</button>
+    </div>
     <!-- <img src="lord.jpg";
         id="flyingObject" alt="Летающая картинка" /> -->
     <div id="messageOverlay" class="overlay">
@@ -26,6 +33,8 @@
         </div>
     </div>
     <img src="i.jpg" class="center-image">
+
+
     <!-- Navbar items -->
     <div class="main_window">
 
@@ -71,8 +80,10 @@
         Это подвал, он нужен иногда
     </footer>
     <script src="cookies.js"></script>
+    <script src="request.js"></script>
+    <script src="profile.js"></script>
     <script src="main.js"></script>
-    <script src="registration.js"></script>
+
 </body>
 
 </html>
