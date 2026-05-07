@@ -3,7 +3,7 @@
 from pathlib import Path
 from shutil import copyfileobj
 
-from fastapi import UploadFile
+from fastapi import HTTPException, status, UploadFile
 
 from app.api.files.config import PATH_STORAGE
 
@@ -32,42 +32,47 @@ def get_user_dir_path(user_dir: str) -> Path:
         dir_path.mkdir()
     return dir_path
 
-def get_unique_filename(filename: str, directory_path: Path) -> str:
-    """Получить уникальное имя файла.
+def set_unique_filename(file: UploadFile, directory_path: Path) -> None:
+    """Задать файлу уникальное имя.
 
-    Проверяет в папке наличиче файла с таким же именем, и при наличии
-    онного добавляет к нему номер.
+    Проверяет в папке наличиче файла с таким же именем, и при наличии онного
+    добавляет к нему номер.
 
     Args:
-        filename (str): Имя файла.
+        file (UploadFile): Файл.
         directory_path (Path): Путь до папки хранения.
-
-    Returns:
-        str: Уникальное имя файла.
     """
-    file = Path(filename)
+    file_path = Path(file.filename)
     cnt = 1
-    nowname = filename
+    name, ext, nowname = file_path.stem, file_path.suffix, file_path.name
     while (directory_path / nowname).exists():
-        nowname = f'{file.stem} ({cnt}){file.suffix}'
+        nowname = f'{name} ({cnt}){ext}'
         cnt += 1
-    return nowname
+    file.filename = nowname
 
 def write_uploadfile(file: UploadFile, directory_path: Path,
-                     overwrite: bool = False) -> None:
+                     overwrite: bool | None = None) -> None:
     """Записать UploadFile в файл.
 
     Args:
         file (UploadFile): UploadFile для записи.
         directory_path (Path): Путь до директории для записи файла.
-        overwrite (bool): Флаг перезаписи файла в случае совпадения
-            имен. По умолчанию False.
+        overwrite (bool | None): Флаг перезаписи файла в случае наличия файла
+            с таким же именем в хранилище. True - перезаписать, False - создать
+            уникальное имя с помощью суффикса с номером, None - откинуть
+            ошибку. По умолчанию None.
+    
+    Raises:
+        HTTPException: Если файл с таким именем есть в хранилище, но нет
+            указаний на этот случай во флаге overwrite.
     """
-    if overwrite:
-        filename = file.filename
-    else:
-        filename = get_unique_filename(file.filename, directory_path)
-        file.filename = filename
-    file_path = directory_path / filename
+    if overwrite is None and (directory_path / file.filename).exists():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f'File {file.filename} already exists'
+        )
+    if overwrite == False:
+        set_unique_filename(file, directory_path)
+    file_path = directory_path / file.filename
     with open(file_path, "wb") as buffer:
         copyfileobj(file.file, buffer)

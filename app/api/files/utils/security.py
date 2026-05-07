@@ -114,7 +114,7 @@ def check_filename(file: UploadFile, rename: bool = False) -> None:
     if rename:
         file.filename = safe_filename
         return
-    elif filename != safe_filename:
+    if filename != safe_filename:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f'Bad filename'

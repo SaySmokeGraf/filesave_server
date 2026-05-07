@@ -61,14 +61,16 @@ async def download_file(filename: str,
 @router.post('/upload/single', status_code=status.HTTP_201_CREATED)
 async def upload_single_file(file: SingleFileDep,
                              user_dir: GetUserDirectoryDep,
-                             overwrite: bool = False) -> JSONResponse:
+                             overwrite: bool | None = None) -> JSONResponse:
     """Загрузить на сервер один файл.
 
     Args:
         file (SingleFileDep): Файл для загрузки.
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
-        overwrite (bool): Флаг перезаписи файла в случае совпадения
-            имен. По умолчанию False.
+        overwrite (bool | None): Флаг перезаписи файла в случае наличия файла
+            с таким же именем в хранилище. True - перезаписать, False - создать
+            уникальное имя с помощью суффикса с номером, None - откинуть
+            ошибку. По умолчанию None.
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
