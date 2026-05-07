@@ -58,7 +58,7 @@ async def download_file(filename: str,
         )
     return FileResponse(path=file_path, filename=filename)
 
-@router.post('/upload/single', status_code=status.HTTP_201_CREATED)
+@router.post('/upload/single')
 async def upload_single_file(file: SingleFileDep,
                              user_dir: GetUserDirectoryDep,
                              overwrite: bool | None = None) -> JSONResponse:
@@ -78,6 +78,7 @@ async def upload_single_file(file: SingleFileDep,
     dir_path = get_user_dir_path(user_dir)
     write_uploadfile(file, dir_path, overwrite)
     return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
         content={'message': f'File {file.filename} uploaded successfully!'}
     )
 

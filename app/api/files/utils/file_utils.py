@@ -68,7 +68,7 @@ def write_uploadfile(file: UploadFile, directory_path: Path,
     """
     if overwrite is None and (directory_path / file.filename).exists():
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_409_CONFLICT,
             detail=f'File {file.filename} already exists'
         )
     if overwrite == False:

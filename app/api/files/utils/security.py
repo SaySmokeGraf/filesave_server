@@ -91,8 +91,8 @@ def check_file_size(size: int) -> None:
     free_space = disk_usage(_path_disk).free - RESERVED_DISK_SPACE
     if size > free_space:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f'Files total size is too large'
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+            detail=f'File size is too large'
         )
 
 def check_filename(file: UploadFile, rename: bool = False) -> None:
@@ -116,6 +116,6 @@ def check_filename(file: UploadFile, rename: bool = False) -> None:
         return
     if filename != safe_filename:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f'Bad filename'
         )
