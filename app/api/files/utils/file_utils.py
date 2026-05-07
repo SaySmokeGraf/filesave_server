@@ -1,13 +1,15 @@
 """Утилиты для работы с файлами, папками и путями."""
 
 from pathlib import Path
-from shutil import copyfileobj
+from shutil import copyfileobj, disk_usage
 
 from fastapi import HTTPException, status, UploadFile
 
-from app.api.files.config import PATH_STORAGE
+from app.api.files.config import PATH_DISK, PATH_STORAGE, RESERVED_DISK_SPACE
+from app.api.files.models import StorageUsageInfo
 
 
+_path_disk = Path(PATH_DISK)
 _path_storage = Path(PATH_STORAGE)
 
 
@@ -15,6 +17,18 @@ def create_storage_directory() -> None:
     """Создать папку хранилища, если нужно."""
     if not _path_storage.exists():
         _path_storage.mkdir(parents=True)
+
+def get_storage_usage_info() -> StorageUsageInfo:
+    """Получить информацию об использовании места хранилища.
+
+    Returns:
+        StorageUsageInfo: Информация об использовании места хранилища.
+    """
+    storage_usage = disk_usage(_path_disk)
+    used = storage_usage.used
+    free = storage_usage.free - RESERVED_DISK_SPACE
+    free = free if free >= 0 else 0
+    return StorageUsageInfo(used=used, free=free)
 
 def get_user_dir_path(user_dir: str) -> Path:
     """Получить путь до папки пользователя.

@@ -3,12 +3,25 @@
 from pydantic import BaseModel
 
 
-class FileDataModel(BaseModel):
-    """Модель данных о файле.
-
-    Args:
-        filename (str): Имя файла.
-        size (int): Размер файла в байтах.
-    """
+class _BaseFileInfo(BaseModel):
+    """Базовая модель информации о файле."""
     filename: str
     size: int
+
+
+class FileInfoShort(_BaseFileInfo):
+    """Краткая информация о файле."""
+    pass
+
+
+class FileInfoVerbose(_BaseFileInfo):
+    """Подробная информация о файле."""
+    content_type: str | None
+    atime: float
+    mtime: float
+
+
+class StorageUsageInfo(BaseModel):
+    """Информация об использовании места хранилища."""
+    used: int
+    free: int

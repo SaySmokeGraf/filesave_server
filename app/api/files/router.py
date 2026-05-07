@@ -2,12 +2,16 @@
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
+from filetype import guess_mime
 
-from app.api.auth.dependencies import GetUserDirectoryDep
+from app.api.auth.dependencies import GetUserDirectoryDep, CheckUserDepends
 from app.api.files.dependencies import SingleFileDep
-from app.api.files.models import FileDataModel
+from app.api.files.models import (
+    FileInfoShort, FileInfoVerbose, StorageUsageInfo
+)
 from app.api.files.utils.file_utils import (
-    create_storage_directory, get_user_dir_path, write_uploadfile
+    create_storage_directory, get_storage_usage_info, get_user_dir_path,
+    write_uploadfile
 )
 
 
@@ -15,24 +19,62 @@ router = APIRouter()
 create_storage_directory()
 
 
-@router.get('/', response_model=list[FileDataModel])
-async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileDataModel]:
+@router.get('/', response_model=list[FileInfoShort])
+async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
     Args:
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Returns:
-        list[FileDataModel]: Список с данными о файлах.
+        list[FileInfoShort]: Список с данными о файлах.
     """
     resp = []
     dir_path = get_user_dir_path(user_dir)
     for file_path in dir_path.iterdir():
-        resp.append(FileDataModel(
+        resp.append(FileInfoShort(
             filename=file_path.name,
             size=file_path.stat().st_size
         ))
     return resp
+
+@router.get('/file-info')
+async def get_file_info(filename: str,
+                        user_dir: GetUserDirectoryDep) -> FileInfoVerbose:
+    """Получить подробную информацию о файле.
+
+    Args:
+        filename (str): Имя файла.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+
+    Raises:
+        HTTPException: Файл не найден.
+
+    Returns:
+        FileInfoVerbose: Подробная информация о файле.
+    """
+    dir_path = get_user_dir_path(user_dir)
+    file_path = dir_path / filename
+    if not filename or not file_path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'File {filename} not found'
+        )
+    file_stats = file_path.stat()
+    return FileInfoVerbose(filename=filename,
+                           size=file_stats.st_size,
+                           content_type=guess_mime(file_path),
+                           atime=file_stats.st_atime,
+                           mtime=file_stats.st_mtime)
+
+@router.get('/storage-info', dependencies=[CheckUserDepends])
+async def get_storage_info() -> StorageUsageInfo:
+    """Получить информацию об использовании места хранилища.
+
+    Returns:
+        StorageUsageInfo: Информация об использовании места хранилища.
+    """
+    return get_storage_usage_info()
 
 @router.get('/download')
 async def download_file(filename: str,
@@ -44,7 +86,7 @@ async def download_file(filename: str,
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Raises:
-        HTTPException: Файла с таким именем нет.
+        HTTPException: Файл не найден.
 
     Returns:
         FileResponse: Файл для скачивания.
@@ -92,8 +134,9 @@ async def delete_file(filename: str,
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Raises:
-        HTTPException: Файла с таким именем нет.
-        HTTPException: Нет доступа для удаления (например, файл занят другим процессом).
+        HTTPException: Файл не найден.
+        HTTPException: Нет доступа для удаления (например, файл занят другим
+            процессом).
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.

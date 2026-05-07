@@ -49,7 +49,7 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
     return user
 
 
-# зависимость в более компактном формате для объявления через аннотирование
+# зависимости в более компактном формате для объявления через аннотирование
 GetCurrentUserDep = Annotated[UserPublic, Depends(get_current_user)]
 
 
@@ -84,7 +84,7 @@ async def get_allowed_user(user: GetCurrentUserDep) -> UserPublic:
     return user
 
 
-# зависимость в более компактном формате для объявления через аннотирование
+# зависимости в более компактном формате для объявления через аннотирование
 GetAllowedUserDep = Annotated[UserPublic, Depends(get_allowed_user)]
 
 
@@ -100,6 +100,18 @@ async def get_user_directory(user: GetAllowedUserDep) -> str:
     """
     return str(user.id)
 
+async def check_user(user: GetAllowedUserDep) -> None:
+    """Проверить пользователя.
 
-# зависимость в более компактном формате для объявления через аннотирование
+    Args:
+        user (GetAllowedUserDep): Пользователь.
+    """
+    pass
+
+
+# зависимости в более компактном формате для объявления через аннотирование
 GetUserDirectoryDep = Annotated[str, Depends(get_user_directory)]
+
+# зависимости, возвращающие None, в более компактном формате для использования
+# в пар-ре dependencies
+CheckUserDepends = Depends(check_user)

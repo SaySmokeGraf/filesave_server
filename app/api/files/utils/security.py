@@ -3,16 +3,13 @@
 import re
 import unicodedata
 from pathlib import Path
-from shutil import disk_usage
 
 from fastapi import HTTPException, status, UploadFile
 
-from app.api.files.config import PATH_DISK, RESERVED_DISK_SPACE
+from app.api.files.utils.file_utils import get_storage_usage_info
 
 
 # вспомогательные переменные и константы
-_path_disk = Path(PATH_DISK)
-
 _WINDOWS_RESERVED = {
     'CON', 'PRN', 'AUX', 'NUL',
     *(f'COM{i}' for i in range(1, 10)),
@@ -88,8 +85,7 @@ def check_file_size(size: int) -> None:
     Raises:
         HTTPException: Размер файла слишком велик.
     """
-    free_space = disk_usage(_path_disk).free - RESERVED_DISK_SPACE
-    if size > free_space:
+    if size > get_storage_usage_info().free:
         raise HTTPException(
             status_code=status.HTTP_413_CONTENT_TOO_LARGE,
             detail=f'File size is too large'
