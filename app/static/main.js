@@ -7,7 +7,10 @@ const overlay = document.getElementById('messageOverlay');
 const alert_ok_btn = document.getElementById('alert_btn_ok');
 const alert_btn_close = document.getElementById('alert_btn_no');
 const closeAlertBtn = document.getElementById('closeBtn');
+
+window.getProfile();
 window.loadLibraryData();
+
 let fileToUpload = [];
 
 closeAlertBtn.addEventListener('click', () => {
@@ -20,6 +23,12 @@ window.addEventListener('click', (e) => {
     }
 });
 
+
+window.exit_profile_btn.addEventListener('click', () => {
+
+    window.location.href = '/site/registration.html';
+    window.cleanCookie('auth_token');
+})
 /**
  * Выгрузка куки из базы куки браузера.
  * */
@@ -388,38 +397,7 @@ window.addEventListener('resize', () => {
 // Запускаем анимацию
 animate();
 
-async function apiRequest(url, options = {}, method = 'GET', contentType = 'application/json') {
-    const token = getCookie('auth_token');
-    if (!token) {
-        return {
-            error: 'No authentication token found. Please log in.',
-            status: 401,
-            body: null
-        };
-    } else {
-        const config = {
-            method: method,
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': contentType,
-                ...options.headers
-            },
-            ...options
-        };
 
-        const response = await fetch(url, config);
-
-        if (!response.ok) {
-            return {
-                error: `HTTP error! status: ${response.status}`,
-                status: response.status,
-                body: await response.text()
-            };
-        }
-
-        return response;
-    }
-}
 
 
 
