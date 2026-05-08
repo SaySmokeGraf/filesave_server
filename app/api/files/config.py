@@ -6,3 +6,4 @@ PATH_DISK = 'C:'
 
 # константы
 RESERVED_DISK_SPACE = 0  # [байты]
+MAX_FILE_SIZE = 1 << 30  # [байты]

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from fastapi import HTTPException, status, UploadFile
 
+from app.api.files.config import MAX_FILE_SIZE
 from app.api.files.utils.file_utils import get_storage_usage_info
 
 
@@ -85,7 +86,7 @@ def check_file_size(size: int) -> None:
     Raises:
         HTTPException: Размер файла слишком велик.
     """
-    if size > get_storage_usage_info().free:
+    if size > MAX_FILE_SIZE or size > get_storage_usage_info().free:
         raise HTTPException(
             status_code=status.HTTP_413_CONTENT_TOO_LARGE,
             detail=f'File size is too large'
