@@ -1,7 +1,9 @@
 """Менеджер токенов для аут.-авт."""
 
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Generator
 
 import jwt
 
@@ -22,12 +24,20 @@ class TokenManager:
 
     def __init__(self):
         """Инициализация экземпляра менеджера токенов."""
-        self._read_key()
+        pass
 
-    def _read_key(self) -> None:
-        """Прочитать ключ шифрования токенов."""
-        with open(_path_secret_users, 'r') as file:
-            self._key = file.read()
+    @contextmanager
+    def _read_key(self) -> Generator[str, None, None]:
+        """Прочитать ключ шифрования токенов.
+
+        Yields:
+            Generator[str, None, None]: Ключ шифрования.
+        """
+        file = open(_path_secret_users, 'r')
+        try:
+            yield file.read()
+        finally:
+            file.close()
 
     def create_token(self, data: dict,
                      expires_delta: timedelta | None = None) -> str:
@@ -47,7 +57,8 @@ class TokenManager:
                                       minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({'exp': expire})
-        encoded_jwt = jwt.encode(to_encode, self._key, algorithm=ALGORITHM)
+        with self._read_key() as key:
+            encoded_jwt = jwt.encode(to_encode, key, algorithm=ALGORITHM)
         return encoded_jwt
     
     def decode_token(self, token: str) -> dict:
@@ -59,4 +70,6 @@ class TokenManager:
         Returns:
             dict: Расшифрованные данные из токена.
         """
-        return jwt.decode(token, self._key, algorithms=[ALGORITHM])
+        with self._read_key() as key:
+            decoded_jwt = jwt.decode(token, key, algorithms=[ALGORITHM])
+        return decoded_jwt
