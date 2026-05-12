@@ -48,7 +48,7 @@ async def get_file_info(filename: str,
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Raises:
-        HTTPException: Файл не найден.
+        HTTPException: (404) Файл не найден.
 
     Returns:
         FileInfoVerbose: Подробная информация о файле.
@@ -86,7 +86,7 @@ async def download_file(filename: str,
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Raises:
-        HTTPException: Файл не найден.
+        HTTPException: (404) Файл не найден.
 
     Returns:
         FileResponse: Файл для скачивания.
@@ -134,9 +134,9 @@ async def delete_file(filename: str,
         user_dir (GetUserDirectoryDep): Имя папки пользователя.
 
     Raises:
-        HTTPException: Файл не найден.
-        HTTPException: Нет доступа для удаления (например, файл занят другим
-            процессом).
+        HTTPException: (404) Файл не найден.
+        HTTPException: (409) Нет доступа для удаления (например, файл занят
+            другим процессом).
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
@@ -152,7 +152,7 @@ async def delete_file(filename: str,
         file_path.unlink()
     except PermissionError:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_409_CONFLICT,
             detail='No permissions to delete'
         )
     return JSONResponse(
