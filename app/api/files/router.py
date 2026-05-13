@@ -113,6 +113,10 @@ async def upload_single_file(file: SingleFileDep,
             с таким же именем в хранилище. True - перезаписать, False - создать
             уникальное имя с помощью суффикса с номером, None - откинуть
             ошибку. По умолчанию None.
+    
+    Raises:
+        HTTPException: (409) Если файл с таким именем есть в хранилище, но нет
+            указаний на этот случай во флаге overwrite.
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.

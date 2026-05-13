@@ -77,7 +77,7 @@ def write_uploadfile(file: UploadFile, directory_path: Path,
             ошибку. По умолчанию None.
     
     Raises:
-        HTTPException: Если файл с таким именем есть в хранилище, но нет
+        HTTPException: (409) Если файл с таким именем есть в хранилище, но нет
             указаний на этот случай во флаге overwrite.
     """
     if overwrite is None and (directory_path / file.filename).exists():

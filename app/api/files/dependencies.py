@@ -15,6 +15,11 @@ async def validate_single_file(file: UploadFile, rename: bool = False) -> Upload
 
     Args:
         file (UploadFile): Файл для проверки.
+    
+    Raises:
+        HTTPException: (413) Размер файла слишком велик.
+        HTTPException: (400) Если имя небезопасно, при этом параметр rename
+            равен False.
 
     Returns:
         UploadFile: Исходный файл.

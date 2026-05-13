@@ -84,7 +84,7 @@ def check_file_size(size: int) -> None:
         size (int): Размер файла.
 
     Raises:
-        HTTPException: Размер файла слишком велик.
+        HTTPException: (413) Размер файла слишком велик.
     """
     if size > MAX_FILE_SIZE or size > get_storage_usage_info().free:
         raise HTTPException(
@@ -103,8 +103,8 @@ def check_filename(file: UploadFile, rename: bool = False) -> None:
             умолчанию False.
 
     Raises:
-        HTTPException: Если имя небезопасно, при этом параметр rename равен
-            False.
+        HTTPException: (400) Если имя небезопасно, при этом параметр rename
+            равен False.
     """
     filename = file.filename
     safe_filename = _make_safe_filename(filename)
