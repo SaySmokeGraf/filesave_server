@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="file-hub.css">
     <link rel="stylesheet" href="progressbar.css">
     <link rel="stylesheet" href="profileblock.css">
+    <link rel="stylesheet" href="renameFilepopup.css">
 
 </head>
 
@@ -32,6 +33,46 @@
             </div>
         </div>
     </div>
+
+    <div id="renameFileOverlay" class="renameFileOverlay">
+        <div class="popup">
+            <span class="close-btn" id="renameCloseBtn">&times</span>
+            <h2>Обнаружено некорректное имя файла. Примите решение по переименованию файла.</h2>
+            <div class="alert-buttons-container">
+                <button class="rename_btn_manually" id="rename_btn_manually">Вручную</button>
+                <button class="alert_btn_rename_automat" id="alert_btn_rename_automat">Автоматически</button>
+                <button class="alert_btn_rename_no" id="alert_btn_rename_no">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="renameFileOptionOverlay" class="renameFileOptionOverlay">
+        <div class="rename_file_Option_popup" id="rename_file_Option_popup">
+            <span class="option-close-btn" id="option-close-btn">&times</span>
+            <h2>Введите новое имя файла</h2>
+            <div id="file_already_exists" hidden>Такой файл уже существует</div>
+            <div id="file_bad_name" hidden>Имя файла некорректно</div>
+            <div id="empty_alert" hidden>Заполните поле</div>
+            <input type="text" id="newFileName" placeholder="Введите новое имя файла" />
+            <div class="alert-rename-buttons-container">
+                <button class="rename_file_btn_ok" id="rename_file_btn_ok">OK</button>
+                <button class="rename_file_btn_no" id="rename_file_btn_no">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="copyOrRewriteOverlay" class="copyOrRewriteOverlay">
+        <div class="copyOrRewriteOverlay_popup">
+            <span class="copyOrRewriteOverlay-close-btn" id="copyOrRewriteOverlay-close-btn">&times</span>
+            <h2>Перезапишите файл на сервере или добавьте новый файл как копию </h2>
+            <div class="alert-buttons-container_copy_or_rewrite">
+                <button class="rewriteFileWithNewName" id="rewriteFileWithNewNameBtn">Перезаписать</button>
+                <button class="makeCopyWithName" id="makeCopyWithName">Копия</button>
+                <button class="cancel" id="alert_btn_copy_or_rewrite_cancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
     <img src="i.jpg" class="center-image">
 
 
@@ -79,10 +120,13 @@
     <footer>
         Это подвал, он нужен иногда
     </footer>
+
     <script src="cookies.js"></script>
     <script src="request.js"></script>
     <script src="profile.js"></script>
+    <script src="renameFilepopup.js"></script>
     <script src="main.js"></script>
+
 
 </body>
 

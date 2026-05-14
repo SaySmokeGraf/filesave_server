@@ -4,31 +4,91 @@ const fileListContainer = document.querySelector('.uploader_file_list');
 const dropZone = document.getElementById('drop-zone');
 const myFiles = document.getElementById('loaded-file-list');
 const overlay = document.getElementById('messageOverlay');
+const renameFileOverlay = document.getElementById('renameFileOverlay');
+const renameBtnManually = document.getElementById('rename_btn_manually');
+const renameOkAutomatic = document.getElementById('alert_btn_rename_automat');
+const renameBtnCancel = document.getElementById('alert_btn_rename_no');
+const renameCloseBtn = document.getElementById('renameCloseBtn');
 const alert_ok_btn = document.getElementById('alert_btn_ok');
 const alert_btn_close = document.getElementById('alert_btn_no');
 const closeAlertBtn = document.getElementById('closeBtn');
 
+let currentUploadContext = null;// { file, uploadBtn, progressBar }
+
+renameFilePopupOkButton.addEventListener('click', () => {
+    if (!currentUploadContext) return;
+    if (renameFileTextArea.value.trim() !== '') {
+        const orig = currentUploadContext.file; // native File
+        const newFile = new File([orig], renameFileTextArea.value.trim(), { type: orig.type });
+        currentUploadContext.file.file = newFile;
+        uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, false);
+    } else {
+        renameFileOptionOverlayInformationEmptyAlertNotice();
+    }
+});
+renameBtnManually.addEventListener('click', () => {
+    if (!currentUploadContext) return;
+    console.log('открыть дополнительное окно загрузки вручную');
+    // renameFile.style.display = 'block';
+    renameFileOptionOverlay.style.display = 'block';
+
+    renameFilePopupNoButton.addEventListener('click', () => {
+        if (!currentUploadContext) return;
+        renameFileOptionOverlay.style.display = 'none';
+    })
+}
+);
+
+rewriteFileWithNewNameBtn.addEventListener('click', () => {
+    if (!currentUploadContext) return;
+    uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, true, true);
+});
+
+makeCopyWithName.addEventListener('click', () => {
+    if (!currentUploadContext) return;
+    uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, false, false);
+})
+console.trace('attach listener');
+renameOkAutomatic.addEventListener('click', () => {
+    if (!currentUploadContext) return;
+    console.log('кнопка');
+    uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, true, false);
+});
+
 window.getProfile();
 window.loadLibraryData();
-
 let fileToUpload = [];
+// renameFileOptionOverlay.style.display = 'none';
+// renameFileOverlay.style.display = 'none';
+// overlay.style.display = 'none';
 
 closeAlertBtn.addEventListener('click', () => {
     overlay.style.display = 'none';
-})
+
+});
+
+renameCloseBtn.addEventListener('click', () => {
+    renameFileOverlay.style.display = 'none';
+});
+
+renameBtnCancel.addEventListener('click', () => {
+    renameFileOverlay.style.display = 'none';
+});
 
 window.addEventListener('click', (e) => {
     if (e.target === overlay) {
         overlay.style.display = 'none';
+
     }
 });
 
 
 window.exit_profile_btn.addEventListener('click', () => {
-
     window.location.href = '/site/registration.html';
     window.cleanCookie('auth_token');
 })
+
+
 /**
  * Выгрузка куки из базы куки браузера.
  * */
@@ -61,19 +121,23 @@ function updateUploaderFileList() {
 function createUploadElement(file) {
     const li = document.createElement('li');
     li.className = 'upload_file_item';
+    li.id = file.key;
 
     const progressBarContainer = document.createElement('div');
     progressBarContainer.className = 'progress-container';
+    progressBarContainer.id = `progress-container${file.key}`;
     const progressBar = document.createElement('div');
     progressBar.className = 'progress-bar';
-    progressBar.id = 'progress-bar';
+    progressBar.id = `progress-bar-${file.key}`;
     progressBarContainer.appendChild(progressBar);
     const uploadedFileInfoDiv = document.createElement('div');
     uploadedFileInfoDiv.className = 'upload_file-info';
+    uploadedFileInfoDiv.id = `upload_file-info_${file.key}`;
 
     const upload_fileLink = document.createElement('a');
     upload_fileLink.href = '#';
     upload_fileLink.className = 'upload_file-link';
+    upload_fileLink.id = `upload_file-linl${file.key}`;
 
     let lastDotIndex = file.name.lastIndexOf('.');
     let filename = lastDotIndex !== -1 ? file.name.substring(0, lastDotIndex) : file.name;
@@ -88,13 +152,16 @@ function createUploadElement(file) {
 
     const fileActionsDiv = document.createElement('div');
     fileActionsDiv.className = 'upload_file-actions';
+    fileActionsDiv.id = `upload_file-actions_${file.key}`;
 
     const uploadBtn = document.createElement('button');
     uploadBtn.className = 'upload_download-btn';
+    uploadBtn.id = `upload_btn_${file.key}`;
     uploadBtn.textContent = 'Загрузить';
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'upload_delete-btn';
+    deleteBtn.id = `delete_btn_${file.key}`;
     deleteBtn.textContent = 'Удалить';
 
     fileActionsDiv.appendChild(uploadBtn);
@@ -109,11 +176,15 @@ function createUploadElement(file) {
 
     deleteBtn.addEventListener('click', () => {
         deleteUploadFile(file);
-    });
+    },);
 
     uploadBtn.addEventListener('click', () => {
-        uploadFileOnServer(file, uploadBtn);
+        uploadFileOnServer(file, uploadBtn, progressBar);
     })
+
+    // currentUploadContext.file = file.file;
+    // currentUploadContext.uploadBtn = uploadBtn;
+    // currentUploadContext.progressBar = progressBar;
 }
 /**
  * 
@@ -131,19 +202,40 @@ function deleteUploadFile(file) {
  * 
  * Загрузка файла на сервер из списка Upload.
  */
-function uploadFileOnServer(file, btn) {
+async function uploadFileOnServer(file, btn, progressBar, renameQuery = undefined, rewriteQuery = undefined) {
+    console.log(`получен файл${file}`);
     const xhr = new XMLHttpRequest();
     btn.disabled = true;
+    url = '/files/upload/single';
+    const params = [];
 
+    // if (option) {
+    if (rewriteQuery == true) {
+        params.push('overwrite=true');
+    } else if (rewriteQuery == false) {
+        params.push('overwrite=false');
+    }
+
+    if (renameQuery == true) {
+        params.push('rename=true');
+    } else if (renameQuery == false) {
+        params.push('rename=false');
+    }
+
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
+    // }
+    console.log(url);
     // Создаем FormData и добавляем файл
     const formData = new FormData();
     formData.append('file', file.file); // 'file' - имя поля, которое ожидает сервер
 
-    xhr.open('POST', '/files/upload/single', true);
+    xhr.open('POST', url, true);
 
     // Устанавливаем заголовок авторизации (не нужно устанавливать для FormData)
     xhr.setRequestHeader('Authorization', `Bearer ${getCookie('auth_token')}`);
-    const progressBar = document.getElementById('progress-bar');
+    // const progressBar = document.getElementById('progress-bar');
     // Отслеживание прогресса
     // const progressResult;
     xhr.upload.onprogress = function (event) {
@@ -157,28 +249,96 @@ function uploadFileOnServer(file, btn) {
 
     // Обработка успешного ответа
     xhr.onload = () => {
-        if (xhr.status === 200) {
-            console.log('Успешно:', xhr.responseText);
-            // progressBar.style.width = ``;
+        btn.disabled = false;
+        currentUploadContext = { file: file, uploadBtn: btn, progressBar: progressBar };
+        if (xhr.status === 201) {
+            // успешно
+            console.log('201');
+            if (progressBar) progressBar.style.width = '100%';
             deleteUploadFile(file);
+            disableAllAlertWindow();
         } else if (xhr.status === 401) {
+            console.log('401');
+            if (progressBar) {
+                console.log('прогрессбар должен быть в ноль');
+                progressBar.style.width = '0%';
+            }
             window.location.href = '/site/registration.html';
+        } else if (xhr.status === 400) {
+
+            console.log('400');
+            if ((getComputedStyle(renameFileOverlay).display === 'none')) {
+                showRenameFileOverlay();
+            } else {
+                renameFileOptionOverlayInformationBadFileNameNotice();
+            }
+            if (progressBar) {
+                console.log('прогрессбар должен быть в ноль');
+                progressBar.style.width = '0%';
+            }
+        }
+        else if (xhr.status == 409) {
+            // if (getComputedStyle(renameFileOptionOverlay).display === 'block') {
+            //     // renameFileOptionOverlayInformationAlreadyExistsNotice();
+            //     copyOrRewriteOverlay.style.display = 'block';
+            // } else {
+
+            // }
+            copyOrRewriteOverlay.style.display = 'block';
+            // else {
+            //     console.log('меню переименования тут будет. ')
+            //     copyOrRewriteOverlay.style.display = 'block';
+            // }
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
         } else {
             console.error('Ошибка при загрузке:', xhr.status, xhr.statusText);
         }
-        btn.disabled = false; // Разблокируем кнопку после завершения
-    };
 
-    // Обработка ошибок сети
+    }
     xhr.onerror = () => {
         console.error('Ошибка сети');
         btn.disabled = false;
     };
 
+
     //  Отправляем запрос с файлом
     xhr.send(formData);
 }
 
+function disableAllAlertWindow() {
+    if (getComputedStyle(renameFileOverlay).display === 'block' ||
+        getComputedStyle(copyOrRewriteOverlay).display === 'block' ||
+        getComputedStyle(renameFileOptionOverlay).display === 'block') {
+        copyOrRewriteOverlay.style.display = 'none';
+        renameFileOverlay.style.display = 'none';
+        renameFileOptionOverlay.style.display = 'none';
+    }
+
+}
+
+
+function showRenameFileOverlay() {
+    empty_alert.hidden = true; file_already_exists.hidden = true; file_bad_name.hidden = true;
+    renameFileOverlay.style.display = 'block';
+}
+
+function renameFileOptionOverlayInformationBadFileNameNotice() {
+    file_bad_name.hidden = false;
+    file_already_exists.hidden = true;
+    empty_alert.hidden = true;
+}
+function renameFileOptionOverlayInformationAlreadyExistsNotice() {
+    file_bad_name.hidden = true;
+    file_already_exists.hidden = false;
+    empty_alert.hidden = true;
+}
+function renameFileOptionOverlayInformationEmptyAlertNotice() {
+    file_bad_name.hidden = true;
+    file_already_exists.hidden = true;
+    empty_alert.hidden = false;
+}
 
 function addFilesInCollections(files) {
     Array.from(files).forEach(file => {
@@ -332,71 +492,6 @@ function updateContent(data) {
 
     })
 }
-const obj = document.getElementById('flyingObject');
-
-// Задаем зону перемещения (например, центральная часть окна)
-const zone = {
-    xMin: 100,
-    yMin: 100,
-    xMax: window.innerWidth - 150, // учитываем ширину картинки
-    yMax: window.innerHeight - 150 // учитываем высоту картинки
-};
-
-// Начальные координаты
-let position = {
-    x: Math.random() * (zone.xMax - zone.xMin) + zone.xMin,
-    y: Math.random() * (zone.yMax - zone.yMin) + zone.yMin
-};
-
-// Целевая точка
-let target = {
-    x: 0,
-    y: 0
-};
-
-// Скорость перемещения
-const speed = 1.5; // пикселей за кадр, можно регулировать
-
-// Функция для выбора новой цели внутри зоны
-function setNewTarget() {
-    target.x = Math.random() * (zone.xMax - zone.xMin) + zone.xMin;
-    target.y = Math.random() * (zone.yMax - zone.yMin) + zone.yMin;
-}
-
-// Изначально задаем первую цель
-setNewTarget();
-
-function animate() {
-    // Вычисляем разницу до цели
-    const dx = target.x - position.x;
-    const dy = target.y - position.y;
-    const distance = Math.hypot(dx, dy);
-
-    if (distance < speed) {
-        // Достигли цели, выбираем новую
-        setNewTarget();
-    } else {
-        // Двигаемся к цели
-        position.x += (dx / distance) * speed;
-        position.y += (dy / distance) * speed;
-    }
-
-    // Обновляем позицию картинки
-    obj.style.left = position.x + 'px';
-    obj.style.top = position.y + 'px';
-
-    requestAnimationFrame(animate);
-}
-
-// Обновляем зону при изменении размера окна
-window.addEventListener('resize', () => {
-    zone.xMax = window.innerWidth - 150;
-    zone.yMax = window.innerHeight - 150;
-});
-
-// Запускаем анимацию
-animate();
-
 
 
 
