@@ -1,6 +1,17 @@
-"""Модели для API аут.-авт."""
+"""Модели для API аутентификации-авторизации"""
 
 from pydantic import BaseModel
+
+
+class AuthFormData(BaseModel):
+    """Данные формы аутентификации по паролю.
+    
+    Params:
+        username (str): Имя пользователя.
+        password (str): Пароль.
+    """
+    username: str
+    password: str
 
 
 class Token(BaseModel):

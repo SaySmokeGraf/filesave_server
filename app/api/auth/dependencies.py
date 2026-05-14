@@ -8,13 +8,37 @@ from jwt.exceptions import InvalidTokenError
 
 from app.api.auth.managers import token_manager, user_manager
 from app.api.auth.managers.dbmanager import UserPublic
-from app.api.auth.models import TokenData
+from app.api.auth.models import AuthFormData, TokenData
+from app.api.auth.utils import validate_password, validate_username
 
 
 # базовые зависимости для OAuth2 аутентификации по паролю bearer типа
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 OAuth2SchemeDep = Annotated[str, Depends(oauth2_scheme)]
 OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
+
+
+# зависимости валидации данных формы
+async def get_reg_form_data(form_data: OAuth2FormDep) -> AuthFormData:
+    """Получить валидные данные формы для регистрации.
+
+    Args:
+        form_data (OAuth2FormDep): Данные формы.
+    
+    Raises:
+        HTTPException: (422) Невалидное поле формы.
+
+    Returns:
+        RegistrationData: Данные для регистрации.
+    """
+    validate_username(form_data.username)
+    validate_password(form_data.password)
+    return AuthFormData(username=form_data.username,
+                        password=form_data.password)
+
+
+# зависимости в более компактном формате для объявления через аннотирование
+GetRegFormDataDep = Annotated[AuthFormData, Depends(get_reg_form_data)]
 
 
 # основная универсальная зависимость
