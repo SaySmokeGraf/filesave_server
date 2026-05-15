@@ -9,7 +9,9 @@ from jwt.exceptions import InvalidTokenError
 from app.api.auth.managers import token_manager, user_manager
 from app.api.auth.managers.dbmanager import UserPublic
 from app.api.auth.models import AuthFormData, TokenData
-from app.api.auth.utils import validate_password, validate_username
+from app.api.utils.validation import (
+    isvalid_pwd, isvalid_pwd_length, isvalid_username, isvalid_username_length
+)
 
 
 # базовые зависимости для OAuth2 аутентификации по паролю bearer типа
@@ -19,7 +21,7 @@ OAuth2FormDep = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
 # зависимости валидации данных формы
-async def get_reg_form_data(form_data: OAuth2FormDep) -> AuthFormData:
+async def get_valid_reg_data(form_data: OAuth2FormDep) -> AuthFormData:
     """Получить валидные данные формы для регистрации.
 
     Args:
@@ -29,16 +31,50 @@ async def get_reg_form_data(form_data: OAuth2FormDep) -> AuthFormData:
         HTTPException: (422) Невалидное поле формы.
 
     Returns:
-        RegistrationData: Данные для регистрации.
+        AuthFormData: Данные для регистрации.
     """
-    validate_username(form_data.username)
-    validate_password(form_data.password)
-    return AuthFormData(username=form_data.username,
-                        password=form_data.password)
+    is_valid = isvalid_pwd(form_data.password)
+    is_valid = is_valid and isvalid_username(form_data.username)
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail='Could not validate registration credentials',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    return AuthFormData(
+        username=form_data.username,
+        password=form_data.password
+    )
+
+async def get_valid_login_data(form_data: OAuth2FormDep) -> AuthFormData:
+    """Получить валидные данные формы для входа.
+
+    Args:
+        form_data (OAuth2FormDep): Данные формы.
+
+    Raises:
+        HTTPException: (401) Невалидное поле формы.
+
+    Returns:
+        AuthFormData: Данные для входа.
+    """
+    is_valid = isvalid_pwd_length(form_data.password)
+    is_valid = is_valid and isvalid_username_length(form_data.username)
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Could not validate credentials',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    return AuthFormData(
+        username=form_data.username,
+        password=form_data.password
+    )
 
 
 # зависимости в более компактном формате для объявления через аннотирование
-GetRegFormDataDep = Annotated[AuthFormData, Depends(get_reg_form_data)]
+GetValidRegData = Annotated[AuthFormData, Depends(get_valid_reg_data)]
+GetValidLoginData = Annotated[AuthFormData, Depends(get_valid_login_data)]
 
 
 # основная универсальная зависимость
@@ -137,5 +173,5 @@ async def check_user(user: GetAllowedUserDep) -> None:
 GetUserDirectoryDep = Annotated[str, Depends(get_user_directory)]
 
 # зависимости, возвращающие None, в более компактном формате для использования
-# в пар-ре dependencies
+# в параметре dependencies
 CheckUserDepends = Depends(check_user)

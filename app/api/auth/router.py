@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.auth.dependencies import (
-    GetCurrentUserDep, GetRegFormDataDep, OAuth2FormDep
+    GetCurrentUserDep, GetValidRegData, GetValidLoginData
 )
 from app.api.auth.managers import token_manager, user_manager, UserPublic
 from app.api.auth.models import Token
@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post('/token')
-async def login_for_access_token(form_data: OAuth2FormDep) -> Token:
+async def login_for_access_token(form_data: GetValidLoginData) -> Token:
     """Вход пользователя.
 
     Args:
@@ -37,7 +37,7 @@ async def login_for_access_token(form_data: OAuth2FormDep) -> Token:
     return Token(access_token=access_token, token_type='bearer')
 
 @router.post('/register')
-async def register_for_access_token(reg_data: GetRegFormDataDep) -> Token:
+async def register_for_access_token(reg_data: GetValidRegData) -> Token:
     """Регистрация пользователя.
 
     Args:

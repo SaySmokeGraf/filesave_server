@@ -45,8 +45,8 @@ class TokenManager:
 
         Args:
             data (dict): Данные для записи в токен.
-            expires_delta (timedelta | None): Время истечения токена. По
-                умолчанию - None.
+            expires_delta (timedelta | None, optional): Время истечения токена.
+                По умолчанию None.
 
         Returns:
             str: Токен.

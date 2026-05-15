@@ -71,10 +71,10 @@ def write_uploadfile(file: UploadFile, directory_path: Path,
     Args:
         file (UploadFile): UploadFile для записи.
         directory_path (Path): Путь до директории для записи файла.
-        overwrite (bool | None): Флаг перезаписи файла в случае наличия файла
-            с таким же именем в хранилище. True - перезаписать, False - создать
-            уникальное имя с помощью суффикса с номером, None - откинуть
-            ошибку. По умолчанию None.
+        overwrite (bool | None, optional): Флаг перезаписи файла в случае
+            наличия файла с таким же именем в хранилище. True - перезаписать,
+            False - создать уникальное имя с помощью суффикса с номером, None -
+            откинуть ошибку. По умолчанию None.
     
     Raises:
         HTTPException: (409) Если файл с таким именем есть в хранилище, но нет
