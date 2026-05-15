@@ -18,7 +18,7 @@ async function apiRequest(url, options = {}, method = 'GET', contentType = 'appl
         };
 
         const response = await fetch(url, config);
-
+        
         if (!response.ok) {
             return {
                 error: `HTTP error! status: ${response.status}`,

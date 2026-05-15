@@ -439,13 +439,19 @@ function updateContent(data) {
             overlay.style.display = 'block';
             alert_ok_btn.addEventListener('click', () => {
                 apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
-                    'application/json').then(() => loadLibraryData());
+                    'application/json').then(response => {
+                        if (response.status == 404) {
+                            // window.location.href = '/site/error.html';
+                            fileNotFoundAlert.style.display = 'block';
+                        }
+                        return response;
+                    }).then(() => loadLibraryData());
                 overlay.style.display = 'none';
+                alert_btn_close.addEventListener('click', () => {
+                    overlay.style.display = 'none';
+                })
             });
-            alert_btn_close.addEventListener('click', () => {
-                overlay.style.display = 'none';
-            })
-        })
+        });
 
         downloadButton.addEventListener('click', () => {
             // Создаем спиннер или иное индикатор загрузки
@@ -465,8 +471,9 @@ function updateContent(data) {
                     if (response.status == 401) {
                         window.location.href = '/site/registration.html';
                         return response;
-                    } else if (!response.ok) {
-                        window.location.href = '/site/error.html';
+                    } else if (response.status == 404) {
+                        // window.location.href = '/site/error.html';
+                        fileNotFoundAlert.style.display = 'block';
                         return response;
                     }
                     return response.blob();
@@ -491,9 +498,5 @@ function updateContent(data) {
         });
 
     })
+
 }
-
-
-
-
-

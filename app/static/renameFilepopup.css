@@ -1,5 +1,6 @@
 .option-close-btn,
-.copyOrRewriteOverlay-close-btn {
+.copyOrRewriteOverlay-close-btn,
+.fileNotFound-close-btn {
     cursor: pointer;
     float: right;
     position: relative;
@@ -13,7 +14,8 @@
 }
 
 .renameFileOptionOverlay,
-.copyOrRewriteOverlay {
+.copyOrRewriteOverlay,
+.fileNotFoundAlert {
     display: none;
     /* скрыто по умолчанию */
     position: fixed;
@@ -28,7 +30,8 @@
 }
 
 .alert-rename-buttons-container,
-.alert-buttons-container_copy_or_rewrite {
+.alert-buttons-container_copy_or_rewrite,
+.alert-buttons-container_fileNotFound {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -36,7 +39,8 @@
 
 /* Само окно */
 .rename_file_Option_popup,
-.copyOrRewriteOverlay_popup {
+.copyOrRewriteOverlay_popup,
+.fileNotFound_popup {
 
     display: flex;
     flex-direction: column;
@@ -75,6 +79,8 @@
 .rewriteFileWithNewNameBtn,
 .rewriteFileWithNewName,
 .makeCopyWithName,
+.fileNotFound,
+.fileNotFound_btn,
 .cancel {
     background-color: #28a745;
     color: #fff;
@@ -85,6 +91,8 @@
 .rewriteFileWithNewNameBtn:hover,
 .rewriteFileWithNewName:hover,
 .makeCopyWithName:hover,
+.fileNotFound:hover,
+.fileNotFound_btn:hover,
 .alert_btn_copy_or_rewrite_cancel:hover {
     background-color: #218838;
 }

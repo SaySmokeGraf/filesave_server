@@ -11,10 +11,21 @@ const makeCopyWithName = document.getElementById('makeCopyWithName');
 const alert_btn_copy_or_rewrite_cancel = document.getElementById('alert_btn_copy_or_rewrite_cancel');
 const copyOrRewriteOverlay_close_btn = document.getElementById('copyOrRewriteOverlay-close-btn');
 const copyOrRewriteOverlay = document.getElementById('copyOrRewriteOverlay');
+const fileNotFoundAlert = document.getElementById('fileNotFoundAlert');
+const fileNotFound_close_btn = document.getElementById('fileNotFound-close-btn');
+const fileNotFound_ok_btn = document.getElementById('fileNotFound_btn');
 
 
 renameFilePopupNoButton.addEventListener('click', () => {
     renameFileOptionOverlay.style.display = 'none';
+})
+
+fileNotFound_close_btn.addEventListener('click', () => {
+    fileNotFoundAlert.style.display = 'none';
+})
+
+fileNotFound_ok_btn.addEventListener('click', () => {
+    fileNotFoundAlert.style.display = 'none';
 })
 
 renameCloseOptionBtn.addEventListener('click', () => {
