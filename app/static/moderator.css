@@ -1,0 +1,87 @@
+/* Общий стиль для контейнера admin_profile */
+.moderator-panel {
+    position: relative;
+    top: 60px;
+    width: 900px;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.admin_profile_search_panel {
+    display: flex;
+    flex-direction: row;
+}
+
+.admin_profile {
+    display: flex;
+    flex-direction: column;
+    /* Выстраиваем элементы по вертикали */
+    width: 200px;
+    /* Можно указать нужную ширину */
+}
+
+/* Стиль для каждой пары элементов */
+.pair {
+    display: flex;
+    flex-direction: row;
+    /* Вертикальный столбец внутри пары */
+    gap: 10px;
+    /* margin-bottom: 10px; Отступ между парами */
+}
+
+/* Стиль для заголовка */
+.pair .label {
+    font-weight: bold;
+}
+
+.search_panel {}
+
+.moderator_table {
+    width: 100%;
+    height: 75vh;
+    /* или фиксированная ширина, например 1000px */
+    overflow-x: auto;
+    overflow-y: scroll;
+    /* если таблица шире контейнера */
+    margin-top: 5px;
+    /* отступ сверху */
+    background-color: #fff;
+    /* фон для таблицы, чтобы было видно */
+    padding: 0px;
+    /* отступы */
+}
+
+.moderator_table table {
+    width: 100%;
+    border-collapse: collapse;
+    /* убирает двойные границы */
+}
+
+.moderator_table th,
+.moderator_table td {
+    padding: 8px;
+    text-align: left;
+}
+
+.moderator_table table thead {
+    position: sticky;
+    top: 0;
+    /* Расположение от верхней границы таблицы */
+    background-color: #fff;
+    /* Фон, чтобы не было прозрачности */
+    z-index: 1;
+    /* Чтобы шапка не скрывалась под содержимым */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    /* по горизонтали */
+    align-items: center;
+    /* по вертикали */
+    height: 100vh;
+    /* высота вьюпорта для вертикального центрирования */
+    margin: 0;
+    /* убрать отступы по умолчанию */
+}

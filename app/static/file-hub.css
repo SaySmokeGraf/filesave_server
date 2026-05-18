@@ -7,7 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 10px;
     background-color: #1e2a38;
     /* тёмный синий/серый фон */
     color: #f0f0f0;
@@ -359,7 +359,8 @@ footer:hover {
     background-color: #ececec;
 }
 
-.overlay {
+.overlay,
+.renameFileOverlay {
     display: none;
     /* скрыто по умолчанию */
     position: fixed;
@@ -371,6 +372,7 @@ footer:hover {
     z-index: 1000;
     justify-content: center;
     align-items: center;
+    gap: 10px;
 }
 
 /* Само окно */
@@ -404,11 +406,14 @@ footer:hover {
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 10px;
+
 }
 
 .alert_btn_ok,
-.alert_btn_no {
+.alert_btn_no,
+.rename_btn_manually,
+.alert_btn_rename_automat,
+.alert_btn_rename_no {
     /* flex: 1; */
     min-width: 10px;
     padding: 10px 20px;
@@ -420,7 +425,10 @@ footer:hover {
 }
 
 
-.alert_btn_ok {
+.alert_btn_ok,
+.rename_btn_manually,
+.alert_btn_rename_automat,
+.alert_btn_rename_no {
     background-color: #28a745;
 
     color: #fff;
@@ -428,12 +436,14 @@ footer:hover {
 
 .alert_btn_no {
     background-color: #dc3545;
-
     color: #fff;
 }
 
 
-.alert_btn_ok:hover {
+.alert_btn_ok:hover,
+.rename_btn_manually:hover,
+.alert_btn_rename_automat:hover,
+.alert_btn_rename_no:hover {
     background-color: #218838;
 }
 
