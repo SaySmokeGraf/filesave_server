@@ -42,6 +42,17 @@ class UserManager:
             return None
         return UserPublic.model_validate(user)
     
+    def get_users(self) -> list[UserPublic]:
+        """Получить список пользователей.
+
+        Returns:
+            list[UserPublic]: Список пользователей.
+        """
+        users = self._db_manager.get_users()
+        for i in range(len(users)):
+            users[i] = UserPublic.model_validate(users[i])
+        return users
+
     def get_user(self, username: str) -> UserPublic | None:
         """Получить данные о пользователе.
 

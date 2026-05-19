@@ -28,6 +28,18 @@ class DBManager:
         """Создать БД и таблицы, если нужно."""
         SQLModel.metadata.create_all(self._engine)
     
+    def get_users(self) -> list[User]:
+        """Получить список пользователей.
+
+        Returns:
+            list[User]: Список пользователей.
+        """
+        with Session(self._engine) as session:
+            statement = select(User)
+            result = session.exec(statement)
+            users = result.all()
+        return users
+    
     def get_user(self, username: str) -> User | None:
         """Получить данные пользователя из БД.
 
