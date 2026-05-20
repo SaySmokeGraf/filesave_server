@@ -45,11 +45,18 @@ class DBManager:
             page, limit = pagination.page, pagination.limit
             filters_dump = filters.filters_dump()
 
-            total_statement = select(func.count()).select_from(User).where(*filters_dump)
-            total = session.exec(total_statement).one()
+            total = session.exec(
+                select(func.count())
+                .select_from(User)
+                .where(*filters_dump)
+            ).one()
 
-            statement = select(User).where(*filters_dump).offset((page - 1) * limit).limit(limit)
-            users = session.exec(statement).all()
+            users = session.exec(
+                select(User)
+                .where(*filters_dump)
+                .offset((page - 1) * limit)
+                .limit(limit)
+            ).all()
         return PagedUsers(items=users, total=total, page=page, limit=limit)
     
     def get_user(self, username: str) -> User | None:
@@ -63,9 +70,10 @@ class DBManager:
                 пользователя нет.
         """
         with Session(self._engine) as session:
-            statement = select(User).where(User.username == username)
-            result = session.exec(statement)
-            user = result.first()
+            user = session.exec(
+                select(User)
+                .where(User.username == username)
+            ).first()
         return user
     
     def create_user(self, user: UserCreate) -> User | None:
