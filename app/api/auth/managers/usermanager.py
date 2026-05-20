@@ -3,7 +3,10 @@
 from pwdlib import PasswordHash
 
 from app.api.auth.managers.config import DUMMY_PASSWORD
-from app.api.auth.managers.dbmanager import DBManager, UserCreate, UserPublic
+from app.api.auth.managers.dbmanager import (
+    DBManager, PagedUsersPublic, UserCreate, UserPublic,
+    PaginationParams, UsersFilterParams
+)
 
 
 class UserManager:
@@ -42,16 +45,25 @@ class UserManager:
             return None
         return UserPublic.model_validate(user)
     
-    def get_users(self) -> list[UserPublic]:
-        """Получить список пользователей.
+    def get_users(self, pagination: PaginationParams,
+                  filters: UsersFilterParams) -> PagedUsersPublic:
+        """Получить страницу из списка пользователей.
+
+        Args:
+            pagination (PaginationParams): Параметры пагинации.
+            filters (UsersFilterParams): Параметры фильтрации.
 
         Returns:
-            list[UserPublic]: Список пользователей.
+            PagedUsersPublic: Страница из списка пользователей.
         """
-        users = self._db_manager.get_users()
-        for i in range(len(users)):
-            users[i] = UserPublic.model_validate(users[i])
-        return users
+        users = self._db_manager.get_users(pagination, filters)
+        public_users = []
+        for user in users.items:
+            public_users.append(UserPublic.model_validate(user))
+        return PagedUsersPublic(
+            items=public_users,
+            total=users.total, page=users.page, limit=users.limit
+        )
 
     def get_user(self, username: str) -> UserPublic | None:
         """Получить данные о пользователе.

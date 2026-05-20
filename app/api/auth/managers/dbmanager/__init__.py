@@ -7,13 +7,13 @@
         использования вовне.
 
 Кроме того, для удобства импортирования содержит в себе:
-    DBManager - dbmanager.DBManager
-    User - models.User
-    UserCreate - models.UserCreate
-    UserPublic - models.UserPublic
+    DBManager - dbmanager.DBManager.
+    Модели данных из модуля models.
 """
 
 from app.api.auth.managers.dbmanager.dbmanager import DBManager
 from app.api.auth.managers.dbmanager.models import (
-    User, UserCreate, UserPublic
+    User, UserCreate, UserPublic,
+    AbstractPagedItems, PagedUsers, PagedUsersPublic,
+    PaginationParams, UsersFilterParams
 )

@@ -1,8 +1,13 @@
 """Модели для менеджера БД."""
 
+from typing import Any
+
+from fastapi import Query
+from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
 
+# модели пользователя
 class AbscractUser(SQLModel):
     """Абстрактная модель пользователя.
     
@@ -59,3 +64,99 @@ class UserCreate(AbscractUser):
         hashed_password (str): Хешированный пароль.
     """
     hashed_password: str
+
+
+# вспомогательные модели
+class AbstractPagedItems(BaseModel):
+    """Абстрактная страница из списка объектов.
+    
+    Params:
+        items (list[Any]): Список объектов на странице.
+        total (int): Общее число объектов.
+        page (int): Номер страницы.
+        limit (int): Максимальное количество объектов на странице.
+    """
+    items: list[Any]
+    total: int
+    page: int
+    limit: int
+
+
+class PagedUsers(AbstractPagedItems):
+    """Cтраница из списка пользователей.
+    
+    Params:
+        items (list[User]): Список пользователей на странице.
+        total (int): Общее число пользователей.
+        page (int): Номер страницы.
+        limit (int): Максимальное количество пользователей на странице.
+    """
+    items: list[User]
+
+
+class PagedUsersPublic(AbstractPagedItems):
+    """Страница из списка публичных моделей пользователей.
+    
+    Params:
+        items (list[UserPublic]): Список пользователей на странице.
+        total (int): Общее число пользователей.
+        page (int): Номер страницы.
+        limit (int): Максимальное количество пользователей на странице.
+    """
+    items: list[UserPublic]
+
+
+# параметры запросов
+class PaginationParams(BaseModel):
+    """Параметры пагинации.
+    
+    Params:
+        page (int): Номер страницы. Не меньше 1. По умолчанию 1.
+        limit (int): Максимальное число объектов на странице. Не меньше 1, не
+            больше 100. По умолчанию 10.
+    """
+    page: int = Query(1, ge=1)
+    limit: int = Query(10, ge=1, le=100)
+
+
+class UsersFilterParams(BaseModel):
+    """Параметры фильтрации пользователей.
+    
+    Params:
+        id (int | None): ID пользователя или None в случае отсутствия
+            фильтрации по данному полю. По умолчанию None.
+        is_verified (bool | None): Флаг верифицированности или None в случае
+            отсутствия фильтрации по данному полю. По умолчанию None.
+        is_moderator (bool | None): Флаг, является ли пользователь модератором,
+            или None в случае отсутствия фильтрации по данному полю. По
+            умолчанию None.
+        is_banned (bool | None): Флаг забаненности или None в случае отсутствия
+            фильтрации по данному полю. По умолчанию None.
+    
+    Methods:
+        filter_dump: Дамп фильтров в виде списка отдельных условий для WHERE в
+            запросе через SQLModel
+    """
+    id: int | None = Query(None)
+    is_verified: bool | None = Query(None)
+    is_moderator: bool | None = Query(None)
+    is_banned: bool | None = Query(None)
+
+    def filters_dump(self) -> list[Any]:
+        """Дамп фильтров.
+
+        В виде списка отдельных условий для WHERE в запросе через SQLModel.
+
+        Returns:
+            list[Any]: Дамп фильтров.
+        """
+        filters = []
+        if self.id is not None:
+            filters.append(User.id == self.id)
+        if self.is_verified is not None:
+            filters.append(User.is_verified == self.is_verified)
+        if self.is_moderator is not None:
+            filters.append(User.is_moderator == self.is_moderator)
+        if self.is_banned is not None:
+            filters.append(User.is_banned == self.is_banned)
+        return filters

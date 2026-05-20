@@ -9,11 +9,12 @@
 Кроме того:
     token_manager - синглотн менеджера токенов (TokenManager).
     user_manager - синглтон менеджера пользователей (UserManager).
-    UserPublic - модель публичных данных пользователя из dbmanager для удобства
-        импортирования извне.
+    Некоторые модели из пакета dbmanager для удобства импортирования.
 """
 
-from app.api.auth.managers.dbmanager import UserPublic
+from app.api.auth.managers.dbmanager import (
+    PagedUsersPublic, UserPublic, PaginationParams, UsersFilterParams
+)
 from app.api.auth.managers.tokenmanager import TokenManager
 from app.api.auth.managers.usermanager import UserManager
 

@@ -2,10 +2,12 @@
 
 from pathlib import Path
 
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import create_engine, func, select, Session, SQLModel
 
 from app.api.auth.managers.dbmanager.config import PATH_DB_DIR, SQLITE_URL
-from app.api.auth.managers.dbmanager.models import User, UserCreate
+from app.api.auth.managers.dbmanager.models import (
+    PagedUsers, User, UserCreate, PaginationParams, UsersFilterParams
+)
 
 
 _path_db_dir = Path(PATH_DB_DIR)
@@ -28,17 +30,27 @@ class DBManager:
         """Создать БД и таблицы, если нужно."""
         SQLModel.metadata.create_all(self._engine)
     
-    def get_users(self) -> list[User]:
-        """Получить список пользователей.
+    def get_users(self, pagination: PaginationParams,
+                  filters: UsersFilterParams) -> PagedUsers:
+        """Получить страницу из списка пользователей.
+
+        Args:
+            pagination (PaginationParams): Параметры пагинации.
+            filters (UsersFilterParams): Параметры фильтрации.
 
         Returns:
-            list[User]: Список пользователей.
+            PagedUsers: Страница из списка пользователей.
         """
         with Session(self._engine) as session:
-            statement = select(User)
-            result = session.exec(statement)
-            users = result.all()
-        return users
+            page, limit = pagination.page, pagination.limit
+            filters_dump = filters.filters_dump()
+
+            total_statement = select(func.count()).select_from(User).where(*filters_dump)
+            total = session.exec(total_statement).one()
+
+            statement = select(User).where(*filters_dump).offset((page - 1) * limit).limit(limit)
+            users = session.exec(statement).all()
+        return PagedUsers(items=users, total=total, page=page, limit=limit)
     
     def get_user(self, username: str) -> User | None:
         """Получить данные пользователя из БД.
