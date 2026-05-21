@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import Query
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel
+from sqlmodel import col, Field, SQLModel
 
 
 # модели пользователя
@@ -138,6 +138,7 @@ class UsersFilterParams(BaseModel):
             запросе через SQLModel
     """
     id: int | None = Query(None)
+    username: str | None = Query(None)
     is_verified: bool | None = Query(None)
     is_moderator: bool | None = Query(None)
     is_banned: bool | None = Query(None)
@@ -159,4 +160,7 @@ class UsersFilterParams(BaseModel):
             filters.append(User.is_moderator == self.is_moderator)
         if self.is_banned is not None:
             filters.append(User.is_banned == self.is_banned)
+        if self.username is not None:
+            filters.append(col(User.username).contains(self.username,
+                                                       autoescape=True))
         return filters
