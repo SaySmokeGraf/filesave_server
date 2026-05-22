@@ -120,3 +120,24 @@ def isvalid_pwd(password: str) -> bool:
     res = res and parts.isvalid_chars(password,
                                       UserConsts.PWD_UNSAFE_CHARS_REGEX)
     return res
+
+def isvalid_username_filter(username: str | None) -> bool:
+    """Проверка валидности фильтра по имени пользователя.
+
+    Args:
+        username (str | None): Имя пользователя.
+
+    Returns:
+        bool: Валидность.
+    """
+    if username is None:
+        return True
+    res = parts.isvalid_length(username, 1, UserConsts.USERNAME_MAX_LENGTH)
+    if not res:
+        return False
+    
+    res = parts.isvalid_unicode(username)
+    res = res and parts.isvalid_chars(username,
+                                      UserConsts.USERNAME_UNSAFE_CHARS_REGEX)
+    return res
+

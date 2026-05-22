@@ -3,8 +3,12 @@
 from typing import Any
 
 from fastapi import Query
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlmodel import col, Field, SQLModel
+
+from app.api.auth.managers.dbmanager.validation import (
+    get_valid_username_filter,
+)
 
 
 # модели пользователя
@@ -125,6 +129,9 @@ class UsersFilterParams(BaseModel):
     Params:
         id (int | None): ID пользователя или None в случае отсутствия
             фильтрации по данному полю. По умолчанию None.
+        username (str | None): Фильтр по содержанию подстроки в имени
+            пользователя или None в случае отсутствия фильтрации по данному
+            полю. По умолчанию None.
         is_verified (bool | None): Флаг верифицированности или None в случае
             отсутствия фильтрации по данному полю. По умолчанию None.
         is_moderator (bool | None): Флаг, является ли пользователь модератором,
@@ -142,6 +149,18 @@ class UsersFilterParams(BaseModel):
     is_verified: bool | None = Query(None)
     is_moderator: bool | None = Query(None)
     is_banned: bool | None = Query(None)
+
+    @field_validator('username')
+    def validate_username_filter(cls, username: str | None) -> str | None:
+        """Валидатор поля username (имя пользователя).
+
+        Args:
+            username (str | None): Имя пользователя.
+
+        Returns:
+            str | None: Имя пользователя.
+        """
+        return get_valid_username_filter(username)
 
     def filters_dump(self) -> list[Any]:
         """Дамп фильтров.

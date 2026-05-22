@@ -11,5 +11,6 @@
 
 from app.api.utils.validation.schemes import (
     isvalid_pwd, isvalid_pwd_length, isvalid_username, isvalid_username_length,
-    isvalid_filename, normalize_filename
+    isvalid_filename, normalize_filename,
+    isvalid_username_filter
 )

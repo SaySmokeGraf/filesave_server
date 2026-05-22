@@ -171,8 +171,8 @@ async def get_moderator(user: GetAllowedUserDep) -> UserPublic:
 GetModeratorDep = Annotated[UserPublic, Depends(get_moderator)]
 
 
-# зависимости в более компактном формате для использования в параметре
-# dependencies без дальнейшего использования возвращаемых значений
+# зависимости в формате для использования в параметре dependencies без
+# дальнейшего использования возвращаемых значений
 CheckUserDepends = Depends(get_allowed_user)
 CheckModeratorDepends = Depends(get_moderator)
 
