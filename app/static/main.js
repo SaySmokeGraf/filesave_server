@@ -14,7 +14,23 @@ const alert_btn_close = document.getElementById('alert_btn_no');
 const closeAlertBtn = document.getElementById('closeBtn');
 
 let currentUploadContext = null;// { file, uploadBtn, progressBar }
+let currentFilename = null;
+alert_ok_btn.addEventListener('click', () => {
+    apiRequest(`/files/delete?filename=${currentFilename}`, {}, 'DELETE',
+        'application/json').then(response => {
+            if (response.status == 404) {
+                // window.location.href = '/site/error.html';
+                console.log('1234');
+                fileNotFoundAlert.style.display = 'block';
+            }
+            return response;
+        }).then(() => loadLibraryData());
+    overlay.style.display = 'none';
+});
 
+alert_btn_close.addEventListener('click', () => {
+    overlay.style.display = 'none';
+})
 renameFilePopupOkButton.addEventListener('click', () => {
     if (!currentUploadContext) return;
     if (renameFileTextArea.value.trim() !== '') {
@@ -394,16 +410,18 @@ function loadLibraryData() {
                 window.location.href = '/site/registration.html';
                 return null;
             } else {
+                // updateContent(data);
                 return response.json();
             }
         }).then(data => {
             if (data != null) {
+                console.log(data);
                 updateContent(data);
             }
         }).catch(error => console.error('Ошибка запроса:', error));
 }
 
-function updateContent(data) {
+async function updateContent(data) {
     // document.getElementById('content-container').innerHTML = data.html;
     console.log(data);
     myFiles.innerHTML = ''
@@ -436,21 +454,8 @@ function updateContent(data) {
         // myFiles.appendChild(myFileInfoDiv);
 
         deleteBtn.addEventListener('click', () => {
+            currentFilename = element.filename;
             overlay.style.display = 'block';
-            alert_ok_btn.addEventListener('click', () => {
-                apiRequest(`/files/delete?filename=${element.filename}`, {}, 'DELETE',
-                    'application/json').then(response => {
-                        if (response.status == 404) {
-                            // window.location.href = '/site/error.html';
-                            fileNotFoundAlert.style.display = 'block';
-                        }
-                        return response;
-                    }).then(() => loadLibraryData());
-                overlay.style.display = 'none';
-                alert_btn_close.addEventListener('click', () => {
-                    overlay.style.display = 'none';
-                })
-            });
         });
 
         downloadButton.addEventListener('click', () => {
