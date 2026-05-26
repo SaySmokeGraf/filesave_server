@@ -1,0 +1,48 @@
+.profile_window {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 40px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    /* Центрирует аватар относительно текста с кнопкой */
+    gap: 15px;
+    padding: 10px;
+}
+
+.avatar {
+    width: 50px;
+    /* Задайте свои размеры */
+    height: 50px;
+    background: #ccc;
+    border-radius: 50%;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    /* Ставит элементы друг под друга */
+    gap: 5px;
+    /* Расстояние между именем и кнопкой */
+}
+
+.username_label {
+    font-weight: bold;
+    /* Убираем лишние padding, чтобы не мешали позиционированию */
+    padding: 0;
+}
+
+.exit_profile_btn,
+.moderator_btn {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #006064, #004D40);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    width: fit-content;
+    /* Кнопка будет по размеру текста, а не на всю ширину */
+}

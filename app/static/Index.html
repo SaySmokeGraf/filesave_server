@@ -9,10 +9,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="file-hub.css">
     <link rel="stylesheet" href="progressbar.css">
+    <link rel="stylesheet" href="profileblock.css">
+    <link rel="stylesheet" href="renameFilepopup.css">
 
 </head>
 
 <body>
+    <div class="profile_window">
+        <div class="avatar"></div>
+        <label class="username_label">username</label>
+        <button class="moderator_btn" id="moderator_btn" hidden>Панель модератора</button>
+        <button class="exit_profile_btn" id="exit_profile_btn">Выйти из профиля</button>
+    </div>
     <!-- <img src="lord.jpg";
         id="flyingObject" alt="Летающая картинка" /> -->
     <div id="messageOverlay" class="overlay">
@@ -25,7 +33,59 @@
             </div>
         </div>
     </div>
+
+    <div id="renameFileOverlay" class="renameFileOverlay">
+        <div class="popup">
+            <span class="close-btn" id="renameCloseBtn">&times</span>
+            <h2>Обнаружено некорректное имя файла. Примите решение по переименованию файла.</h2>
+            <div class="alert-buttons-container">
+                <button class="rename_btn_manually" id="rename_btn_manually">Вручную</button>
+                <button class="alert_btn_rename_automat" id="alert_btn_rename_automat">Автоматически</button>
+                <button class="alert_btn_rename_no" id="alert_btn_rename_no">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="renameFileOptionOverlay" class="renameFileOptionOverlay">
+        <div class="rename_file_Option_popup" id="rename_file_Option_popup">
+            <span class="option-close-btn" id="option-close-btn">&times</span>
+            <h2>Введите новое имя файла</h2>
+            <div id="file_already_exists" hidden>Такой файл уже существует</div>
+            <div id="file_bad_name" hidden>Имя файла некорректно</div>
+            <div id="empty_alert" hidden>Заполните поле</div>
+            <input type="text" id="newFileName" placeholder="Введите новое имя файла" />
+            <div class="alert-rename-buttons-container">
+                <button class="rename_file_btn_ok" id="rename_file_btn_ok">OK</button>
+                <button class="rename_file_btn_no" id="rename_file_btn_no">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="copyOrRewriteOverlay" class="copyOrRewriteOverlay">
+        <div class="copyOrRewriteOverlay_popup">
+            <span class="copyOrRewriteOverlay-close-btn" id="copyOrRewriteOverlay-close-btn">&times</span>
+            <h2>Перезапишите файл на сервере или добавьте новый файл как копию </h2>
+            <div class="alert-buttons-container_copy_or_rewrite">
+                <button class="rewriteFileWithNewName" id="rewriteFileWithNewNameBtn">Перезаписать</button>
+                <button class="makeCopyWithName" id="makeCopyWithName">Копия</button>
+                <button class="cancel" id="alert_btn_copy_or_rewrite_cancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fileNotFoundAlert" class="fileNotFoundAlert">
+        <div class="fileNotFound_popup">
+            <span class="fileNotFound-close-btn" id="fileNotFound-close-btn">&times</span>
+            <h2>Файл отсутствует на сервере</h2>
+            <div class="alert-buttons-container_fileNotFound">
+                <button class="fileNotFound_btn" id="fileNotFound_btn">Ок</button>
+            </div>
+        </div>
+    </div>
+
     <img src="i.jpg" class="center-image">
+
+
     <!-- Navbar items -->
     <div class="main_window">
 
@@ -70,9 +130,14 @@
     <footer>
         Это подвал, он нужен иногда
     </footer>
+
     <script src="cookies.js"></script>
+    <script src="request.js"></script>
+    <script src="profile.js"></script>
+    <script src="renameFilepopup.js"></script>
     <script src="main.js"></script>
-    <script src="registration.js"></script>
+
+
 </body>
 
 </html>

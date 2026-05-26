@@ -28,3 +28,12 @@ function getCookie(name) {
     // console.log(decodeURIComponent(parts.pop().split(';').shift()));
     return null;
 }
+
+
+function cleanCookie(name) {
+    // Устанавливаем куку с тем же именем, но пустую и с датой в прошлом
+    // path=/ важен, так как кука могла быть установлена для всего сайта
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    console.log(`Кука ${name} была очищена`);
+}

@@ -1,11 +1,14 @@
 """Менеджер БД для аут.-авт."""
 
-import os
+from pathlib import Path
 
 from sqlmodel import Session, SQLModel, create_engine, select
 
 from app.api.auth.managers.dbmanager.config import PATH_DB_DIR, SQLITE_URL
 from app.api.auth.managers.dbmanager.models import User, UserCreate
+
+
+_path_db_dir = Path(PATH_DB_DIR)
 
 
 class DBManager:
@@ -18,8 +21,8 @@ class DBManager:
     
     def _create_db_directory(self) -> None:
         """Создать папку хранения БД, если нужно."""
-        if not os.path.exists(PATH_DB_DIR):
-            os.makedirs(PATH_DB_DIR)
+        if not _path_db_dir.exists():
+            _path_db_dir.mkdir(parents=True)
 
     def _create_db_and_tables(self) -> None:
         """Создать БД и таблицы, если нужно."""
