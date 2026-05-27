@@ -13,7 +13,8 @@
 """
 
 from app.api.auth.managers.dbmanager import (
-    PagedUsersPublic, UserPublic, PaginationParams, UsersFilterParams
+    PagedUsersPublic, UserPublic, PaginationParams, UsersFilterParams,
+    UserUpdateRights
 )
 from app.api.auth.managers.tokenmanager import TokenManager
 from app.api.auth.managers.usermanager import UserManager

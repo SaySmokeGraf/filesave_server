@@ -6,7 +6,8 @@ from sqlmodel import create_engine, func, select, Session, SQLModel
 
 from app.api.auth.managers.dbmanager.config import PATH_DB_DIR, SQLITE_URL
 from app.api.auth.managers.dbmanager.models import (
-    PagedUsers, User, UserCreate, PaginationParams, UsersFilterParams
+    PagedUsers, User, UserCreate, PaginationParams, UsersFilterParams,
+    UserUpdateRights
 )
 
 
@@ -112,4 +113,27 @@ class DBManager:
         with Session(self._engine) as session:
             session.delete(user)
             session.commit()
+        return user
+    
+    def update_user_rights(self, username: str,
+                           user_rights: UserUpdateRights) -> User | None:
+        """Обновить права доступа пользователя в БД.
+
+        Args:
+            username (str): Имя пользователя.
+            user_rights (UserUpdateRights): Обновления прав пользователя.
+
+        Returns:
+            User | None: Обновленный пользователь или None, если пользователь с
+                таким именем не найден.
+        """
+        user = self.get_user(username)
+        if user is None:
+            return None
+        user_rights_dump = user_rights.model_dump(exclude_unset=True)
+        user.sqlmodel_update(user_rights_dump)
+        with Session(self._engine) as session:
+            session.add(user)
+            session.commit()
+            session.refresh(user)
         return user

@@ -14,7 +14,7 @@
 
 from app.api.auth.managers.dbmanager.dbmanager import DBManager
 from app.api.auth.managers.dbmanager.models import (
-    User, UserCreate, UserPublic,
+    User, UserCreate, UserPublic, UserUpdateRights,
     AbstractPagedItems, PagedUsers, PagedUsersPublic,
     PaginationParams, UsersFilterParams
 )

@@ -4,7 +4,8 @@ from pwdlib import PasswordHash
 
 from app.api.auth.managers.config import DUMMY_PASSWORD
 from app.api.auth.managers.dbmanager import (
-    DBManager, PagedUsersPublic, User, UserCreate, UserPublic,
+    DBManager,
+    PagedUsersPublic, User, UserCreate, UserPublic, UserUpdateRights,
     PaginationParams, UsersFilterParams
 )
 
@@ -122,4 +123,19 @@ class UserManager:
                 или None в случае, если пользователя с таким именем нет.
         """
         user = self._db_manager.delete_user(username)
+        return self._convert_public(user)
+    
+    def update_user_rights(self, username: str,
+                           user_rights: UserUpdateRights) -> UserPublic | None:
+        """Обновить права доступа пользователя.
+
+        Args:
+            username (str): Имя пользователя.
+            user_rights (UserUpdateRights): Обновления прав пользователя.
+
+        Returns:
+            UserPublic | None: Публичная информация о пользователе или None,
+                если пользователь с таким именем не найден.
+        """
+        user = self._db_manager.update_user_rights(username, user_rights)
         return self._convert_public(user)

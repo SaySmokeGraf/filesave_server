@@ -13,7 +13,7 @@ from app.api.auth.managers.dbmanager.validation import (
 
 
 # модели пользователя
-class AbscractUser(SQLModel):
+class AbstractUser(SQLModel):
     """Абстрактная модель пользователя.
     
     Params:
@@ -22,7 +22,7 @@ class AbscractUser(SQLModel):
     username: str
     
 
-class User(AbscractUser, table=True):
+class User(AbstractUser, table=True):
     """Модель-таблица пользователей.
     
     Params:
@@ -45,7 +45,7 @@ class User(AbscractUser, table=True):
     is_banned: bool = Field(default=False)
 
 
-class UserPublic(AbscractUser):
+class UserPublic(AbstractUser):
     """Модель публичных данных о пользователе.
     
     Params:
@@ -54,6 +54,8 @@ class UserPublic(AbscractUser):
         is_verified (bool): Флаг верифицированности пользователя.
         is_moderator (bool): Флаг, является ли пользователь модератором.
         is_banned (bool): Флаг забаненности пользователя.
+    
+    Properties:
         dir_name (str): Имя папки в хранилище.
     """
     id: int
@@ -67,7 +69,7 @@ class UserPublic(AbscractUser):
         return str(self.id)
 
 
-class UserCreate(AbscractUser):
+class UserCreate(AbstractUser):
     """Модель данных для создания пользователя.
     
     Params:
@@ -75,6 +77,21 @@ class UserCreate(AbscractUser):
         hashed_password (str): Хешированный пароль.
     """
     hashed_password: str
+
+
+class UserUpdateRights(SQLModel):
+    """Модель для обновления прав пользователя.
+
+    При неуказании параметра он маркируется как "неуказанный" и не обновляется.
+
+    Params:
+        is_verified (bool): Флаг верифицированности пользователя.
+        is_moderator (bool): Флаг, является ли пользователь модератором.
+        is_banned (bool): Флаг забаненности пользователя.
+    """
+    is_verified: bool = False
+    is_moderator: bool = False
+    is_banned: bool = False
 
 
 # вспомогательные модели
