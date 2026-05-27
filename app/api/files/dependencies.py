@@ -10,7 +10,8 @@ from app.api.files.utils.validation import (
 
 
 # зависимости в формате функций
-async def validate_single_file(file: UploadFile, rename: bool = False) -> UploadFile:
+async def validate_single_file(file: UploadFile,
+                               rename: bool = False) -> UploadFile:
     """Проверить один файл на соответствие требованиям сервиса.
 
     Args:

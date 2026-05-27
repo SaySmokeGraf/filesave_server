@@ -1,7 +1,7 @@
 """Утилиты для работы с файлами, папками и путями."""
 
 from pathlib import Path
-from shutil import copyfileobj, disk_usage
+from shutil import copyfileobj, disk_usage, rmtree
 
 from fastapi import HTTPException, status, UploadFile
 
@@ -45,6 +45,16 @@ def get_user_dir_path(user_dir: str) -> Path:
     if not dir_path.exists():
         dir_path.mkdir()
     return dir_path
+
+def delete_user_directory(user_dir: str) -> None:
+    """Удалить папку пользователя.
+
+    Args:
+        user_dir (str): Имя папки пользователя.
+    """
+    dir_path = get_user_dir_path(user_dir)
+    if dir_path.exists():
+        rmtree(dir_path)
 
 def set_unique_filename(file: UploadFile, directory_path: Path) -> None:
     """Задать файлу уникальное имя.

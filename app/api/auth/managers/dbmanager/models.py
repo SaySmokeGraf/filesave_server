@@ -1,5 +1,6 @@
 """Модели для менеджера БД."""
 
+from __future__ import annotations
 from typing import Any
 
 from fastapi import Query
@@ -53,11 +54,17 @@ class UserPublic(AbscractUser):
         is_verified (bool): Флаг верифицированности пользователя.
         is_moderator (bool): Флаг, является ли пользователь модератором.
         is_banned (bool): Флаг забаненности пользователя.
+        dir_name (str): Имя папки в хранилище.
     """
     id: int
     is_verified: bool
     is_moderator: bool
     is_banned: bool
+    
+    @property
+    def dir_name(self) -> str:
+        """Имя папки пользователя."""
+        return str(self.id)
 
 
 class UserCreate(AbscractUser):

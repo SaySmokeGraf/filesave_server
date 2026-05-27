@@ -187,7 +187,7 @@ async def get_user_directory(user: GetAllowedUserDep) -> str:
     Returns:
         str: Имя папки пользователя в хранилище.
     """
-    return str(user.id)
+    return user.dir_name
 
 
 # зависимости в более компактном формате для объявления через аннотирование

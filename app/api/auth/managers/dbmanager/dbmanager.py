@@ -95,3 +95,21 @@ class DBManager:
             session.commit()
             session.refresh(db_user)
         return db_user
+    
+    def delete_user(self, username: str) -> User | None:
+        """Удаление пользователя из БД.
+
+        Args:
+            username (str): Имя пользователя.
+
+        Returns:
+            User | None: Удаленный пользователь или None, если пользователя с
+                таким именем нет.
+        """
+        user = self.get_user(username)
+        if user is None:
+            return None
+        with Session(self._engine) as session:
+            session.delete(user)
+            session.commit()
+        return user

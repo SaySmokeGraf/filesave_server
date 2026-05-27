@@ -4,7 +4,7 @@ from pwdlib import PasswordHash
 
 from app.api.auth.managers.config import DUMMY_PASSWORD
 from app.api.auth.managers.dbmanager import (
-    DBManager, PagedUsersPublic, UserCreate, UserPublic,
+    DBManager, PagedUsersPublic, User, UserCreate, UserPublic,
     PaginationParams, UsersFilterParams
 )
 
@@ -24,6 +24,20 @@ class UserManager:
 
         # нужен далее для "пустой" верификации для защиты от тайминговых атак
         self._DUMMY_HASH = self._pwd_hasher.hash(DUMMY_PASSWORD)
+    
+    def _convert_public(self, user: User | None) -> UserPublic | None:
+        """Конвертировать пользователя из БД в публичную версию.
+
+        Args:
+            user (User | None): Пользователь или None.
+
+        Returns:
+            UserPublic | None: Публичная информация о пользователе или None,
+                если на вход поступило None.
+        """
+        if user is None:
+            return None
+        return UserPublic.model_validate(user)
     
     def authenticate_user(self, username: str,
                           password: str) -> UserPublic | None:
@@ -76,9 +90,7 @@ class UserManager:
                 пользователя нет.
         """
         user = self._db_manager.get_user(username)
-        if user is None:
-            return None
-        return UserPublic.model_validate(user)
+        return self._convert_public(user)
 
     def create_user(self, username: str, password: str) -> UserPublic | None:
         """Создать пользователя.
@@ -97,6 +109,17 @@ class UserManager:
             hashed_password=self._pwd_hasher.hash(password)
         )
         user = self._db_manager.create_user(create_user)
-        if user is None:
-            return None
-        return UserPublic.model_validate(user)
+        return self._convert_public(user)
+    
+    def delete_user(self, username: str) -> UserPublic | None:
+        """Удалить пользователя.
+
+        Args:
+            username (str): Имя пользователя.
+
+        Returns:
+            UserPublic | None: Публичная информация об удаленном пользователе
+                или None в случае, если пользователя с таким именем нет.
+        """
+        user = self._db_manager.delete_user(username)
+        return self._convert_public(user)
