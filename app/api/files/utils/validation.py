@@ -1,4 +1,12 @@
-"""Функции валидации и нормализации файловых параметров."""
+"""Функции валидации и нормализации файловых параметров.
+
+Validation:
+    isvalid_file_size: Проверка валидности размера файла.
+    isvalid_filename: Проверка валидности имени файла.
+
+Normalization:
+    normalize_filename: Нормализация имени файла.
+"""
 
 from app.api.files.config import MAX_FILE_SIZE
 from app.api.files.utils.file_utils import get_storage_usage_info

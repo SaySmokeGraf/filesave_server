@@ -1,4 +1,14 @@
-"""Утилиты для работы с файлами, папками и путями."""
+"""Утилиты для работы с файлами, папками и путями.
+
+Funcs:
+    create_storage_directory: Создать папку хранилища.
+    get_storage_usage_info: Получить информацию об использовании места
+        хранилища.
+    get_user_dir_path: Получить путь до папки пользователя.
+    delete_user_directory: Удалить папку пользователя.
+    set_unique_filename: Задать файлу уникальное имя.
+    write_uploadfile: Записать UploadFile в файл.
+"""
 
 from pathlib import Path
 from shutil import copyfileobj, disk_usage, rmtree

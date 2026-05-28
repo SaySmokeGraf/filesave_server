@@ -1,4 +1,10 @@
-"""Модели для файлового API."""
+"""Модели для файлового API.
+
+Models:
+    FileInfoShort: Краткая информация о файле.
+    FileInfoVerbose: Подробная информация о файле.
+    StorageUsageInfo: Информация об использовании места хранилища.
+"""
 
 from pydantic import BaseModel
 

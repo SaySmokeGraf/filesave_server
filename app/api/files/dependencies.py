@@ -1,4 +1,13 @@
-"""Зависимости для файлового API."""
+"""Зависимости для файлового API.
+
+Dependencies:
+    validate_single_file: Проверка одного файла на соответствие требованиям
+        сервиса.
+
+AnnotatedDeps:
+    SingleFileDep (UploadFile): Проверка одного файла на соответствие
+        требованиям сервиса.
+"""
 
 from typing import Annotated
 

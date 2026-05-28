@@ -1,4 +1,9 @@
-"""Общий роутер API."""
+"""Общий роутер API.
+
+Contains:
+    router: Общий роутер API. Включает в себя все роутеры составных частей API
+        и эндпоинт '/', перенаправляющий на статические файлы.
+"""
 
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse

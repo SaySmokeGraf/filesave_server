@@ -1,4 +1,14 @@
-"""Конкретные схемы валидации или нормализации полей."""
+"""Конкретные схемы валидации или нормализации полей.
+
+Schemes:
+    isvalid_filename: Проверка валидности имени файла.
+    isvalid_pwd: Проверка валидности пароля.
+    isvalid_pwd_length: Проверка валидности длины пароля.
+    isvalid_username: Проверка валидности имени пользователя.
+    isvalid_username_filter: Проверка валидности фильтра по имени пользователя.
+    isvalid_username_length: Проверка валидности длины имени файла.
+    normalize_filename: Нормализация имени файла.
+"""
 
 from app.api.utils.validation import parts
 from app.api.utils.validation.config import FileConsts, UserConsts

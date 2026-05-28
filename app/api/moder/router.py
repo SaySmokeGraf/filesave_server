@@ -1,4 +1,8 @@
-"""Роутер API модерирования."""
+"""Роутер API модерирования.
+
+Contains:
+    router: Роутер API модерирования.
+"""
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
@@ -21,8 +25,10 @@ async def get_users(pagination: PaginationParams = Depends(),
     """Получить страницу из списка пользователей.
 
     Args:
-        pagination (PaginationParams): Параметры пагинации.
-        filters (UsersFilterParams): Параметры фильтрации.
+        pagination (PaginationParams): Параметры пагинации. Модель
+            разворачивается в отдельные query-параметры.
+        filters (UsersFilterParams): Параметры фильтрации. Модель
+            разворачивается в отдельные query-параметры.
 
     Returns:
         PagedUsersPublic: Страница из списка пользователей.
@@ -34,7 +40,7 @@ async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
     """Удалить пользователя.
 
     Args:
-        username (GetAllowedUsernameDep): Имя пользователя.
+        username (GetAllowedUsernameDep): Имя пользователя. Зависимость.
 
     Raises:
         HTTPException: (409) Нет доступа для удаления (например, сервис в
@@ -63,7 +69,7 @@ async def update_user_rights(username: GetAllowedUsernameDep,
     """Обновить права доступа пользователя.
 
     Args:
-        username (GetAllowedUsernameDep): Имя пользователя.
+        username (GetAllowedUsernameDep): Имя пользователя. Зависимость.
         user_rights (UserUpdateRights): Обновления прав пользователя.
 
     Returns:

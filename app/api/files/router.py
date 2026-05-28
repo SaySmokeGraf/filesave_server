@@ -1,4 +1,8 @@
-"""Роутер под файловый API."""
+"""Роутер под файловый API.
+
+Contains:
+    router: Роутер файлового API.
+"""
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
@@ -24,7 +28,7 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
 
     Returns:
         list[FileInfoShort]: Список с данными о файлах.
@@ -45,7 +49,7 @@ async def get_file_info(filename: str,
 
     Args:
         filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -83,7 +87,7 @@ async def download_file(filename: str,
 
     Args:
         filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -107,8 +111,8 @@ async def upload_single_file(file: SingleFileDep,
     """Загрузить на сервер один файл.
 
     Args:
-        file (SingleFileDep): Файл для загрузки.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        file (SingleFileDep): Файл для загрузки. Зависимость.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
         overwrite (bool | None, optional): Флаг перезаписи файла в случае
             наличия файла с таким же именем в хранилище. True - перезаписать,
             False - создать уникальное имя с помощью суффикса с номером, None -
@@ -135,7 +139,7 @@ async def delete_file(filename: str,
 
     Args:
         filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.

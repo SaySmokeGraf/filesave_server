@@ -1,4 +1,16 @@
-"""Зависимости для API модерации."""
+"""Зависимости для API модерации.
+
+Dependencies:
+    get_valid_username: Проверка имени пользователя на валидность.
+    get_allowed_username: Проверки имени пользователя на допустимость
+        проведения модерации над ним.
+
+
+AnnotatedDeps:
+    GetValidUsername (str): Проверка имени пользователя на валидность.
+    GetAllowedUsernameDep (str): Проверки имени пользователя на допустимость
+        проведения модерации над ним.
+"""
 
 from typing import Annotated
 
@@ -36,7 +48,7 @@ async def get_allowed_username(username: GetValidUsername) -> str:
     """Получить имя пользователя, над которым можно производить модерацию.
 
     Args:
-        username (GetValidUsername): Имя пользователя.
+        username (GetValidUsername): Имя пользователя. Зависимость.
 
     Raises:
         HTTPException: (404) Пользователь не найден.

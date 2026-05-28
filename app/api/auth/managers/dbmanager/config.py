@@ -1,4 +1,9 @@
-"""Конфигурационный скрипт для менеджера БД."""
+"""Конфигурационный скрипт для менеджера БД.
+
+Consts:
+    PATH_DB (str): Путь до БД.
+    SQLITE_URL (str): URL БД для подключения через ORM.
+"""
 
 from app.settings import DB_FILENAME, PATH_DB_DIR
 

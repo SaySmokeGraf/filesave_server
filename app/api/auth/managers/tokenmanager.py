@@ -1,4 +1,8 @@
-"""Менеджер токенов для аут.-авт."""
+"""Менеджер токенов для аутентификации-авторизации.
+
+Classes:
+    TokenManager: Менеджер токенов.
+"""
 
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -20,6 +24,10 @@ class TokenManager:
     """Менеджер токенов.
     
     Отвечает за взаимодействие с токенами.
+
+    Methods:
+        create_token: Создать токен.
+        decode_token: Дешифровать токен.
     """
 
     def __init__(self):

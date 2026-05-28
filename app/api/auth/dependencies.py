@@ -1,4 +1,28 @@
-"""Зависимости для аут.-авт."""
+"""Зависимости для аутентификации-авторизации.
+
+Dependencies:
+    oauth2_scheme: OAuth2 схема.
+    get_valid_reg_data: Валидные данные регистрации.
+    get_valid_login_data: Валидные данные входа.
+    get_current_user: Текущий пользователь.
+    get_allowed_user: Пользователь с правами доступа использования сервиса.
+    get_moderator: Модератор.
+    get_user_directory: Имя папки пользователя.
+
+AnnotatedDeps:
+    OAuth2SchemeDep: OAuth2 схема.
+    OAuth2FormDep: Форма OAuth2 для аутентификации.
+    GetValidRegData: Валидные данные регистрации.
+    GetValidLoginData: Валидные данные входа.
+    GetCurrentUserDep: Текущий пользователь.
+    GetAllowedUserDep: Пользователь с правами доступа использования сервиса.
+    GetModeratorDep: Модератор.
+    GetUserDirectoryDep: Имя папки пользователя.
+
+CheckDepends:
+    CheckUserDepends: Проверка пользователя.
+    CheckModeratorDepends: Проверка модератора.
+"""
 
 from typing import Annotated
 
@@ -166,7 +190,7 @@ async def get_moderator(user: GetAllowedUserDep) -> UserPublic:
             headers={'WWW-Authenticate': 'Bearer'}
         )
     return user
-    
+
 
 GetModeratorDep = Annotated[UserPublic, Depends(get_moderator)]
 

@@ -1,4 +1,17 @@
-"""Модели для менеджера БД."""
+"""Модели для менеджера БД.
+
+Models:
+    AbstractUser: Абстрактный пользователь.
+    User: Модель-таблица пользователя.
+    UserPublic: Публичная информация о пользователе.
+    UserCreate: Информация для создания пользователя.
+    UserUpdateRights: Обновление прав доступа пользователя.
+    AbstractPagedItems: Абстрактная страница списка объектов.
+    PagedUsers: Страница списка пользователей.
+    PagedUsersPublic: Страница списка публичных пользователей.
+    PaginationParams: Параметры пагинации.
+    UsersFilterParams: Параметры фильтрации пользователей.
+"""
 
 from __future__ import annotations
 from typing import Any
@@ -56,7 +69,7 @@ class UserPublic(AbstractUser):
         is_banned (bool): Флаг забаненности пользователя.
     
     Properties:
-        dir_name (str): Имя папки в хранилище.
+        dir_name (str): Имя папки пользователя.
     """
     id: int
     is_verified: bool
@@ -155,7 +168,7 @@ class UsersFilterParams(BaseModel):
             фильтрации по данному полю. По умолчанию None.
         username (str | None): Фильтр по содержанию подстроки в имени
             пользователя или None в случае отсутствия фильтрации по данному
-            полю. По умолчанию None.
+            полю. Валидируется кастомным валидатором. По умолчанию None.
         is_verified (bool | None): Флаг верифицированности или None в случае
             отсутствия фильтрации по данному полю. По умолчанию None.
         is_moderator (bool | None): Флаг, является ли пользователь модератором,

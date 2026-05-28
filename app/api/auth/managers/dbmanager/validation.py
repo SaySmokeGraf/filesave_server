@@ -1,4 +1,8 @@
-"""Валидация для менеджера БД."""
+"""Валидация для менеджера БД.
+
+Funcs:
+    get_valid_username_filter: Получить валидный фильтр по имени пользователя.
+"""
 
 from fastapi import HTTPException, status
 
@@ -7,7 +11,7 @@ from app.api.utils.validation import isvalid_username_filter
 
 # получение валидных полей моделей
 def get_valid_username_filter(username: str | None) -> str | None:
-    """Получить валидный фильтр по имени поьзователя.
+    """Получить валидный фильтр по имени пользователя.
 
     Args:
         username (str | None): Имя пользователя.

@@ -1,4 +1,8 @@
-"""Роутер под API аутентификации-авторизации."""
+"""Роутер под API аутентификации-авторизации.
+
+Contains:
+    router: Роутер API аутентификации-авторизации.
+"""
 
 from fastapi import APIRouter, HTTPException, status
 
@@ -18,6 +22,7 @@ async def login_for_access_token(form_data: GetValidLoginData) -> Token:
 
     Args:
         form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
+            Зависимость.
 
     Raises:
         HTTPException: (401) Неправильный логин или пароль.
@@ -42,7 +47,7 @@ async def register_for_access_token(reg_data: GetValidRegData) -> Token:
 
     Args:
         reg_data (GetRegFormDataDep): Данные формы для аутентификации по
-            паролю.
+            паролю. Зависимость.
     
     Raises:
         HTTPException: (403) Пользователь с таким логином уже существует.
@@ -65,7 +70,7 @@ async def get_user_info(user: GetCurrentUserDep) -> UserPublic:
     """Получить информацию о пользователе.
 
     Args:
-        user (GetCurrentUserDep): Пользователь.
+        user (GetCurrentUserDep): Пользователь. Зависимость.
 
     Returns:
         UserPublic: Публичная информация о пользователе.
