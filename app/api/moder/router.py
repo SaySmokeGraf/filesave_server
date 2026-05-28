@@ -9,6 +9,7 @@ from app.api.auth.managers import (
     PagedUsersPublic, PaginationParams, UsersFilterParams, UserUpdateRights
 )
 from app.api.files.utils.file_utils import delete_user_directory
+from app.api.moder.dependencies import GetAllowedUsernameDep
 
 
 router = APIRouter(dependencies=[CheckModeratorDepends])
@@ -29,33 +30,20 @@ async def get_users(pagination: PaginationParams = Depends(),
     return user_manager.get_users(pagination, filters)
 
 @router.delete('/users/delete')
-async def delete_user(username: str) -> JSONResponse:
+async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
     """Удалить пользователя.
 
     Args:
-        username (str): Имя пользователя.
+        username (GetAllowedUsernameDep): Имя пользователя.
 
     Raises:
-        HTTPException: (404) Пользователь с таким именем не найден.
-        HTTPException: (403) Попытка модератора удалить другого модератора.
         HTTPException: (409) Нет доступа для удаления (например, сервис в
-            занял папку пользователя для обработки в данный момент).
+            данный момент занял папку пользователя для какой-либо обработки).
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
     user = user_manager.get_user(username)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='User not found'
-        )
-    if user.is_moderator:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail='Moderator has no permission to delete another moderator'
-        )
-    
     try:
         delete_user_directory(user.dir_name)
     except PermissionError:
@@ -70,33 +58,17 @@ async def delete_user(username: str) -> JSONResponse:
     )
 
 @router.patch('/users/update')
-async def update_user_rights(username: str,
+async def update_user_rights(username: GetAllowedUsernameDep,
                              user_rights: UserUpdateRights) -> JSONResponse:
     """Обновить права доступа пользователя.
 
     Args:
-        username (str): Имя пользователя.
+        username (GetAllowedUsernameDep): Имя пользователя.
         user_rights (UserUpdateRights): Обновления прав пользователя.
-
-    Raises:
-        HTTPException: (404) Пользователь с таким именем не найден.
-        HTTPException: (403) Попытка модератора изменить другого модератора.
 
     Returns:
         JSONResponse: Ответ об успешном выполнении.
     """
-    user = user_manager.get_user(username)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='User not found'
-        )
-    if user.is_moderator:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail='Moderator has no permission to update another moderator'
-        )
-    
     updated_user = user_manager.update_user_rights(username, user_rights)
     return JSONResponse(
         content={'message': f'User {updated_user.username} updated successfully!'}
