@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, JSONResponse
 from filetype import guess_mime
 
+import app.api.files._swagger_docs as swdocs
 from app.api.auth.dependencies import GetUserDirectoryDep, CheckUserDepends
 from app.api.files.dependencies import SingleFileDep
 from app.api.files.models import (
@@ -19,11 +20,12 @@ from app.api.files.utils.file_utils import (
 )
 
 
-router = APIRouter()
+router = APIRouter(**swdocs.router.docs_dump())
 create_storage_directory()
 
 
-@router.get('/', response_model=list[FileInfoShort])
+@router.get('/', response_model=list[FileInfoShort],
+            **swdocs.get_files_data.docs_dump())
 async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
@@ -42,7 +44,7 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
         ))
     return resp
 
-@router.get('/file-info')
+@router.get('/file-info', **swdocs.get_file_info.docs_dump())
 async def get_file_info(filename: str,
                         user_dir: GetUserDirectoryDep) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
@@ -71,7 +73,8 @@ async def get_file_info(filename: str,
                            atime=file_stats.st_atime,
                            mtime=file_stats.st_mtime)
 
-@router.get('/storage-info', dependencies=[CheckUserDepends])
+@router.get('/storage-info', dependencies=[CheckUserDepends],
+            **swdocs.get_storage_info.docs_dump())
 async def get_storage_info() -> StorageUsageInfo:
     """Получить информацию об использовании места хранилища.
 
@@ -80,7 +83,7 @@ async def get_storage_info() -> StorageUsageInfo:
     """
     return get_storage_usage_info()
 
-@router.get('/download')
+@router.get('/download', **swdocs.download_file.docs_dump())
 async def download_file(filename: str,
                         user_dir: GetUserDirectoryDep) -> FileResponse:
     """Скачать файл.
@@ -104,7 +107,7 @@ async def download_file(filename: str,
         )
     return FileResponse(path=file_path, filename=filename)
 
-@router.post('/upload/single')
+@router.post('/upload/single', **swdocs.upload_single_file.docs_dump())
 async def upload_single_file(file: SingleFileDep,
                              user_dir: GetUserDirectoryDep,
                              overwrite: bool | None = None) -> JSONResponse:
@@ -132,7 +135,7 @@ async def upload_single_file(file: SingleFileDep,
         content={'message': f'File {file.filename} uploaded successfully!'}
     )
 
-@router.delete('/delete')
+@router.delete('/delete', **swdocs.delete_file.docs_dump())
 async def delete_file(filename: str,
                       user_dir: GetUserDirectoryDep) -> JSONResponse:
     """Удалить файл с сервера.

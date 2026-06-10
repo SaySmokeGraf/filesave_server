@@ -7,6 +7,7 @@ Contains:
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 
+import app.api.moder._swagger_docs as swdocs
 from app.api.auth.dependencies import CheckModeratorDepends
 from app.api.auth.managers import user_manager
 from app.api.auth.managers import (
@@ -16,10 +17,12 @@ from app.api.files.utils.file_utils import delete_user_directory
 from app.api.moder.dependencies import GetAllowedUsernameDep
 
 
-router = APIRouter(dependencies=[CheckModeratorDepends])
+router = APIRouter(dependencies=[CheckModeratorDepends],
+                   **swdocs.router.docs_dump())
 
 
-@router.get('/users', response_model=PagedUsersPublic)
+@router.get('/users', response_model=PagedUsersPublic,
+            **swdocs.get_users.docs_dump())
 async def get_users(pagination: PaginationParams = Depends(),
                 filters: UsersFilterParams = Depends()) -> PagedUsersPublic:
     """Получить страницу из списка пользователей.
@@ -35,7 +38,7 @@ async def get_users(pagination: PaginationParams = Depends(),
     """
     return user_manager.get_users(pagination, filters)
 
-@router.delete('/users/delete')
+@router.delete('/users/delete', **swdocs.delete_user.docs_dump())
 async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
     """Удалить пользователя.
 
@@ -63,7 +66,7 @@ async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
         content={'message': f'User {deleted_user.username} deleted successfully!'}
     )
 
-@router.patch('/users/update')
+@router.patch('/users/update', **swdocs.update_user_rights.docs_dump())
 async def update_user_rights(username: GetAllowedUsernameDep,
                              user_rights: UserUpdateRights) -> JSONResponse:
     """Обновить права доступа пользователя.
