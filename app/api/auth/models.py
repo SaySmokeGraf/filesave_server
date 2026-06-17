@@ -29,10 +29,10 @@ class Token(BaseModel):
         access_token (str): Токен.
         token_type (str): Тип токена.
     """
-    model_config = swdocs.model_token.docs_dump()
+    model_config = swdocs.models.token.docs_dump()
 
-    access_token: str = Field(**swdocs.field_access_token.docs_dump())
-    token_type: str = Field(**swdocs.field_token_type.docs_dump())
+    access_token: str = Field(**swdocs.fields.access_token.docs_dump())
+    token_type: str = Field(**swdocs.fields.token_type.docs_dump())
 
 
 class TokenData(BaseModel):

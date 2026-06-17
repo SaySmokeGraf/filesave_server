@@ -21,7 +21,7 @@ router.include_router(files_router, prefix='/files')
 router.include_router(moder_router, prefix='/moder')
 
 
-@router.get('/', **swdocs.get_root.docs_dump())
+@router.get('/', **swdocs.endpoints.get_root.docs_dump())
 async def get_root() -> RedirectResponse:
     """Получить главное окно сервиса.
 

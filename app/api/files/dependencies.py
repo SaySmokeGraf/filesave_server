@@ -22,7 +22,7 @@ from app.api.files.utils.validation import (
 # зависимости в формате функций
 async def validate_single_file(
     file: UploadFile,
-    rename: bool = Query(default=False, **swdocs.query_rename.docs_dump())
+    rename: bool = Query(default=False, **swdocs.params.rename.docs_dump())
 ) -> UploadFile:
     """Проверить один файл на соответствие требованиям сервиса.
 

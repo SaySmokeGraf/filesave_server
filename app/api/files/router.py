@@ -25,7 +25,7 @@ create_storage_directory()
 
 
 @router.get('/', response_model=list[FileInfoShort],
-            **swdocs.get_files_data.docs_dump())
+            **swdocs.endpoints.get_files_data.docs_dump())
 async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
@@ -44,10 +44,10 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
         ))
     return resp
 
-@router.get('/file-info', **swdocs.get_file_info.docs_dump())
+@router.get('/file-info', **swdocs.endpoints.get_file_info.docs_dump())
 async def get_file_info(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.field_filename.docs_dump())
+    filename: str = Query(**swdocs.params.filename.docs_dump())
 ) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
 
@@ -76,7 +76,7 @@ async def get_file_info(
                            mtime=file_stats.st_mtime)
 
 @router.get('/storage-info', dependencies=[CheckUserDepends],
-            **swdocs.get_storage_info.docs_dump())
+            **swdocs.endpoints.get_storage_info.docs_dump())
 async def get_storage_info() -> StorageUsageInfo:
     """Получить информацию об использовании места хранилища.
 
@@ -85,10 +85,10 @@ async def get_storage_info() -> StorageUsageInfo:
     """
     return get_storage_usage_info()
 
-@router.get('/download', **swdocs.download_file.docs_dump())
+@router.get('/download', **swdocs.endpoints.download_file.docs_dump())
 async def download_file(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.field_filename.docs_dump())
+    filename: str = Query(**swdocs.params.filename.docs_dump())
 ) -> FileResponse:
     """Скачать файл.
 
@@ -111,12 +111,13 @@ async def download_file(
         )
     return FileResponse(path=file_path, filename=filename)
 
-@router.post('/upload/single', **swdocs.upload_single_file.docs_dump())
+@router.post('/upload/single',
+             **swdocs.endpoints.upload_single_file.docs_dump())
 async def upload_single_file(
     file: SingleFileDep,
     user_dir: GetUserDirectoryDep,
     overwrite: bool | None = Query(
-        default=None, **swdocs.query_overwrite.docs_dump()
+        default=None, **swdocs.params.overwrite.docs_dump()
     )
 ) -> JSONResponse:
     """Загрузить на сервер один файл.
@@ -143,10 +144,10 @@ async def upload_single_file(
         content={'message': f'File {file.filename} uploaded successfully!'}
     )
 
-@router.delete('/delete', **swdocs.delete_file.docs_dump())
+@router.delete('/delete', **swdocs.endpoints.delete_file.docs_dump())
 async def delete_file(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.field_filename.docs_dump())
+    filename: str = Query(**swdocs.params.filename.docs_dump())
 ) -> JSONResponse:
     """Удалить файл с сервера.
 

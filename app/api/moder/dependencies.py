@@ -22,7 +22,7 @@ from app.api.utils.validation import isvalid_username
 
 # зависимости и их компактные записи для объявления через аннотирование
 async def get_valid_username(
-    username: str = Query(**swdocs.query_username.docs_dump())
+    username: str = Query(**swdocs.params.username.docs_dump())
 ) -> str:
     """Получить валидное имя пользователя.
 

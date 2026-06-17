@@ -1,11 +1,10 @@
-"""Документация для отображения в OpenAPI (Swagger) для пакета api."""
+"""Документация для эндпоинтов."""
 
 from fastapi import status
 
 from app.api.utils.swagger_docs.models import EndpointDocsParams
 
 
-# эндпоинты
 get_root = EndpointDocsParams(
     status_code=status.HTTP_308_PERMANENT_REDIRECT,
     tags=['common'],

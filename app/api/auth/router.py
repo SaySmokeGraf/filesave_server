@@ -17,7 +17,8 @@ from app.api.auth.models import Token
 router = APIRouter(**swdocs.router.docs_dump())
 
 
-@router.post('/token', response_model=Token, **swdocs.login.docs_dump())
+@router.post('/token', response_model=Token,
+             **swdocs.endpoints.login.docs_dump())
 async def login(form_data: GetValidLoginData) -> Token:
     """Вход пользователя.
 
@@ -42,7 +43,8 @@ async def login(form_data: GetValidLoginData) -> Token:
     access_token = token_manager.create_token(data={'sub': user.username})
     return Token(access_token=access_token, token_type='bearer')
 
-@router.post('/register', response_model=Token, **swdocs.register.docs_dump())
+@router.post('/register', response_model=Token,
+             **swdocs.endpoints.register.docs_dump())
 async def register(reg_data: GetValidRegData) -> Token:
     """Регистрация пользователя.
 
@@ -67,7 +69,7 @@ async def register(reg_data: GetValidRegData) -> Token:
     return Token(access_token=access_token, token_type='bearer')
 
 @router.get('/user-info', response_model=UserPublic,
-            **swdocs.get_user_info.docs_dump())
+            **swdocs.endpoints.get_user_info.docs_dump())
 async def get_user_info(user: GetCurrentUserDep) -> UserPublic:
     """Получить информацию о пользователе.
 

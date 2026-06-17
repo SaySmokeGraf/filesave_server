@@ -1,53 +1,12 @@
-"""Документация для отображения в OpenAPI (Swagger) для пакета moder."""
+"""Документация для эндпоинтов."""
 
 from fastapi import status
 
+import app.api.moder._swagger_docs._responses as _resps
 import app.api.utils.swagger_docs.common as swcommon
-from app.api.utils.swagger_docs.models import (
-    FieldDocsParams,
-    EndpointDocsParams, ResponseDocsParams, RouterDocsParams
-)
+from app.api.utils.swagger_docs.models import EndpointDocsParams
 
 
-# параметры
-query_username = FieldDocsParams(
-    title='Имя пользователя',
-    description='Имя пользователя.'
-)
-
-_BODY_UPDATE_RIGHTS_DESC = """
-Модель обновления прав доступа пользователя.
-
-Схема: UserUpdateRights.
-"""
-body_update_rights = FieldDocsParams(
-    title='Обновление прав пользователя',
-    description=_BODY_UPDATE_RIGHTS_DESC
-)
-
-
-# ответы
-_RESP_200_PAGE_DESC = """
-Страница из списка пользователей.
-
-Схема: PagedUsersPublic.
-"""
-_resp_200_page = ResponseDocsParams(
-    description=_RESP_200_PAGE_DESC
-)
-
-
-# роутеры
-router = RouterDocsParams(
-    tags=['moderation'],
-    responses={
-        401: swcommon.resp_401_token.docs_dump(),
-        422: swcommon.resp_422_validation.docs_dump()
-    }
-)
-
-
-# эндпоинты
 _GET_USERS_DESC = """
 Получить страницу из списка пользователей.
 
@@ -60,7 +19,7 @@ get_users = EndpointDocsParams(
     summary='Получить список пользователей',
     description=_GET_USERS_DESC,
     responses={
-        200: _resp_200_page.docs_dump(),
+        200: _resps.s200_page.docs_dump(),
         403: swcommon.resp_403_moder.docs_dump()
     }
 )
@@ -90,7 +49,7 @@ _UPDATE_USER_RIGHTS_DESC = """
 Требуется авторизационный заголовок с токеном типа Bearer пользователя с
 правами модератора.
 """
-update_user_rights = EndpointDocsParams(
+update_user = EndpointDocsParams(
     status_code=status.HTTP_200_OK,
     summary='Обновить права доступа пользователя',
     description=_UPDATE_USER_RIGHTS_DESC,
