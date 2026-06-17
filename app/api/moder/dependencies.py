@@ -5,7 +5,6 @@ Dependencies:
     get_allowed_username: Проверки имени пользователя на допустимость
         проведения модерации над ним.
 
-
 AnnotatedDeps:
     GetValidUsername (str): Проверка имени пользователя на валидность.
     GetAllowedUsernameDep (str): Проверки имени пользователя на допустимость

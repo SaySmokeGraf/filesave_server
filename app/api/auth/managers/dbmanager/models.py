@@ -14,7 +14,7 @@ Models:
 """
 
 from __future__ import annotations
-from typing import Annotated, Any
+from typing import Any
 
 from fastapi import Query
 from pydantic import BaseModel, Field as PydField, field_validator

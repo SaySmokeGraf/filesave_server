@@ -23,8 +23,10 @@ router = APIRouter(dependencies=[CheckModeratorDepends],
 
 @router.get('/users', response_model=PagedUsersPublic,
             **swdocs.get_users.docs_dump())
-async def get_users(pagination: PaginationParams = Depends(),
-                filters: UsersFilterParams = Depends()) -> PagedUsersPublic:
+async def get_users(
+    pagination: PaginationParams = Depends(),
+    filters: UsersFilterParams = Depends()
+) -> PagedUsersPublic:
     """Получить страницу из списка пользователей.
 
     Args:

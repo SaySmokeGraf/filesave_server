@@ -1,19 +1,19 @@
 """Модуль с объектами для OpenAPI (Swagger) документации.
 
-Contains:
+DataTypes:
     ResponsesDict: Тип данных для обозначения словаря, описывающего ответы.
     JSONLikeDict: Тип данных JSON-подобных словарей.
 
 Models:
+    EndpointDocsParams: Параметры документирования эндпоинта.
     FieldDocsParams: Параметры документирования поля модели или параметра
         эндпоинта.
-    EndpointDocsParams: Параметры документирования эндпоинта.
-    ResponseDocsParams: Параметры документирования ответа.
     HeaderDocsParams: Параметры документирования заголовка.
-    RouterDocsParams: Параметры документирования роутера.
+    ModelDocsParams: Параметры документирования модели.
     ModelJSONSchemaParams: Параметры дополнительной JSON-схемы документирования
         модели.
-    ModelDocsParams: Параметры документирования модели.
+    ResponseDocsParams: Параметры документирования ответа.
+    RouterDocsParams: Параметры документирования роутера.
 """
 
 from typing import Any, Literal
@@ -21,10 +21,12 @@ from typing import Any, Literal
 from pydantic import BaseModel
 
 
+# вспопомгательные типы данных
 ResponsesDict = dict[int | str, dict[str, Any]]
 JSONLikeDict = dict[str, dict[str, Any]]
 
 
+# основные классы документации
 class _AbstractDocsParams(BaseModel):
     """Абстрактная модель параметров документирования.
 

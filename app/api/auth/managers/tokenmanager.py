@@ -47,8 +47,9 @@ class TokenManager:
         finally:
             file.close()
 
-    def create_token(self, data: dict,
-                     expires_delta: timedelta | None = None) -> str:
+    def create_token(
+        self, data: dict, expires_delta: timedelta | None = None
+    ) -> str:
         """Создать токен.
 
         Args:

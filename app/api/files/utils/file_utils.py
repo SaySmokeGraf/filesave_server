@@ -84,8 +84,9 @@ def set_unique_filename(file: UploadFile, directory_path: Path) -> None:
         cnt += 1
     file.filename = nowname
 
-def write_uploadfile(file: UploadFile, directory_path: Path,
-                     overwrite: bool | None = None) -> None:
+def write_uploadfile(
+    file: UploadFile, directory_path: Path, overwrite: bool | None = None
+) -> None:
     """Записать UploadFile в файл.
 
     Args:

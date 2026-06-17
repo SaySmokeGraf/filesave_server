@@ -45,8 +45,9 @@ class DBManager:
         """Создать БД и таблицы, если нужно."""
         SQLModel.metadata.create_all(self._engine)
     
-    def get_users(self, pagination: PaginationParams,
-                  filters: UsersFilterParams) -> PagedUsers:
+    def get_users(
+        self, pagination: PaginationParams, filters: UsersFilterParams
+    ) -> PagedUsers:
         """Получить страницу из списка пользователей.
 
         Args:
@@ -129,8 +130,9 @@ class DBManager:
             session.commit()
         return user
     
-    def update_user_rights(self, username: str,
-                           user_rights: UserUpdateRights) -> User | None:
+    def update_user_rights(
+        self, username: str, user_rights: UserUpdateRights
+    ) -> User | None:
         """Обновить права доступа пользователя в БД.
 
         Args:

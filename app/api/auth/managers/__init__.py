@@ -15,8 +15,8 @@ Models:
 """
 
 from app.api.auth.managers.dbmanager import (
-    PagedUsersPublic, UserPublic, PaginationParams, UsersFilterParams,
-    UserUpdateRights
+    PagedUsersPublic, UserPublic, UserUpdateRights,
+    PaginationParams, UsersFilterParams
 )
 from app.api.auth.managers.tokenmanager import TokenManager
 from app.api.auth.managers.usermanager import UserManager

@@ -52,8 +52,9 @@ class UserManager:
             return None
         return UserPublic.model_validate(user)
     
-    def authenticate_user(self, username: str,
-                          password: str) -> UserPublic | None:
+    def authenticate_user(
+        self, username: str, password: str
+    ) -> UserPublic | None:
         """Аутентифицировать пользователя по логину и паролю.
 
         Args:
@@ -72,8 +73,9 @@ class UserManager:
             return None
         return UserPublic.model_validate(user)
     
-    def get_users(self, pagination: PaginationParams,
-                  filters: UsersFilterParams) -> PagedUsersPublic:
+    def get_users(
+        self, pagination: PaginationParams, filters: UsersFilterParams
+    ) -> PagedUsersPublic:
         """Получить страницу из списка пользователей.
 
         Args:
@@ -137,8 +139,9 @@ class UserManager:
         user = self._db_manager.delete_user(username)
         return self._convert_public(user)
     
-    def update_user_rights(self, username: str,
-                           user_rights: UserUpdateRights) -> UserPublic | None:
+    def update_user_rights(
+        self, username: str, user_rights: UserUpdateRights
+    ) -> UserPublic | None:
         """Обновить права доступа пользователя.
 
         Args:
