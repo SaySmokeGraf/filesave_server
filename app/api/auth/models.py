@@ -6,7 +6,9 @@ Models:
     TokenData: Модель данных из токена.
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+import app.api.auth._swagger_docs as swdocs
 
 
 class AuthFormData(BaseModel):
@@ -27,8 +29,10 @@ class Token(BaseModel):
         access_token (str): Токен.
         token_type (str): Тип токена.
     """
-    access_token: str
-    token_type: str
+    model_config = swdocs.model_token.docs_dump()
+
+    access_token: str = Field(**swdocs.field_access_token.docs_dump())
+    token_type: str = Field(**swdocs.field_token_type.docs_dump())
 
 
 class TokenData(BaseModel):

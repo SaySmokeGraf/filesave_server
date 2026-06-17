@@ -4,6 +4,7 @@ from fastapi import status
 
 import app.api.utils.swagger_docs.common as swcommon
 from app.api.utils.swagger_docs.models import (
+    ModelDocsParams, ModelJSONSchemaParams, FieldDocsParams,
     EndpointDocsParams, ResponseDocsParams, RouterDocsParams
 )
 
@@ -14,6 +15,41 @@ _RESP_2XX_TOKEN_DESC = """
 
 Схема: Token.
 """
+
+
+# JSON-схемы моделей
+_TOKEN_DESC = """
+Модель токена.
+
+Содержит в себе непосредственно токен и его тип.
+"""
+_json_schema_token = ModelJSONSchemaParams(
+    description=_TOKEN_DESC,
+    examples=[
+        {'access_token': 'someAC.CESStoken.JWT', 'token_type': 'bearer'}
+    ]
+)
+
+
+# модели
+model_token = ModelDocsParams(
+    title='Token: Токен',
+    json_schema_extra=_json_schema_token.docs_dump()
+)
+
+
+# поля
+field_access_token = FieldDocsParams(
+    title='Токен',
+    description='Токен.',
+    examples=['someAC.CESStoken.JWT', 's0meotH3r.ACC3ssT0K3N.B3Ar3rJWT']
+)
+
+field_token_type = FieldDocsParams(
+    title='Тип токена',
+    description='Тип токена.',
+    examples=['bearer']
+)
 
 
 # ответы
@@ -114,10 +150,15 @@ register = EndpointDocsParams(
     }
 )
 
+_GET_USER_INFO_DESC = """
+Получить публичную информацию о пользователе по его токену.
+
+Требуется валидный токен в соответствующем заголовке.
+"""
 get_user_info = EndpointDocsParams(
     status_code=status.HTTP_200_OK,
     summary='Информация о пользователе',
-    description='Получить публичную информацию о пользователе по его токену.',
+    description=_GET_USER_INFO_DESC,
     responses={
         200: _resp_200_user_info.docs_dump(),
         401: swcommon.resp_401_token.docs_dump()

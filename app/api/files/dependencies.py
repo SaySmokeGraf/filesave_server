@@ -11,16 +11,19 @@ AnnotatedDeps:
 
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, UploadFile
+from fastapi import Depends, HTTPException, Query, status, UploadFile
 
+import app.api.files._swagger_docs as swdocs
 from app.api.files.utils.validation import (
     isvalid_file_size, isvalid_filename, normalize_filename
 )
 
 
 # зависимости в формате функций
-async def validate_single_file(file: UploadFile,
-                               rename: bool = False) -> UploadFile:
+async def validate_single_file(
+    file: UploadFile,
+    rename: bool = Query(default=False, **swdocs.query_rename.docs_dump())
+) -> UploadFile:
     """Проверить один файл на соответствие требованиям сервиса.
 
     Args:

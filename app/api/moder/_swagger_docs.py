@@ -4,7 +4,25 @@ from fastapi import status
 
 import app.api.utils.swagger_docs.common as swcommon
 from app.api.utils.swagger_docs.models import (
+    FieldDocsParams,
     EndpointDocsParams, ResponseDocsParams, RouterDocsParams
+)
+
+
+# параметры
+query_username = FieldDocsParams(
+    title='Имя пользователя',
+    description='Имя пользователя.'
+)
+
+_BODY_UPDATE_RIGHTS_DESC = """
+Модель обновления прав доступа пользователя.
+
+Схема: UserUpdateRights.
+"""
+body_update_rights = FieldDocsParams(
+    title='Обновление прав пользователя',
+    description=_BODY_UPDATE_RIGHTS_DESC
 )
 
 

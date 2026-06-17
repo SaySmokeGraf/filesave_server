@@ -4,7 +4,130 @@ from fastapi import status
 
 import app.api.utils.swagger_docs.common as swcommon
 from app.api.utils.swagger_docs.models import (
+    ModelDocsParams, ModelJSONSchemaParams, FieldDocsParams,
     EndpointDocsParams, HeaderDocsParams, ResponseDocsParams, RouterDocsParams
+)
+
+
+# JSON-схемы моделей
+_json_schema_short_info = ModelJSONSchemaParams(
+    description='Краткая информация о файле.',
+    examples=[
+        {'filename': 'example.txt', 'size': 556}
+    ]
+)
+
+_json_schema_verbose_info = ModelJSONSchemaParams(
+    description='Подробная информация о файле.',
+    examples=[
+        {'filename': 'example.txt', 'size': 556, 'content_type': 'text',
+         'atime': 1645557742.0, 'mtime': 1320995471.0}
+    ]
+)
+
+_json_schema_storage = ModelJSONSchemaParams(
+    description='Информация об использовании хранилища.',
+    examples=[
+        {'used': 10 << 30, 'free': 100 << 30}
+    ]
+)
+
+
+# модели
+model_short_info = ModelDocsParams(
+    title='FileInfoShort: Краткая информация о файле',
+    json_schema_extra=_json_schema_short_info.docs_dump()
+)
+
+model_verbose_info = ModelDocsParams(
+    title='FileInfoVerbose: Подробная информация о файле',
+    json_schema_extra=_json_schema_verbose_info.docs_dump()
+)
+
+model_storage = ModelDocsParams(
+    title='StorageUsageInfo: Использование хранилища',
+    json_schema_extra=_json_schema_storage.docs_dump()
+)
+
+
+# поля
+field_filename = FieldDocsParams(
+    title='Имя файла',
+    description='Имя файла в формате <стэм>.<расширение>.',
+    examples=['text.txt', 'stem.suffix', 'abc123.abc123']
+)
+
+field_size = FieldDocsParams(
+    title='Размер файла',
+    description='Размер файла в байтах.',
+    examples=[0, 123456, 10 << 30]
+)
+
+_FIELD_CONTENT_TYPE_DESC = """
+MIME-тип содержимого или null в случае невозможности определения.
+"""
+field_content_type = FieldDocsParams(
+    title='MIME-тип',
+    description=_FIELD_CONTENT_TYPE_DESC,
+    examples=['image/jpeg', 'video/mp4', None]
+)
+
+_FIELD_ATIME_DESC = """
+Время последнего доступа к файлу в формате Epoch Unix Timestamp.
+"""
+field_atime = FieldDocsParams(
+    title='Время последнего доступа',
+    description=_FIELD_ATIME_DESC,
+    examples=[1645557742.0, 1320995471.0, 981493200.0]
+)
+
+_FIELD_MTIME_DESC = """
+Время последнего изменения файла в формате Epoch Unix Timestamp.
+"""
+field_mtime = FieldDocsParams(
+    title='Время последнего изменения',
+    description=_FIELD_MTIME_DESC,
+    examples=[1645557742.0, 1320995471.0, 981493200.0]
+)
+
+field_used = FieldDocsParams(
+    title='Использованное место',
+    description='Использованное место на диске в байтах.',
+    examples=[0, 123456, 10 << 30]
+)
+
+field_free = FieldDocsParams(
+    title='Свободное место',
+    description='Свободное место на диске в байтах.',
+    examples=[0, 123456, 10 << 30]
+)
+
+
+# параметры
+_QUERY_OVERWRITE_DESC = """
+Флаг перезаписи файла в случае наличия файла с таким же именем в хранилище.
+
+Значения: true - перезаписать, false - создать уникальное имя с помощью
+суффикса с номером, null (отсутствие инструкций) - откинуть ошибку.
+
+По умолчанию null.
+"""
+query_overwrite = FieldDocsParams(
+    title='Флаг перезаписи файла',
+    description=_QUERY_OVERWRITE_DESC
+)
+
+_QUERY_RENAME_DESC = """
+Флаг переименования файла в случае небезопасного имени.
+
+При значении false вызывает ошибку в случае небезопасного имени. При true -
+автоматически переименовывает на безопасное имя по необходимости.
+
+По умолчанию false.
+"""
+query_rename = FieldDocsParams(
+    title='Флаг переименования файла',
+    description=_QUERY_RENAME_DESC
 )
 
 

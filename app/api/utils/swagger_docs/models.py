@@ -11,9 +11,12 @@ Models:
     ResponseDocsParams: Параметры документирования ответа.
     HeaderDocsParams: Параметры документирования заголовка.
     RouterDocsParams: Параметры документирования роутера.
+    ModelJSONSchemaParams: Параметры дополнительной JSON-схемы документирования
+        модели.
+    ModelDocsParams: Параметры документирования модели.
 """
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -35,13 +38,13 @@ class _AbstractDocsParams(BaseModel):
     def docs_dump(self) -> dict[str, Any]:
         """Дамп параметров документации в виде словаря.
 
-        Исключает параметры, имеющие значения None. По сути представляет собой
-        model_dump с exclude_none=True.
+        Исключает незаданные параметры. По сути представляет собой model_dump с
+        exclude_unset=True.
 
         Returns:
             dict[str, Any]: Словарь параметров документации.
         """
-        return self.model_dump(exclude_none=True)
+        return self.model_dump(exclude_unset=True)
 
 
 class FieldDocsParams(_AbstractDocsParams):
@@ -53,10 +56,12 @@ class FieldDocsParams(_AbstractDocsParams):
     Params:
         title (str | None): Имя поля. По умолчанию None.
         description (str | None): Описание поля. По умолчанию None.
-        examples (list | None): Примеры значений поля. По умолчанию None.
+        examples (list[Any] | None): Примеры значений поля. По умолчанию None.
         openapi_examples (list | None): Примеры значений поля в OpenAPI
             стилистике. По умолчанию None.
         deprecated (bool | None): Флаг устаревшести. По умолчанию None.
+        include_in_schema (bool | None): Флаг добавления в Swagger (OpenAPI)
+            документацию. По умолчанию None.
     
     Methods:
         docs_dump: Дамп параметров документации.
@@ -64,9 +69,42 @@ class FieldDocsParams(_AbstractDocsParams):
 
     title: str | None = None
     description: str | None = None
-    examples: list | None = None
+    examples: list[Any] | None = None
     openapi_examples: list | None = None
     deprecated: bool | None = None
+    include_in_schema: bool | None = None
+
+
+class ModelJSONSchemaParams(_AbstractDocsParams):
+    """Параметры дополнительной JSON-схемы документирования модели.
+    
+    Значение None параметра означает отсутствие документации по этому
+    параметру.
+
+    Params:
+        description (str | None): Описание. По умолчанию None.
+        examples (list[dict[str, Any]] | None): Примеры. По умолчанию None.
+    """
+    description: str | None = None
+    examples: list[dict[str, Any]] | None = None
+
+
+class ModelDocsParams(_AbstractDocsParams):
+    """Параметры документирования модели.
+    
+    Значение None параметра означает отсутствие документации по этому
+    параметру.
+
+    Params:
+        title (str | None): Краткое описание. По умолчанию None.
+        json_schema_extra (dict[str, Any] | None): Дополнительная JSON-схема
+            документирования модели. По умолчанию None.
+        extra (Literal['forbid'] | None): Параметр запрета дополнительных
+            полей модели. По умолчанию None.
+    """
+    title: str | None = None
+    json_schema_extra: dict[str, Any] | None = None
+    extra: Literal['forbid'] | None = None
 
 
 class EndpointDocsParams(_AbstractDocsParams):
@@ -149,14 +187,13 @@ class HeaderDocsParams(_AbstractDocsParams):
     def docs_dump(self) -> dict[str, Any]:
         """Дамп параметров документации в виде словаря.
 
-        Заменяет параметр schema_ на schema. Исключает параметры, имеющие
-        значения None. По сути представляет собой model_dump с
-        exclude_none=True.
+        Заменяет параметр schema_ на schema. Исключает незаданные параметры. По
+        сути представляет собой model_dump с exclude_unset=True.
 
         Returns:
             dict[str, Any]: Словарь параметров документации.
         """
-        dump = self.model_dump(exclude_none=True)
+        dump = self.model_dump(exclude_unset=True)
         dump['schema'] = dump['schema_']
         del dump['schema_']
         return dump

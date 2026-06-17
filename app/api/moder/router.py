@@ -4,7 +4,7 @@ Contains:
     router: Роутер API модерирования.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 
 import app.api.moder._swagger_docs as swdocs
@@ -67,8 +67,10 @@ async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
     )
 
 @router.patch('/users/update', **swdocs.update_user_rights.docs_dump())
-async def update_user_rights(username: GetAllowedUsernameDep,
-                             user_rights: UserUpdateRights) -> JSONResponse:
+async def update_user_rights(
+    username: GetAllowedUsernameDep,
+    user_rights: UserUpdateRights = Body(**swdocs.body_update_rights.docs_dump())
+) -> JSONResponse:
     """Обновить права доступа пользователя.
 
     Args:

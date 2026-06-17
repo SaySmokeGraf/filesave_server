@@ -4,7 +4,7 @@ Contains:
     router: Роутер файлового API.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 from fastapi.responses import FileResponse, JSONResponse
 from filetype import guess_mime
 
@@ -45,13 +45,15 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
     return resp
 
 @router.get('/file-info', **swdocs.get_file_info.docs_dump())
-async def get_file_info(filename: str,
-                        user_dir: GetUserDirectoryDep) -> FileInfoVerbose:
+async def get_file_info(
+    user_dir: GetUserDirectoryDep,
+    filename: str = Query(**swdocs.field_filename.docs_dump())
+) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
 
     Args:
-        filename (str): Имя файла.
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        filename (str): Имя файла.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -84,13 +86,15 @@ async def get_storage_info() -> StorageUsageInfo:
     return get_storage_usage_info()
 
 @router.get('/download', **swdocs.download_file.docs_dump())
-async def download_file(filename: str,
-                        user_dir: GetUserDirectoryDep) -> FileResponse:
+async def download_file(
+    user_dir: GetUserDirectoryDep,
+    filename: str = Query(**swdocs.field_filename.docs_dump())
+) -> FileResponse:
     """Скачать файл.
 
     Args:
-        filename (str): Имя файла.
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        filename (str): Имя файла.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -108,9 +112,13 @@ async def download_file(filename: str,
     return FileResponse(path=file_path, filename=filename)
 
 @router.post('/upload/single', **swdocs.upload_single_file.docs_dump())
-async def upload_single_file(file: SingleFileDep,
-                             user_dir: GetUserDirectoryDep,
-                             overwrite: bool | None = None) -> JSONResponse:
+async def upload_single_file(
+    file: SingleFileDep,
+    user_dir: GetUserDirectoryDep,
+    overwrite: bool | None = Query(
+        default=None, **swdocs.query_overwrite.docs_dump()
+    )
+) -> JSONResponse:
     """Загрузить на сервер один файл.
 
     Args:
@@ -136,13 +144,15 @@ async def upload_single_file(file: SingleFileDep,
     )
 
 @router.delete('/delete', **swdocs.delete_file.docs_dump())
-async def delete_file(filename: str,
-                      user_dir: GetUserDirectoryDep) -> JSONResponse:
+async def delete_file(
+    user_dir: GetUserDirectoryDep,
+    filename: str = Query(**swdocs.field_filename.docs_dump())
+) -> JSONResponse:
     """Удалить файл с сервера.
 
     Args:
-        filename (str): Имя файла.
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        filename (str): Имя файла.
 
     Raises:
         HTTPException: (404) Файл не найден.

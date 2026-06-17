@@ -14,14 +14,17 @@ AnnotatedDeps:
 
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Query, status
 
+import app.api.moder._swagger_docs as swdocs
 from app.api.auth.managers import user_manager
 from app.api.utils.validation import isvalid_username
 
 
 # зависимости и их компактные записи для объявления через аннотирование
-async def get_valid_username(username: str) -> str:
+async def get_valid_username(
+    username: str = Query(**swdocs.query_username.docs_dump())
+) -> str:
     """Получить валидное имя пользователя.
 
     Args:

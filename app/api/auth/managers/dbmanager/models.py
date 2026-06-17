@@ -14,12 +14,13 @@ Models:
 """
 
 from __future__ import annotations
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import Query
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field as PydField, field_validator
 from sqlmodel import col, Field, SQLModel
 
+import app.api.auth.managers.dbmanager._swagger_docs as swdocs
 from app.api.auth.managers.dbmanager.validation import (
     get_valid_username_filter,
 )
@@ -71,10 +72,13 @@ class UserPublic(AbstractUser):
     Properties:
         dir_name (str): Имя папки пользователя.
     """
-    id: int
-    is_verified: bool
-    is_moderator: bool
-    is_banned: bool
+    model_config = swdocs.model_user_public.docs_dump()
+
+    id: int = Field(**swdocs.field_id.docs_dump())
+    username: str = Field(**swdocs.field_username.docs_dump())
+    is_verified: bool = Field(**swdocs.field_is_verified.docs_dump())
+    is_moderator: bool = Field(**swdocs.field_is_moderator.docs_dump())
+    is_banned: bool = Field(**swdocs.field_is_banned.docs_dump())
     
     @property
     def dir_name(self) -> str:
@@ -102,9 +106,14 @@ class UserUpdateRights(SQLModel):
         is_moderator (bool): Флаг, является ли пользователь модератором.
         is_banned (bool): Флаг забаненности пользователя.
     """
-    is_verified: bool = False
-    is_moderator: bool = False
-    is_banned: bool = False
+    model_config = swdocs.model_user_updaterights.docs_dump()
+
+    is_verified: bool = Field(default=False,
+                              **swdocs.field_is_verified.docs_dump())
+    is_moderator: bool = Field(default=False,
+                               **swdocs.field_is_moderator.docs_dump())
+    is_banned: bool = Field(default=False,
+                            **swdocs.field_is_banned.docs_dump())
 
 
 # вспомогательные модели
@@ -144,7 +153,12 @@ class PagedUsersPublic(AbstractPagedItems):
         page (int): Номер страницы.
         limit (int): Максимальное количество пользователей на странице.
     """
-    items: list[UserPublic]
+    model_config = swdocs.model_paged_users_public.docs_dump()
+
+    items: list[UserPublic] = PydField(**swdocs.field_items_users.docs_dump())
+    total: int = PydField(**swdocs.field_total_users.docs_dump())
+    page: int = PydField(**swdocs.field_page_users.docs_dump())
+    limit: int = PydField(**swdocs.field_limit_users.docs_dump())
 
 
 # параметры запросов
@@ -156,8 +170,10 @@ class PaginationParams(BaseModel):
         limit (int): Максимальное число объектов на странице. Не меньше 1, не
             больше 100. По умолчанию 10.
     """
-    page: int = Query(1, ge=1)
-    limit: int = Query(10, ge=1, le=100)
+    page: int = Query(1, ge=1, **swdocs.field_page_users.docs_dump())
+    limit: int = Query(
+        10, ge=1, le=100, **swdocs.field_limit_users.docs_dump()
+    )
 
 
 class UsersFilterParams(BaseModel):
@@ -181,11 +197,19 @@ class UsersFilterParams(BaseModel):
         filter_dump: Дамп фильтров в виде списка отдельных условий для WHERE в
             запросе через SQLModel
     """
-    id: int | None = Query(None)
-    username: str | None = Query(None)
-    is_verified: bool | None = Query(None)
-    is_moderator: bool | None = Query(None)
-    is_banned: bool | None = Query(None)
+    id: int | None = Query(None, **swdocs.field_id.docs_dump())
+    username: str | None = Query(
+        None, **swdocs.field_username_filter.docs_dump()
+    )
+    is_verified: bool | None = Query(
+        None, **swdocs.field_is_verified.docs_dump()
+    )
+    is_moderator: bool | None = Query(
+        None, **swdocs.field_is_moderator.docs_dump()
+    )
+    is_banned: bool | None = Query(
+        None, **swdocs.field_is_banned.docs_dump()
+    )
 
     @field_validator('username')
     def validate_username_filter(cls, username: str | None) -> str | None:
