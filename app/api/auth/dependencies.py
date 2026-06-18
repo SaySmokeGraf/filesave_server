@@ -10,14 +10,15 @@ Dependencies:
     get_user_directory: Имя папки пользователя.
 
 AnnotatedDeps:
-    OAuth2SchemeDep: OAuth2 схема.
-    OAuth2FormDep: Форма OAuth2 для аутентификации.
-    RegDataDep: Валидные данные регистрации.
-    LoginDataDep: Валидные данные входа.
-    CurrentUserDep: Текущий пользователь.
-    AllowedUserDep: Пользователь с правами доступа использования сервиса.
-    ModerDep: Модератор.
-    UserDirDep: Имя папки пользователя.
+    OAuth2SchemeDep (str): OAuth2 схема.
+    OAuth2FormDep (OAuth2PasswordRequestForm): Форма OAuth2 для аутентификации.
+    RegDataDep (AuthFormData): Валидные данные регистрации.
+    LoginDataDep (AuthFormData): Валидные данные входа.
+    CurrentUserDep (UserPublic): Текущий пользователь.
+    AllowedUserDep (UserPublic): Пользователь с правами доступа использования
+        сервиса.
+    ModerDep (UserPublic): Модератор.
+    UserDirDep (str): Имя папки пользователя.
 
 CheckDepends:
     CheckUserDepends: Проверка пользователя.
