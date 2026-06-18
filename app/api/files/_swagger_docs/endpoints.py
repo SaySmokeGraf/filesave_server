@@ -34,7 +34,8 @@ get_file_info = EndpointDocsParams(
     description=_GET_FILE_INFO_DESC,
     responses={
         200: _resps.s200_file_info.docs_dump(),
-        404: swcommon.resp_404_file.docs_dump()
+        404: swcommon.resp_404_file.docs_dump(),
+        422: _resps.s422_bad_filename.docs_dump()
     }
 )
 
@@ -65,7 +66,8 @@ download_file = EndpointDocsParams(
     description=_DOWNLOAD_FILE_DESC,
     responses={
         200: _resps.s200_file.docs_dump(),
-        404: swcommon.resp_404_file.docs_dump()
+        404: swcommon.resp_404_file.docs_dump(),
+        422: _resps.s422_bad_filename.docs_dump()
     }
 )
 
@@ -103,6 +105,7 @@ delete_file = EndpointDocsParams(
     responses={
         200: swcommon.resp_200_simple_msg.docs_dump(),
         404: swcommon.resp_404_file.docs_dump(),
-        409: swcommon.resp_409_no_permission.docs_dump()
+        409: swcommon.resp_409_no_permission.docs_dump(),
+        422: _resps.s422_bad_filename.docs_dump()
     }
 )

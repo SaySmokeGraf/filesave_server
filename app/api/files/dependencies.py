@@ -56,6 +56,26 @@ async def validate_single_file(
         
     return file
 
+async def validate_filename(filename: str) -> str:
+    """Валидировать имя файла по требованиям сервиса.
+
+    Args:
+        filename (str): Имя файла.
+
+    Raises:
+        HTTPException: (422) Невалидное имя файла.
+
+    Returns:
+        str: Имя файла без изменений.
+    """
+    if not isvalid_filename(filename):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail='Bad filename'
+        )
+    return filename
+
 
 # зависимости в более компактном формате для объявления через аннотирование
 SingleFileDep = Annotated[UploadFile, Depends(validate_single_file)]
+FilenameDep = Annotated[str, Depends(validate_filename)]

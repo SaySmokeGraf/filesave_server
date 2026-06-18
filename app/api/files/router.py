@@ -10,7 +10,7 @@ from filetype import guess_mime
 
 import app.api.files._swagger_docs as swdocs
 from app.api.auth.dependencies import GetUserDirectoryDep, CheckUserDepends
-from app.api.files.dependencies import SingleFileDep
+from app.api.files.dependencies import FilenameDep, SingleFileDep
 from app.api.files.models import (
     FileInfoShort, FileInfoVerbose, StorageUsageInfo
 )
@@ -47,13 +47,13 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
 @router.get('/file-info', **swdocs.endpoints.get_file_info.docs_dump())
 async def get_file_info(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.params.filename.docs_dump())
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
 
     Args:
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
-        filename (str): Имя файла.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -88,13 +88,13 @@ async def get_storage_info() -> StorageUsageInfo:
 @router.get('/download', **swdocs.endpoints.download_file.docs_dump())
 async def download_file(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.params.filename.docs_dump())
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> FileResponse:
     """Скачать файл.
 
     Args:
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
-        filename (str): Имя файла.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -147,13 +147,13 @@ async def upload_single_file(
 @router.delete('/delete', **swdocs.endpoints.delete_file.docs_dump())
 async def delete_file(
     user_dir: GetUserDirectoryDep,
-    filename: str = Query(**swdocs.params.filename.docs_dump())
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> JSONResponse:
     """Удалить файл с сервера.
 
     Args:
         user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
-        filename (str): Имя файла.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.

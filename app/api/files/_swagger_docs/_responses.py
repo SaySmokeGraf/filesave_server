@@ -90,3 +90,8 @@ s413_too_large = ResponseDocsParams(
     description='Размер файла слишком велик.',
     content=swcommon.RESP_XXX_SIMPLE_MSG_CONTENT
 )
+
+s422_bad_filename = ResponseDocsParams(
+    description='Плохое имя файла.',
+    content=swcommon.RESP_XXX_SIMPLE_MSG_CONTENT
+)

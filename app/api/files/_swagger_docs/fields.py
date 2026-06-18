@@ -3,9 +3,12 @@
 from app.api.utils.swagger_docs.models import FieldDocsParams
 
 
+_FILENAME_DESC = """
+Имя файла в формате <стэм>.<расширение> или <стэм>, если расширения нет.
+"""
 filename = FieldDocsParams(
     title='Имя файла',
-    description='Имя файла в формате <стэм>.<расширение>.',
+    description=_FILENAME_DESC,
     examples=['text.txt', 'stem.suffix', 'abc123.abc123']
 )
 
