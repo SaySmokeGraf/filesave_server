@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, status
 
 import app.api.auth._swagger_docs as swdocs
 from app.api.auth.dependencies import (
-    GetCurrentUserDep, GetValidRegData, GetValidLoginData
+    CurrentUserDep, RegDataDep, LoginDataDep
 )
 from app.api.auth.managers import token_manager, user_manager, UserPublic
 from app.api.auth.models import Token
@@ -19,7 +19,7 @@ router = APIRouter(**swdocs.router.docs_dump())
 
 @router.post('/token', response_model=Token,
              **swdocs.endpoints.login.docs_dump())
-async def login(form_data: GetValidLoginData) -> Token:
+async def login(form_data: LoginDataDep) -> Token:
     """Вход пользователя.
 
     Args:
@@ -45,7 +45,7 @@ async def login(form_data: GetValidLoginData) -> Token:
 
 @router.post('/register', response_model=Token,
              **swdocs.endpoints.register.docs_dump())
-async def register(reg_data: GetValidRegData) -> Token:
+async def register(reg_data: RegDataDep) -> Token:
     """Регистрация пользователя.
 
     Args:
@@ -70,11 +70,11 @@ async def register(reg_data: GetValidRegData) -> Token:
 
 @router.get('/user-info', response_model=UserPublic,
             **swdocs.endpoints.get_user_info.docs_dump())
-async def get_user_info(user: GetCurrentUserDep) -> UserPublic:
+async def get_user_info(user: CurrentUserDep) -> UserPublic:
     """Получить информацию о пользователе.
 
     Args:
-        user (GetCurrentUserDep): Пользователь. Зависимость.
+        user (CurrentUserDep): Пользователь. Зависимость.
 
     Returns:
         UserPublic: Публичная информация о пользователе.

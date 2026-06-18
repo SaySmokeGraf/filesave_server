@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from filetype import guess_mime
 
 import app.api.files._swagger_docs as swdocs
-from app.api.auth.dependencies import GetUserDirectoryDep, CheckUserDepends
+from app.api.auth.dependencies import UserDirDep, CheckUserDepends
 from app.api.files.dependencies import FilenameDep, SingleFileDep
 from app.api.files.models import (
     FileInfoShort, FileInfoVerbose, StorageUsageInfo
@@ -26,11 +26,11 @@ create_storage_directory()
 
 @router.get('/', response_model=list[FileInfoShort],
             **swdocs.endpoints.get_files_data.docs_dump())
-async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
+async def get_files_data(user_dir: UserDirDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
 
     Returns:
         list[FileInfoShort]: Список с данными о файлах.
@@ -46,13 +46,13 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
 
 @router.get('/file-info', **swdocs.endpoints.get_file_info.docs_dump())
 async def get_file_info(
-    user_dir: GetUserDirectoryDep,
+    user_dir: UserDirDep,
     filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
         filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
@@ -87,13 +87,13 @@ async def get_storage_info() -> StorageUsageInfo:
 
 @router.get('/download', **swdocs.endpoints.download_file.docs_dump())
 async def download_file(
-    user_dir: GetUserDirectoryDep,
+    user_dir: UserDirDep,
     filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> FileResponse:
     """Скачать файл.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
         filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
@@ -115,7 +115,7 @@ async def download_file(
              **swdocs.endpoints.upload_single_file.docs_dump())
 async def upload_single_file(
     file: SingleFileDep,
-    user_dir: GetUserDirectoryDep,
+    user_dir: UserDirDep,
     overwrite: bool | None = Query(
         default=None, **swdocs.params.overwrite.docs_dump()
     )
@@ -124,7 +124,7 @@ async def upload_single_file(
 
     Args:
         file (SingleFileDep): Файл для загрузки. Зависимость.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
         overwrite (bool | None, optional): Флаг перезаписи файла в случае
             наличия файла с таким же именем в хранилище. True - перезаписать,
             False - создать уникальное имя с помощью суффикса с номером, None -
@@ -146,13 +146,13 @@ async def upload_single_file(
 
 @router.delete('/delete', **swdocs.endpoints.delete_file.docs_dump())
 async def delete_file(
-    user_dir: GetUserDirectoryDep,
+    user_dir: UserDirDep,
     filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
 ) -> JSONResponse:
     """Удалить файл с сервера.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
         filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:

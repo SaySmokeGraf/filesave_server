@@ -6,8 +6,8 @@ Dependencies:
         проведения модерации над ним.
 
 AnnotatedDeps:
-    GetValidUsername (str): Проверка имени пользователя на валидность.
-    GetAllowedUsernameDep (str): Проверки имени пользователя на допустимость
+    ValidUsernameDep (str): Проверка имени пользователя на валидность.
+    AllowedUsernameDep (str): Проверки имени пользователя на допустимость
         проведения модерации над ним.
 """
 
@@ -43,14 +43,14 @@ async def get_valid_username(
     return username
 
 
-GetValidUsername = Annotated[str, Depends(get_valid_username)]
+ValidUsernameDep = Annotated[str, Depends(get_valid_username)]
 
 
-async def get_allowed_username(username: GetValidUsername) -> str:
+async def get_allowed_username(username: ValidUsernameDep) -> str:
     """Получить имя пользователя, над которым можно производить модерацию.
 
     Args:
-        username (GetValidUsername): Имя пользователя. Зависимость.
+        username (ValidUsernameDep): Имя пользователя. Зависимость.
 
     Raises:
         HTTPException: (404) Пользователь не найден.
@@ -73,4 +73,4 @@ async def get_allowed_username(username: GetValidUsername) -> str:
     return username
 
 
-GetAllowedUsernameDep = Annotated[str, Depends(get_allowed_username)]
+AllowedUsernameDep = Annotated[str, Depends(get_allowed_username)]

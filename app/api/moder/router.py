@@ -9,12 +9,12 @@ from fastapi.responses import JSONResponse
 
 import app.api.moder._swagger_docs as swdocs
 from app.api.auth.dependencies import CheckModeratorDepends
-from app.api.auth.managers import user_manager
 from app.api.auth.managers import (
+    user_manager,
     PagedUsersPublic, PaginationParams, UsersFilterParams, UserUpdateRights
 )
 from app.api.files.utils.file_utils import delete_user_directory
-from app.api.moder.dependencies import GetAllowedUsernameDep
+from app.api.moder.dependencies import AllowedUsernameDep
 
 
 router = APIRouter(
@@ -42,11 +42,11 @@ async def get_users(
     return user_manager.get_users(pagination, filters)
 
 @router.delete('/users/delete', **swdocs.endpoints.delete_user.docs_dump())
-async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
+async def delete_user(username: AllowedUsernameDep) -> JSONResponse:
     """Удалить пользователя.
 
     Args:
-        username (GetAllowedUsernameDep): Имя пользователя. Зависимость.
+        username (AllowedUsernameDep): Имя пользователя. Зависимость.
 
     Raises:
         HTTPException: (409) Нет доступа для удаления (например, сервис в
@@ -71,7 +71,7 @@ async def delete_user(username: GetAllowedUsernameDep) -> JSONResponse:
 
 @router.patch('/users/update', **swdocs.endpoints.update_user.docs_dump())
 async def update_user_rights(
-    username: GetAllowedUsernameDep,
+    username: AllowedUsernameDep,
     user_rights: UserUpdateRights = Body(
         **swdocs.params.update_rights.docs_dump()
     )
@@ -79,7 +79,7 @@ async def update_user_rights(
     """Обновить права доступа пользователя.
 
     Args:
-        username (GetAllowedUsernameDep): Имя пользователя. Зависимость.
+        username (AllowedUsernameDep): Имя пользователя. Зависимость.
         user_rights (UserUpdateRights): Обновления прав пользователя.
 
     Returns:
