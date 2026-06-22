@@ -1,335 +1,114 @@
 <!DOCTYPE html>
 <html lang="ru">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Панель модератора</title>
-    <link rel="stylesheet" href="moderator.css">
-</head>
+    <link rel="stylesheet" href="moderator.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  </head>
 
-<body>
-    <div class="moderator-panel">
-        <div class="admin_profile_search_panel">
-            <div class="admin_profile">
-                <div class="pair" id="username_pair">
-                    <label id="username_label">username</label>
-                    <label id="username_field_label">Admin</label>
-                </div>
-                <div class="pair" id="status_pair">
-                    <label id="status_label">status</label>
-                    <label id="status_field_label">Administrator</label>
-                </div>
-            </div>
-            <div class="search_panel"> <label id="search_label">*******</label> </div>
-
+  <body>
+    <div class="moderator_header">
+      <div class="moderator-panel">
+        <div class="admin_profile">
+          <div class="pair" id="username_pair">
+            <label id="username_label">username:</label>
+            <label id="username_field_label">Admin</label>
+          </div>
+          <div class="pair" id="status_pair">
+            <label id="status_label">status:</label>
+            <label id="status_field_label">Administrator</label>
+          </div>
         </div>
+      </div>
 
-        <div class=" moderator_table" id="moderator_table">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Имя пользователя</th>
-                        <th>Верифицирован</th>
-                        <th>Забанен</th>
-                        <th>Модератор</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                    <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                      <tr>
-                        <td>Ячейка 1,1</td>
-                        <td>Ячейка 1,2</td>
-                        <td>Ячейка 1,3</td>
-                        <td>Ячейка 1,4</td>
-                        <td>Ячейка 1,5</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <div class="search_panel">
+        <form class="search_form">
+          <input
+            type="text"
+            class="search_form_input"
+            placeholder="Искать пользователя здесь..." />
+          <button type="submit" class="search_form_button"></button>
+        </form>
+      </div>
 
+      <button type="button" class="new_user_button">
+        <i class="fa fa-user-plus" aria-hidden="true"></i>
+      </button>
+    </div>
 
-</body>
-
-
+    <div class="user_list">
+      <table class="moderator_table" id="moderator_table">
+        <thead>
+          <tr>
+            <th>Пользователь</th>
+            <th>Верифицирован</th>
+            <th>Забанен</th>
+            <th>Модератор</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id=`user_row${name}`>
+            <td>Иван Иванов</td>
+            <td class="checkbox-container" >
+              <input type="checkbox" class="status-checkbox"  checked id="verified_checkbox"/>
+            </td>
+            <td class="checkbox-container" >
+              <input type="checkbox" class="status-checkbox" id="banned_checkbox" checked />
+            </td>
+            <td class="checkbox-container">
+              <input type="checkbox" class="status-checkbox" id="is_moderator_checkbox"checked />
+            </td>
+            <td class="action-buttons">
+              <button class="action-btn save-btn">Сохранить</button>
+              <button class="action-btn delete-btn">Удалить</button>
+            </td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    <!-- <div class="pagination-container">
+      <div class="pagination-info">  Страница <span id="current-page">1</span> из <span id="total-pages">1</span> (<span id="total-users">0</span>
+        пользователей всего)
+      </div>
+      <div class="pagination-controls">
+        <button id="prev-page" class="pagination-btn" disabled>← Назад</button>
+        <span id="page-numbers"></span>
+        <button id="next-page" class="pagination-btn">Вперёд →</button>
+      </div>
+    </div> -->
+    <div class="pagination-container">
+      <div class="pagination-info">
+        Страница <span id="current-page">5</span> из <span id="total-pages">10</span> (<span id="total-users">100</span> пользователей всего)
+      </div>
+      <div class="pagination-controls">
+        <button id="prev-page" class="pagination-btn">← Назад</button>
+        <span id="page-numbers">
+          <button class="page-link">1</button>
+          <span class="ellipsis">...</span>
+          <button class="page-link">3</button>
+          <button class="page-link">4</button>
+          <button class="page-link active">5</button>
+          <button class="page-link">6</button>
+          <button class="page-link">7</button>
+          <span class="ellipsis">...</span>
+          <button class="page-link">10</button>
+        </span>
+        <button id="next-page" class="pagination-btn">Вперёд →</button>
+      </div>
+    </div>
+    <script src="moderator.js"></script>
+    <script src="cookies.js"></script>
+    <script src="request.js"></script>
+    <script src="profile.js"></script>
+    <script src="main.js"></script>
+  </body>
+  <footer>
+    
+  </footer>
 </html>
