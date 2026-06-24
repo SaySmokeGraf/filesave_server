@@ -1,113 +1,45 @@
-const moderator_table = document.getElementById("moderator_table");
+const username_field_label = document.getElementById("username_field_label");
+const status_field_label = document.getElementById("status_field_label");
 
-// alert_ok_btn.addEventListener('click', () => {
-//     apiRequest(`/files/delete?filename=${currentFilename}`, {}, 'DELETE',
-//         'application/json').then(response => {
-//             if (response.status == 404) {
-//                 // window.location.href = '/site/error.html';
-//                 console.log('1234');
-//                 fileNotFoundAlert.style.display = 'block';
-//             }
-//             return response;
-//         }).then(() => loadLibraryData());
-//     overlay.style.display = 'none';
-// });
+// Запускаем асинхронные функции последовательно или параллельно
+initPage();
 
-// alert_btn_close.addEventListener('click', () => {
-//     overlay.style.display = 'none';
-// })
-// renameFilePopupOkButton.addEventListener('click', () => {
-//     if (!currentUploadContext) return;
-//     if (renameFileTextArea.value.trim() !== '') {
-//         const orig = currentUploadContext.file; // native File
-//         const newFile = new File([orig], renameFileTextArea.value.trim(), { type: orig.type });
-//         currentUploadContext.file.file = newFile;
-//         uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, false);
-//     } else {
-//         renameFileOptionOverlayInformationEmptyAlertNotice();
-//     }
-// });
-
-function updateUserListContent() {
-  apiRequest("/moder/users", {}, "GET", "application/json")
-    .then((response) => {
-      if (response.status == 200) {
-        console.log("1234");
-        return response;
-      }
-    })
-    .then((data) => {
-      getUserListByRequest(data);
-    });
+async function initPage() {
+    try {
+        // Ждем проверку статуса и отрисовку списка пользователей
+        await updateModeratorStatus();
+        await updateUserListContent();
+    } catch (error) {
+        console.error("Ошибка при инициализации страницы:", error);
+    }
 }
 
-function getUserListByRequest(data) {
-  const data = JSON.parse(data.items);
-  console.log(Array.isArray(data)); // true
-  console.log(objectArray.length); // 3
-  console.log(typeof data[0]); // "object"
-  if (Array.isArray(data)) {
-    data.array.forEach((element) => {
-      row = table.insertRow(-1);
-      row.id = `user_row${element.id}`;
-      user_name_cell = row.insertCell(0);
-      is_verified_cell = row.insertCell(1);
-      is_banned_cell = row.insertCell(2);
-      is_moderator_cell = row.insertCell(3);
-      action_bar_cell = row.insertCell(4);
-      // 4. Заполняем ячейки
-      user_name_cell = element.username;
-      is_verified_cell.className = "checkbox-container";
-      is_banned_cell.className = "checkbox-container";
-      is_moderator_cell.className = "checkbox-container";
-      action_bar_cell.className = "action-buttons";
-      addUserRowCheckBoxes(element,isVerifiedCell,isBannedCell,isModeratorCell,actionBarCell);
-    });
-  }
-}
+// ВАЖНО: Добавили ключевое слово async
+async function updateModeratorStatus() {
+    let queries = "/auth/user-info";
+    try {
+        const response = await apiRequest(queries, {}, "GET", "application/json");
 
-function addUserRowCheckBoxes(user,isVerifiedCell,isBannedCell,isModeratorCell,actionBarCell) {
-  isVerifiedCell.appendChild(addVerifiedCheckBox(user));
-  isBannedCell.appendChild(addIsBannedCheckBox(user));
-  isModeratorCell.appendChild(addIsModeratorCheckBox(user));
-}
+        if (response.status !== 200) {
+            throw new Error(`Ошибка загрузки профиля. Статус: ${response.status}`);
+        }
 
-function addVerifiedCheckBox(user) {
-  checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.id = "verified_checkbox";
-  if (user.is_verified) {
-    checkbox.checked = true;
-  } else {
-    checkbox.checked = false;
-  }
-  return checkbox;
-}
+        const data = await response.json();
 
-function addIsBannedCheckBox(user) {
-  checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.id = "banned_checkbox";
-  if (user.is_banned) {
-    checkbox.checked = true;
-  } else {
-    checkbox.checked = false;
-  }
-  return checkbox;
-}
+        if (data) {
+            if (username_field_label) {
+                username_field_label.textContent = data.username;
+            }
 
-function addIsModeratorCheckBox(user) {
-  checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.id = "is_moderator_checkbox";
-  if (user.is_moderator) {
-    checkbox.checked = true;
-  } else {
-    checkbox.checked = false;
-  }
-  return checkbox;
-}
-
-function updatePagination(limit,total,page){
-
+            if (status_field_label) {
+                if (data.is_moderator) {
+                    status_field_label.textContent = "Модератор";
+                } else {
+                    status_field_label.textContent = "Пользователь";
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Не удалось обновить статус модератора:", error);
+    }
 }
