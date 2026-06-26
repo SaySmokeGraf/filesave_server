@@ -1,2 +1,25 @@
 [tool.fastapi]
 entrypoint = "app.main:app"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "app: тесты общего уровня приложения",
+    "auth: тесты аутентификационного API",
+    "files: тесты файлового API",
+    "moder: тесты API модерирования",
+    "utils: тесты утилит приложения"
+]
+addopts = [
+    "-vv",
+    "--import-mode=importlib",
+    "--cov=app",
+    "--html=.pytest_report.html",
+    "--self-contained-html"
+]
+cache_dir = ".pytest_cache"
