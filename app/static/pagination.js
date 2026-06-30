@@ -1,13 +1,79 @@
 const moderator_table = document.getElementById("moderator_table");
 const tbody = moderator_table.querySelector("tbody");
+// const searchForm = document.querySelector('.search_form');
+const paginationConfing = {
+    limit: "",
+    username: "",
+    is_verified: "",
+    is_banned: "",
+    is_moderator: ""
+}
 
-async function updateUserListContent(page = "", limit = "") {
+function resetPagination() {
+    paginationConfing.limit = "";
+    paginationConfing.username = "";
+    paginationConfing.is_verified = "";
+    paginationConfing.is_banned = "";
+    paginationConfing.is_moderator = "";
+    // const formData = new FormData(searchForm);
+    searchForm.reset();
+}
+async function updateUserListContent(page = "", limit = "", username = "", is_verified = "", is_banned = "", is_moderator = "") {
     try {
         if (tbody) {
             tbody.innerHTML = "";
         }
 
-        let queries = (page === "" || limit === "") ? "/moder/users" : `/moder/users?page=${page}&limit=${limit}`;
+        let baseUrl = "/moder/users";
+        const params = new URLSearchParams();
+        if (page !== "") {
+            params.append('page', page)
+
+        }
+        if (limit !== "") {
+            params.append('limit', limit);
+            paginationConfing.limit = limit;
+        } else {
+            paginationConfing.limit = "";
+        }
+        // Добавляем параметры ТОЛЬКО если они не пустые
+        if (username !== "") {
+            params.append('username', username)
+            paginationConfing.username = username;
+        }
+        else {
+            paginationConfing.username = "";
+        }
+
+
+        if (is_verified !== "") {
+            params.append('is_verified', is_verified);
+            paginationConfing.is_verified = is_verified;
+        } else {
+            paginationConfing.is_verified = "";
+        }
+
+        if (is_banned !== "") {
+            params.append('is_banned', is_banned);
+            paginationConfing.is_banned = is_banned;
+        } else {
+            paginationConfing.is_banned = "";
+        }
+        if (is_moderator !== "") {
+            params.append('is_moderator', is_moderator);
+            paginationConfing.is_moderator = is_moderator;
+        } else {
+            paginationConfing.is_moderator = "";
+        }
+
+        // Формируем итоговый URL
+        let queries = baseUrl;
+        if (params.toString()) {
+            queries += "?" + params.toString();
+        }
+        // -------------------------------
+
+        console.log("Отправляем запрос:", queries);
 
         // 1. Ждем ответ от сервера
         const response = await apiRequest(queries, {}, "GET", "application/json");
@@ -44,7 +110,7 @@ async function getUserListByRequest(data) {
 
     // Заменили .forEach на обычный цикл for...of, который корректно работает в async-функциях
     for (const element of userData) {
-       const row = tbody.insertRow(-1);
+        const row = tbody.insertRow(-1);
         row.id = `user_row${element.id}`;
 
         const user_name_cell = row.insertCell(0);
@@ -93,6 +159,21 @@ async function getUserListByRequest(data) {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'action-btn delete-btn';
         deleteBtn.textContent = 'Удалить';
+        deleteBtn.addEventListener('click', async (event) => {
+            try {
+                const res = await apiRequest(`/moder/users/delete?username=${element.username}`, {}, 'DELETE', 'application/json');
+                console.log(`Статус обновления пользователя ${element.username}:`, res.status);
+                if (res.status !== 403 && res.status !== 401 && res.status !== 409 && res.status !== 422 && res.status !== 404) {
+                    console.log("Статус не связан с доступом, удаляем строку");
+                    row.remove();
+                }
+                // updateUserListContent();
+            } catch (err) {
+                console.error("Ошибка при обновлении пользователя:", err);
+            }
+
+        })
+
 
         action_bar_cell.appendChild(saveBtn);
         action_bar_cell.appendChild(deleteBtn);
@@ -143,6 +224,7 @@ async function renderPagination(data) {
     }
 
     let l;
+
     for (const i of range) {
         if (l) {
             if (i - l === 2) {
@@ -170,7 +252,8 @@ async function renderPagination(data) {
         } else {
             newPrevBtn.disabled = false;
             newPrevBtn.classList.remove('disabled');
-            newPrevBtn.addEventListener('click', () => updateUserListContent(page - 1, limit));
+            newPrevBtn.addEventListener('click', () => updateUserListContent(page - 1, limit, paginationConfing.username,
+                paginationConfing.is_verified, paginationConfing.is_banned, paginationConfing.is_moderator));
         }
     }
 
@@ -185,7 +268,8 @@ async function renderPagination(data) {
         } else {
             newNextBtn.disabled = false;
             newNextBtn.classList.remove('disabled');
-            newNextBtn.addEventListener('click', () => updateUserListContent(page + 1, limit));
+            newNextBtn.addEventListener('click', () => updateUserListContent(page + 1, limit, paginationConfing.username,
+                paginationConfing.is_verified, paginationConfing.is_banned, paginationConfing.is_moderator));
         }
     }
 
@@ -197,16 +281,17 @@ function createPageButton(pageNum, currentPage, limit) {
     const btn = document.createElement('button');
     btn.className = 'page-link';
     btn.textContent = pageNum;
-
     if (pageNum === currentPage) {
         btn.classList.add('active');
     } else {
         btn.addEventListener('click', () => {
-            updateUserListContent(pageNum, limit);
+            updateUserListContent(pageNum, limit, paginationConfing.username, paginationConfing.is_verified,
+                paginationConfing.is_banned, paginationConfing.is_moderator);
         });
     }
     return btn;
 }
+
 function addUserRowCheckBoxes(user, isVerifiedCell, isBannedCell, isModeratorCell, actionBarCell) {
     isVerifiedCell.appendChild(addVerifiedCheckBox(user));
     isBannedCell.appendChild(addIsBannedCheckBox(user));

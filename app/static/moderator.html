@@ -13,6 +13,7 @@
   <div class="moderator_header">
     <div class="moderator-panel">
       <div class="admin_profile">
+
         <div class="pair" id="username_pair">
           <label id="username_label">username:</label>
           <label id="username_field_label">Admin</label>
@@ -21,20 +22,79 @@
           <label id="status_label">status:</label>
           <label id="status_field_label">Administrator</label>
         </div>
-        
+        <!-- <div class="exitFromModerPanel"> -->
+        <button type="button" class="exit_From_Moder_Btn">Выйти</button>
+        <!-- <i class="fa fa-user-plus" aria-hidden="true"></i> -->
+        </button>
+        <!-- </div> -->
+
       </div>
+
     </div>
 
     <div class="search_panel">
       <form class="search_form">
+        <!-- Текстовое поле -->
         <input type="text" class="search_form_input" placeholder="Искать пользователя здесь..." />
-        <button type="submit" class="search_form_button"></button>
-      </form>
-    </div>
 
-    <button type="button" class="new_user_button">
+        <!-- Встроенный фильтр (теперь стоит перед кнопкой отправки) -->
+        <button type="button" class="search_form_filter_btn" id="filterBtn" title="Фильтры">
+          <i class="fa fa-sliders" aria-hidden="true"></i>
+        </button>
+        <div class="filter-row-container" id="filterDropdown">
+          <div class="filter-item">
+            <!-- <label><input type="checkbox" name="filter_banned"> забанен</label> -->
+            <label>Статус бана:
+              <select name="filter_banned">
+                <option value="">Все равно (ничего)</option> <!-- Это и есть null / пустота -->
+                <option value="true">Забанен</option>
+                <option value="false">Не забанен</option>
+              </select>
+            </label>
+          </div>
+          <div class="filter-item">
+            <label>Статус верификации:
+              <select name="filter_verified">
+                <option value="">Все равно (ничего)</option> <!-- Это и есть null / пустота -->
+                <option value="true">верифицирован</option>
+                <option value="false">неверифицирован</option>
+              </select>
+            </label>
+          </div>
+          <div class="filter-item">
+            <label>Статус модератора:
+              <select name="filter_is_moderator">
+                <option value="">Все равно (ничего)</option> <!-- Это и есть null / пустота -->
+                <option value="true">модератор </option>
+                <option value="false">не модератор</option>
+              </select>
+            </label>
+          </div>
+          <div class="filter-item">
+            <label>Пользователей на странице:
+              <!-- Заменили select на input с типом number -->
+              <input type="number" name="filter_limit" placeholder="10" min="1" max="100" class="filter_limit_input" />
+            </label>
+          </div>
+
+          <button type="button" class="reset">Сброс</button>
+
+
+
+        </div>
+        <button type="submit" class="search_form_button"></button>
+
+    </div>
+    <!-- Кнопка отправки -->
+
+    </form>
+
+  </div>
+  </div>
+
+  <!-- <button type="button" class="new_user_button">
       <i class="fa fa-user-plus" aria-hidden="true"></i>
-    </button>
+    </button> -->
   </div>
 
   <div class="user_list">
@@ -49,39 +109,13 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr id="user_row0">
-          <td>Иван Иванов</td>
-          <td class="checkbox-container">
-            <input type="checkbox" class="status-checkbox" checked id="verified_checkbox" />
-          </td>
-          <td class="checkbox-container">
-            <input type="checkbox" class="status-checkbox" id="banned_checkbox" checked />
-          </td>
-          <td class="checkbox-container">
-            <input type="checkbox" class="status-checkbox" id="is_moderator_checkbox" checked />
-          </td>
-          <td class="action-buttons">
-            <button class="action-btn save-btn">Сохранить</button>
-            <button class="action-btn delete-btn">Удалить</button>
-          </td>
-        </tr> -->
-
       </tbody>
     </table>
   </div>
-  <!-- <div class="pagination-container">
-      <div class="pagination-info">  Страница <span id="current-page">1</span> из <span id="total-pages">1</span> (<span id="total-users">0</span>
-        пользователей всего)
-      </div>
-      <div class="pagination-controls">
-        <button id="prev-page" class="pagination-btn" disabled>← Назад</button>
-        <span id="page-numbers"></span>
-        <button id="next-page" class="pagination-btn">Вперёд →</button>
-      </div>
-    </div> -->
   <div class="pagination-container">
     <div class="pagination-info">
-      Страница <span id="current-page">5</span> из <span id="total-pages">10</span> (<span id="total-users">100</span> пользователей всего)
+      Страница <span id="current-page">5</span> из <span id="total-pages">10</span> (<span id="total-users">100</span>
+      пользователей всего)
     </div>
     <div class="pagination-controls">
       <button id="prev-page" class="pagination-btn">← Назад</button>
@@ -99,10 +133,11 @@
       <button id="next-page" class="pagination-btn">Вперёд →</button>
     </div>
   </div>
-  <script src="pagination.js"></script>
+
   <script src="cookies.js"></script>
   <script src="request.js"></script>
   <script src="profile.js"></script>
+  <script src="pagination.js"></script>
   <script src="moderator.js"></script>
 </body>
 <footer>

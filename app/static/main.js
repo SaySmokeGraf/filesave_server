@@ -77,7 +77,7 @@ renameOkAutomatic.addEventListener('click', () => {
     uploadFileOnServer(currentUploadContext.file, currentUploadContext.uploadBtn, currentUploadContext.progressBar, true, false);
 });
 
-// window.getProfile();
+window.getProfile();
 window.loadLibraryData();
 let fileToUpload = [];
 // renameFileOptionOverlay.style.display = 'none';
