@@ -82,10 +82,16 @@ async function updateModeratorStatus() {
     try {
         const response = await apiRequest(queries, {}, "GET", "application/json");
 
-        if (response.status !== 200) {
-            throw new Error(`Ошибка загрузки профиля. Статус: ${response.status}`);
-        }
+        // if (response.status !== 200) {
+        //     throw new Error(`Ошибка загрузки профиля. Статус: ${response.status}`);
+        //     // if (response.status === 401) {
+        //     //     window.location.href = '/site/registration.html';
+        //     // }
+        // }
 
+        if (response.status === 401) {
+            return;
+        }
         const data = await response.json();
 
         if (data) {

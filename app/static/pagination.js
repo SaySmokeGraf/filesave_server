@@ -1,6 +1,26 @@
+
 const moderator_table = document.getElementById("moderator_table");
 const tbody = moderator_table.querySelector("tbody");
-// const searchForm = document.querySelector('.search_form');
+const dialog = document.getElementById('moderDialog_dialog');
+const closeBtn = document.getElementById('closeBtn_moder_dialog');
+document.addEventListener('DOMContentLoaded', () => {
+    const dialog = document.getElementById('moderDialog_dialog');
+    const closeBtn = document.getElementById('closeBtn_moder_dialog');
+
+    if (closeBtn && dialog) {
+        closeBtn.addEventListener('click', () => {
+            dialog.close();
+        });
+        console.log('✅ Кнопка закрытия успешно привязана к диалогу');
+    } else {
+        // Если сюда попали - значит, ID не совпадают или скрипт грузится не туда
+        console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Не найдены элементы!', { dialog, closeBtn });
+
+        // Для отладки: посмотрим, что вообще есть на странице
+        console.log('Все dialog на странице:', document.querySelectorAll('dialog'));
+        console.log('Все button на странице:', document.querySelectorAll('button'));
+    }
+});
 const paginationConfing = {
     limit: "",
     username: "",
@@ -77,11 +97,17 @@ async function updateUserListContent(page = "", limit = "", username = "", is_ve
 
         // 1. Ждем ответ от сервера
         const response = await apiRequest(queries, {}, "GET", "application/json");
-
-        if (response.status !== 200) {
-            throw new Error(`Ошибка сервера. Статус: ${response.status}`);
+        if (response.status === 401) {
+            window.location.href = '/site/registration.html';
+            return;
         }
 
+        // if (response.status !== 200) {
+        //     throw new Error(`Ошибка сервера. Статус: ${response.status}`);
+        //     // if (response.status === 401) {
+        //     //     window.location.href = '/site/registration.html';
+        //     // }
+        // }
         // 2. Ждем парсинг JSON
         const data = await response.json();
         console.log("Данные успешно получены с сервера:", data);
@@ -151,6 +177,25 @@ async function getUserListByRequest(data) {
             try {
                 const res = await apiRequest(`/moder/users/update?username=${element.username}`, { body: payload }, 'PATCH', 'application/json');
                 console.log(`Статус обновления пользователя ${element.username}:`, res.status);
+                // if (res.status === "401") {
+                //     return;
+                // }
+                if (res.status == "403") {
+                    const dialog = document.getElementById('moderDialog_dialog');
+                    const titleEl = document.getElementById('dialog_title');
+                    const msgEl = document.getElementById('dialog_message');
+
+                    if (dialog && titleEl && msgEl) {
+                        // Меняем ТОЛЬКО текст
+                        titleEl.textContent = "Доступ запрещен";
+                        msgEl.textContent = `${element.username}, вам запрещен доступ к удалению и сохранению пользователя.`;
+
+                        dialog.showModal();
+                    }
+
+                } else if (res.status === 401) {
+                    window.location.href = '/site/registration.html';
+                }
             } catch (err) {
                 console.error("Ошибка при обновлении пользователя:", err);
             }
@@ -163,9 +208,27 @@ async function getUserListByRequest(data) {
             try {
                 const res = await apiRequest(`/moder/users/delete?username=${element.username}`, {}, 'DELETE', 'application/json');
                 console.log(`Статус обновления пользователя ${element.username}:`, res.status);
+                // if (res.status == 401) {
+                //     return;
+                // }
                 if (res.status !== 403 && res.status !== 401 && res.status !== 409 && res.status !== 422 && res.status !== 404) {
                     console.log("Статус не связан с доступом, удаляем строку");
                     row.remove();
+                } else if (res.status == "403") {
+                    const dialog = document.getElementById('moderDialog_dialog');
+                    const titleEl = document.getElementById('dialog_title');
+                    const msgEl = document.getElementById('dialog_message');
+
+                    if (dialog && titleEl && msgEl) {
+                        // Меняем ТОЛЬКО текст
+                        titleEl.textContent = "Доступ запрещен";
+                        msgEl.textContent = `${element.username}, вам запрещен доступ к удалению и сохранению пользователя.`;
+
+                        dialog.showModal();
+                    }
+                }
+                else if (res.status == "401") {
+                    window.location.href = '/site/registration.html';
                 }
                 // updateUserListContent();
             } catch (err) {

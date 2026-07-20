@@ -6,10 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Панель модератора</title>
   <link rel="stylesheet" href="moderator.css" />
+  <link rel="stylesheet" href="moder_pop_up.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
 </head>
 
 <body>
+  <dialog id="moderDialog_dialog">
+    <h2 id="dialog_title">Запрет на действие</h2>
+    <p id="dialog_message">Содержимое</p>
+    <button id="closeBtn_moder_dialog">Закрыть</button>
+  </dialog>
   <div class="moderator_header">
     <div class="moderator-panel">
       <div class="admin_profile">
@@ -134,11 +140,13 @@
     </div>
   </div>
 
-  <script src="cookies.js"></script>
-  <script src="request.js"></script>
-  <script src="profile.js"></script>
-  <script src="pagination.js"></script>
-  <script src="moderator.js"></script>
+  <script src="cookies.js " defer></script>
+  <script src="request.js" defer></script>
+  <script src="profile.js" defer></script>
+
+  <script src="pagination.js" defer></script>
+  <!-- <script src="moder_pop_up.js" defer></script> -->
+  <script src="moderator.js" defer></script>
 </body>
 <footer>
 
