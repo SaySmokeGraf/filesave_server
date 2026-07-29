@@ -4,7 +4,7 @@ const regDialog = document.getElementById('registration_dialog');
 const registrationDialog = document.getElementById('registration_dialog');
 const registrationForm = document.getElementById('registration_form');
 const exitBtn = document.getElementById('exitBtn');
-
+const main_text_registration = document.getElementById('mainText_registration');
 const create_account_link = document.getElementById('create-account-link');
 login_form.addEventListener('submit', handleFormSubmit);
 registrationForm.addEventListener('submit', handleFormRegistration);
@@ -108,7 +108,12 @@ async function handleFormRegistration(event) {
                     return response.json().then(data => {
                         console.log(data);
                         console.log(`${user.username} зарегистрирован`);
+                        main_text_registration.textContent=`${user.username} зарегистрирован`;
                     });
+                } else if (response.status == 403) {
+                    main_text_registration.textContent="Имя пользователя занято";
+                } else if (response.status == 422) {
+                    main_text_registration.textContent="Невалидные данные в форме регистрации";
                 }
                 // } else {
                 //     main_text.textContent = 'Неправильный логин или пароль';

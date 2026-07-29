@@ -26,10 +26,25 @@ body {
     text-align: center;
 }
 
+#registration_dialog {
+    border: 1px solid #db1919;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    background: linear-gradient(167deg, #1c8eb1, #264c5f);
+    background-color: linear-gradient(167deg, #1c8eb1, #264c5f);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+}
+
+
 h1 {
     color: #29dfe6ab;
 }
-
+h3 {
+    color: #ddd;
+}
 label {
     display: block;
     width: 100%;
