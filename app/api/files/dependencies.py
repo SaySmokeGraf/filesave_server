@@ -1,16 +1,31 @@
-"""Зависимости для файлового API."""
+"""Зависимости для файлового API.
+
+Dependencies:
+    validate_filename: Валидировать имя файла по требованиям сервиса.
+    validate_single_file: Проверка одного файла на соответствие требованиям
+        сервиса.
+
+AnnotatedDeps:
+    FilenameDep (str): Валидировать имя файла по требованиям сервиса.
+    SingleFileDep (UploadFile): Проверка одного файла на соответствие
+        требованиям сервиса.
+"""
 
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, UploadFile
+from fastapi import Depends, HTTPException, Query, status, UploadFile
 
+import app.api.files._swagger_docs as swdocs
 from app.api.files.utils.validation import (
     isvalid_file_size, isvalid_filename, normalize_filename
 )
 
 
 # зависимости в формате функций
-async def validate_single_file(file: UploadFile, rename: bool = False) -> UploadFile:
+async def validate_single_file(
+    file: UploadFile,
+    rename: bool = Query(default=False, **swdocs.params.rename.docs_dump())
+) -> UploadFile:
     """Проверить один файл на соответствие требованиям сервиса.
 
     Args:
@@ -43,6 +58,26 @@ async def validate_single_file(file: UploadFile, rename: bool = False) -> Upload
         
     return file
 
+async def validate_filename(filename: str) -> str:
+    """Валидировать имя файла по требованиям сервиса.
+
+    Args:
+        filename (str): Имя файла.
+
+    Raises:
+        HTTPException: (422) Невалидное имя файла.
+
+    Returns:
+        str: Имя файла без изменений.
+    """
+    if not isvalid_filename(filename):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail='Bad filename'
+        )
+    return filename
+
 
 # зависимости в более компактном формате для объявления через аннотирование
 SingleFileDep = Annotated[UploadFile, Depends(validate_single_file)]
+FilenameDep = Annotated[str, Depends(validate_filename)]

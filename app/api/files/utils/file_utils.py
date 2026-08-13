@@ -1,7 +1,17 @@
-"""Утилиты для работы с файлами, папками и путями."""
+"""Утилиты для работы с файлами, папками и путями.
+
+Funcs:
+    create_storage_directory: Создать папку хранилища.
+    get_storage_usage_info: Получить информацию об использовании места
+        хранилища.
+    get_user_dir_path: Получить путь до папки пользователя.
+    delete_user_directory: Удалить папку пользователя.
+    set_unique_filename: Задать файлу уникальное имя.
+    write_uploadfile: Записать UploadFile в файл.
+"""
 
 from pathlib import Path
-from shutil import copyfileobj, disk_usage
+from shutil import copyfileobj, disk_usage, rmtree
 
 from fastapi import HTTPException, status, UploadFile
 
@@ -46,6 +56,16 @@ def get_user_dir_path(user_dir: str) -> Path:
         dir_path.mkdir()
     return dir_path
 
+def delete_user_directory(user_dir: str) -> None:
+    """Удалить папку пользователя.
+
+    Args:
+        user_dir (str): Имя папки пользователя.
+    """
+    dir_path = get_user_dir_path(user_dir)
+    if dir_path.exists():
+        rmtree(dir_path)
+
 def set_unique_filename(file: UploadFile, directory_path: Path) -> None:
     """Задать файлу уникальное имя.
 
@@ -64,8 +84,9 @@ def set_unique_filename(file: UploadFile, directory_path: Path) -> None:
         cnt += 1
     file.filename = nowname
 
-def write_uploadfile(file: UploadFile, directory_path: Path,
-                     overwrite: bool | None = None) -> None:
+def write_uploadfile(
+    file: UploadFile, directory_path: Path, overwrite: bool | None = None
+) -> None:
     """Записать UploadFile в файл.
 
     Args:

@@ -1,6 +1,14 @@
-"""Модели для API аутентификации-авторизации"""
+"""Модели для API аутентификации-авторизации.
 
-from pydantic import BaseModel
+Models:
+    AuthFormData: Данные формы аутентификации по паролю.
+    Token: Модель токена.
+    TokenData: Модель данных из токена.
+"""
+
+from pydantic import BaseModel, Field
+
+import app.api.auth._swagger_docs as swdocs
 
 
 class AuthFormData(BaseModel):
@@ -21,8 +29,10 @@ class Token(BaseModel):
         access_token (str): Токен.
         token_type (str): Тип токена.
     """
-    access_token: str
-    token_type: str
+    model_config = swdocs.models.token.docs_dump()
+
+    access_token: str = Field(**swdocs.fields.access_token.docs_dump())
+    token_type: str = Field(**swdocs.fields.token_type.docs_dump())
 
 
 class TokenData(BaseModel):

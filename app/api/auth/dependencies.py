@@ -1,4 +1,29 @@
-"""Зависимости для аут.-авт."""
+"""Зависимости для аутентификации-авторизации.
+
+Dependencies:
+    oauth2_scheme: OAuth2 схема.
+    get_valid_reg_data: Валидные данные регистрации.
+    get_valid_login_data: Валидные данные входа.
+    get_current_user: Текущий пользователь.
+    get_allowed_user: Пользователь с правами доступа использования сервиса.
+    get_moderator: Модератор.
+    get_user_directory: Имя папки пользователя.
+
+AnnotatedDeps:
+    OAuth2SchemeDep (str): OAuth2 схема.
+    OAuth2FormDep (OAuth2PasswordRequestForm): Форма OAuth2 для аутентификации.
+    RegDataDep (AuthFormData): Валидные данные регистрации.
+    LoginDataDep (AuthFormData): Валидные данные входа.
+    CurrentUserDep (UserPublic): Текущий пользователь.
+    AllowedUserDep (UserPublic): Пользователь с правами доступа использования
+        сервиса.
+    ModerDep (UserPublic): Модератор.
+    UserDirDep (str): Имя папки пользователя.
+
+CheckDepends:
+    CheckUserDepends: Проверка пользователя.
+    CheckModeratorDepends: Проверка модератора.
+"""
 
 from typing import Annotated
 
@@ -73,8 +98,8 @@ async def get_valid_login_data(form_data: OAuth2FormDep) -> AuthFormData:
 
 
 # зависимости в более компактном формате для объявления через аннотирование
-GetValidRegData = Annotated[AuthFormData, Depends(get_valid_reg_data)]
-GetValidLoginData = Annotated[AuthFormData, Depends(get_valid_login_data)]
+RegDataDep = Annotated[AuthFormData, Depends(get_valid_reg_data)]
+LoginDataDep = Annotated[AuthFormData, Depends(get_valid_login_data)]
 
 
 # основная универсальная зависимость
@@ -110,17 +135,17 @@ async def get_current_user(token: OAuth2SchemeDep) -> UserPublic:
 
 
 # зависимости в более компактном формате для объявления через аннотирование
-GetCurrentUserDep = Annotated[UserPublic, Depends(get_current_user)]
+CurrentUserDep = Annotated[UserPublic, Depends(get_current_user)]
 
 
-# зависимости по проверке прав доступа
-async def get_allowed_user(user: GetCurrentUserDep) -> UserPublic:
+# зависимости по проверке прав доступа с их компактными вариантами
+async def get_allowed_user(user: CurrentUserDep) -> UserPublic:
     """Получить пользователя, которому разрешено пользоваться сервисом.
 
     Проверка на наличие верификации от модератора и отсутствие бана.
 
     Args:
-        user (GetCurrentUserDep): Пользователь.
+        user (CurrentUserDep): Пользователь.
 
     Raises:
         HTTPException: (403) Пользователь забанен.
@@ -144,34 +169,51 @@ async def get_allowed_user(user: GetCurrentUserDep) -> UserPublic:
     return user
 
 
-# зависимости в более компактном формате для объявления через аннотирование
-GetAllowedUserDep = Annotated[UserPublic, Depends(get_allowed_user)]
+AllowedUserDep = Annotated[UserPublic, Depends(get_allowed_user)]
 
 
-# дополнительные зависимости для получения определенных пар-ров
-async def get_user_directory(user: GetAllowedUserDep) -> str:
+async def get_moderator(user: AllowedUserDep) -> UserPublic:
+    """Получить пользователя с правами модератора.
+
+    Args:
+        user (AllowedUserDep): Пользователь.
+
+    Raises:
+        HTTPException: (403) Пользователь не является модератором.
+
+    Returns:
+        UserPublic: Пользователь.
+    """
+    if not user.is_moderator:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='User is not a moderator',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
+    return user
+
+
+ModerDep = Annotated[UserPublic, Depends(get_moderator)]
+
+
+# зависимости в формате для использования в параметре dependencies без
+# дальнейшего использования возвращаемых значений
+CheckUserDepends = Depends(get_allowed_user)
+CheckModeratorDepends = Depends(get_moderator)
+
+
+# дополнительные зависимости для получения определенных параметров
+async def get_user_directory(user: AllowedUserDep) -> str:
     """Получить имя папки пользователя.
 
     Args:
-        user (GetAllowedUserDep): Пользователь.
+        user (AllowedUserDep): Пользователь.
 
     Returns:
         str: Имя папки пользователя в хранилище.
     """
-    return str(user.id)
-
-async def check_user(user: GetAllowedUserDep) -> None:
-    """Проверить пользователя.
-
-    Args:
-        user (GetAllowedUserDep): Пользователь.
-    """
-    pass
+    return user.dir_name
 
 
 # зависимости в более компактном формате для объявления через аннотирование
-GetUserDirectoryDep = Annotated[str, Depends(get_user_directory)]
-
-# зависимости, возвращающие None, в более компактном формате для использования
-# в параметре dependencies
-CheckUserDepends = Depends(check_user)
+UserDirDep = Annotated[str, Depends(get_user_directory)]

@@ -1,4 +1,27 @@
-"""Отдельные шаги валидации или нормализации полей."""
+"""Отдельные шаги валидации или нормализации полей.
+
+Funcs:
+    split_filename: Разделить имя файла на стэм и расширение.
+    build_filename: Собрать имя файла из стэма и расширения.
+
+Normalization:
+    normalize_path_traversal: Нормализовать от path traversal.
+    normalize_unicode: Нормализовать по юникоду.
+    normalize_chars: Нормализовать символы по запрещенным символам.
+    normalize_reserved_names: Нормализовать по зарезервированным именам.
+    normalize_length: Нормализовать по длине.
+    normalize_empty_name: Нормализовать по пустому имени.
+
+Validation:
+    isvalid_path_traversal: Проверка валидности от path traversal.
+    isvalid_reserved_names: Проверка валидности по зарезервированным именам.
+    isvalid_length: Проверка валидности по длине.
+    isvalid_unicode: Проверка валидности по юникоду.
+    isvalid_chars: Проверка валидности символов по запрещенным символам.
+
+DataTypes:
+    SplittedFilename (tuple[str, str]): Разделенное имя файла.
+"""
 
 import re
 import unicodedata
@@ -9,9 +32,11 @@ from app.api.utils.validation.config import (
 )
 
 
-# вспомогательные
+# вспомогательный тип данных
 SplittedFilename = tuple[str, str]
 
+
+# вспомогательные шаги
 def split_filename(filename: str) -> SplittedFilename:
     """Разделить имя файла на имя (стэм) и расширение.
 

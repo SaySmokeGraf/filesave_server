@@ -1,4 +1,14 @@
-"""Конкретные схемы валидации или нормализации полей."""
+"""Конкретные схемы валидации или нормализации полей.
+
+Schemes:
+    isvalid_filename: Проверка валидности имени файла.
+    isvalid_pwd: Проверка валидности пароля.
+    isvalid_pwd_length: Проверка валидности длины пароля.
+    isvalid_username: Проверка валидности имени пользователя.
+    isvalid_username_filter: Проверка валидности фильтра по имени пользователя.
+    isvalid_username_length: Проверка валидности длины имени файла.
+    normalize_filename: Нормализация имени файла.
+"""
 
 from app.api.utils.validation import parts
 from app.api.utils.validation.config import FileConsts, UserConsts
@@ -120,3 +130,24 @@ def isvalid_pwd(password: str) -> bool:
     res = res and parts.isvalid_chars(password,
                                       UserConsts.PWD_UNSAFE_CHARS_REGEX)
     return res
+
+def isvalid_username_filter(username: str | None) -> bool:
+    """Проверка валидности фильтра по имени пользователя.
+
+    Args:
+        username (str | None): Имя пользователя.
+
+    Returns:
+        bool: Валидность.
+    """
+    if username is None:
+        return True
+    res = parts.isvalid_length(username, 1, UserConsts.USERNAME_MAX_LENGTH)
+    if not res:
+        return False
+    
+    res = parts.isvalid_unicode(username)
+    res = res and parts.isvalid_chars(username,
+                                      UserConsts.USERNAME_UNSAFE_CHARS_REGEX)
+    return res
+

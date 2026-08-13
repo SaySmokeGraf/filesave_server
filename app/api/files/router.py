@@ -1,11 +1,16 @@
-"""Роутер под файловый API."""
+"""Роутер под файловый API.
 
-from fastapi import APIRouter, HTTPException, status
+Contains:
+    router: Роутер файлового API.
+"""
+
+from fastapi import APIRouter, HTTPException, Query, status
 from fastapi.responses import FileResponse, JSONResponse
 from filetype import guess_mime
 
-from app.api.auth.dependencies import GetUserDirectoryDep, CheckUserDepends
-from app.api.files.dependencies import SingleFileDep
+import app.api.files._swagger_docs as swdocs
+from app.api.auth.dependencies import UserDirDep, CheckUserDepends
+from app.api.files.dependencies import FilenameDep, SingleFileDep
 from app.api.files.models import (
     FileInfoShort, FileInfoVerbose, StorageUsageInfo
 )
@@ -15,16 +20,17 @@ from app.api.files.utils.file_utils import (
 )
 
 
-router = APIRouter()
+router = APIRouter(**swdocs.router.docs_dump())
 create_storage_directory()
 
 
-@router.get('/', response_model=list[FileInfoShort])
-async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
+@router.get('/', response_model=list[FileInfoShort],
+            **swdocs.endpoints.get_files_data.docs_dump())
+async def get_files_data(user_dir: UserDirDep) -> list[FileInfoShort]:
     """Получить список с данными о файлах.
 
     Args:
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
 
     Returns:
         list[FileInfoShort]: Список с данными о файлах.
@@ -38,14 +44,16 @@ async def get_files_data(user_dir: GetUserDirectoryDep) -> list[FileInfoShort]:
         ))
     return resp
 
-@router.get('/file-info')
-async def get_file_info(filename: str,
-                        user_dir: GetUserDirectoryDep) -> FileInfoVerbose:
+@router.get('/file-info', **swdocs.endpoints.get_file_info.docs_dump())
+async def get_file_info(
+    user_dir: UserDirDep,
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
+) -> FileInfoVerbose:
     """Получить подробную информацию о файле.
 
     Args:
-        filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -67,7 +75,8 @@ async def get_file_info(filename: str,
                            atime=file_stats.st_atime,
                            mtime=file_stats.st_mtime)
 
-@router.get('/storage-info', dependencies=[CheckUserDepends])
+@router.get('/storage-info', dependencies=[CheckUserDepends],
+            **swdocs.endpoints.get_storage_info.docs_dump())
 async def get_storage_info() -> StorageUsageInfo:
     """Получить информацию об использовании места хранилища.
 
@@ -76,14 +85,16 @@ async def get_storage_info() -> StorageUsageInfo:
     """
     return get_storage_usage_info()
 
-@router.get('/download')
-async def download_file(filename: str,
-                        user_dir: GetUserDirectoryDep) -> FileResponse:
+@router.get('/download', **swdocs.endpoints.download_file.docs_dump())
+async def download_file(
+    user_dir: UserDirDep,
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
+) -> FileResponse:
     """Скачать файл.
 
     Args:
-        filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.
@@ -100,15 +111,20 @@ async def download_file(filename: str,
         )
     return FileResponse(path=file_path, filename=filename)
 
-@router.post('/upload/single')
-async def upload_single_file(file: SingleFileDep,
-                             user_dir: GetUserDirectoryDep,
-                             overwrite: bool | None = None) -> JSONResponse:
+@router.post('/upload/single',
+             **swdocs.endpoints.upload_single_file.docs_dump())
+async def upload_single_file(
+    file: SingleFileDep,
+    user_dir: UserDirDep,
+    overwrite: bool | None = Query(
+        default=None, **swdocs.params.overwrite.docs_dump()
+    )
+) -> JSONResponse:
     """Загрузить на сервер один файл.
 
     Args:
-        file (SingleFileDep): Файл для загрузки.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        file (SingleFileDep): Файл для загрузки. Зависимость.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
         overwrite (bool | None, optional): Флаг перезаписи файла в случае
             наличия файла с таким же именем в хранилище. True - перезаписать,
             False - создать уникальное имя с помощью суффикса с номером, None -
@@ -128,14 +144,16 @@ async def upload_single_file(file: SingleFileDep,
         content={'message': f'File {file.filename} uploaded successfully!'}
     )
 
-@router.delete('/delete')
-async def delete_file(filename: str,
-                      user_dir: GetUserDirectoryDep) -> JSONResponse:
+@router.delete('/delete', **swdocs.endpoints.delete_file.docs_dump())
+async def delete_file(
+    user_dir: UserDirDep,
+    filename: FilenameDep = Query(**swdocs.params.filename.docs_dump())
+) -> JSONResponse:
     """Удалить файл с сервера.
 
     Args:
-        filename (str): Имя файла.
-        user_dir (GetUserDirectoryDep): Имя папки пользователя.
+        user_dir (UserDirDep): Имя папки пользователя. Зависимость.
+        filename (FilenameDep): Имя файла. Зависимость.
 
     Raises:
         HTTPException: (404) Файл не найден.

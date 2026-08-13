@@ -12,9 +12,11 @@ const renameCloseBtn = document.getElementById('renameCloseBtn');
 const alert_ok_btn = document.getElementById('alert_btn_ok');
 const alert_btn_close = document.getElementById('alert_btn_no');
 const closeAlertBtn = document.getElementById('closeBtn');
+const moderator_btn = document.getElementById('moderator_btn');
 
 let currentUploadContext = null;// { file, uploadBtn, progressBar }
 let currentFilename = null;
+
 alert_ok_btn.addEventListener('click', () => {
     apiRequest(`/files/delete?filename=${currentFilename}`, {}, 'DELETE',
         'application/json').then(response => {
@@ -31,6 +33,10 @@ alert_ok_btn.addEventListener('click', () => {
 alert_btn_close.addEventListener('click', () => {
     overlay.style.display = 'none';
 })
+
+moderator_btn.addEventListener('click', () => {
+    window.location.href = 'moderator.html';
+});
 renameFilePopupOkButton.addEventListener('click', () => {
     if (!currentUploadContext) return;
     if (renameFileTextArea.value.trim() !== '') {

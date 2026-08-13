@@ -1,23 +1,30 @@
-"""Роутер под API аутентификации-авторизации."""
+"""Роутер под API аутентификации-авторизации.
+
+Contains:
+    router: Роутер API аутентификации-авторизации.
+"""
 
 from fastapi import APIRouter, HTTPException, status
 
+import app.api.auth._swagger_docs as swdocs
 from app.api.auth.dependencies import (
-    GetCurrentUserDep, GetValidRegData, GetValidLoginData
+    CurrentUserDep, RegDataDep, LoginDataDep
 )
 from app.api.auth.managers import token_manager, user_manager, UserPublic
 from app.api.auth.models import Token
 
 
-router = APIRouter()
+router = APIRouter(**swdocs.router.docs_dump())
 
 
-@router.post('/token')
-async def login_for_access_token(form_data: GetValidLoginData) -> Token:
+@router.post('/token', response_model=Token,
+             **swdocs.endpoints.login.docs_dump())
+async def login(form_data: LoginDataDep) -> Token:
     """Вход пользователя.
 
     Args:
         form_data (OAuth2FormDep): Данные формы для аутентификации по паролю.
+            Зависимость.
 
     Raises:
         HTTPException: (401) Неправильный логин или пароль.
@@ -36,13 +43,14 @@ async def login_for_access_token(form_data: GetValidLoginData) -> Token:
     access_token = token_manager.create_token(data={'sub': user.username})
     return Token(access_token=access_token, token_type='bearer')
 
-@router.post('/register')
-async def register_for_access_token(reg_data: GetValidRegData) -> Token:
+@router.post('/register', response_model=Token,
+             **swdocs.endpoints.register.docs_dump())
+async def register(reg_data: RegDataDep) -> Token:
     """Регистрация пользователя.
 
     Args:
         reg_data (GetRegFormDataDep): Данные формы для аутентификации по
-            паролю.
+            паролю. Зависимость.
     
     Raises:
         HTTPException: (403) Пользователь с таким логином уже существует.
@@ -60,12 +68,13 @@ async def register_for_access_token(reg_data: GetValidRegData) -> Token:
     access_token = token_manager.create_token(data={'sub': user.username})
     return Token(access_token=access_token, token_type='bearer')
 
-@router.get('/user-info', response_model=UserPublic)
-async def get_user_info(user: GetCurrentUserDep) -> UserPublic:
+@router.get('/user-info', response_model=UserPublic,
+            **swdocs.endpoints.get_user_info.docs_dump())
+async def get_user_info(user: CurrentUserDep) -> UserPublic:
     """Получить информацию о пользователе.
 
     Args:
-        user (GetCurrentUserDep): Пользователь.
+        user (CurrentUserDep): Пользователь. Зависимость.
 
     Returns:
         UserPublic: Публичная информация о пользователе.
