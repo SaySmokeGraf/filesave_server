@@ -8,11 +8,36 @@
 </head>
 
 <body>
+    <dialog id="registration_dialog">
+        <form id="registration_form">
+            <div class="registration_form">
+                <h1>Регистрация аккаунта</h1>
+                <h3 id="mainText_registration">Введите логин и пароль</h3>
+                <label for="first_registration">
+                    Логин:
+                </label>
+                <input type="text" name="username" placeholder="Имя для регистрации" required>
+
+                <label for="registration_username">
+                    Пароль:
+                </label>
+                <input type="password" name="password" placeholder="Пароль для регистрации" required>
+                <div class="wrap_registration">
+                    <button type="submit">
+                        Создать
+                    </button>
+                    <button id="exitBtn" type="button">
+                        Выход
+                    </button>
+                </div>
+            </div>
+        </form>
+    </dialog>
     <form id="login_form">
         <div class="main">
             <h1>File-hub</h1>
             <h3 id="mainText">Введите логин и пароль</h3>
-            <label for="first">
+            <label for="username">
                 Логин:
             </label>
             <input type="text" name="username" placeholder="Введите логин" required>
@@ -29,9 +54,8 @@
             </div>
         </div>
     </form>
-    <p>Не зарегистрированы?<a href="#" style="text-decoration: none;">
-            Создать аккаунт
-        </a>
+    <p>Не зарегистрированы?<a href="#" id="create-account-link" style="text-decoration: none;">
+            Создать аккаунт </a>
     </p>
     <script src="cookies.js"></script>
     <script src="registration.js"></script>

@@ -1,0 +1,89 @@
+/* --- СТИЛИ ДЛЯ ДИАЛОГА (ПОД ТВОЙ ДИЗАЙН) --- */
+
+/* Сам контейнер диалога */
+#moderDialog_dialog {
+    /* Центрируем диалог по вертикали и горизонтали через JS или нативные возможности */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* 👆 ВОТ ЭТИ 3 СТРОКИ ДЕЛАЮТ ЦЕНТРИРОВАНИЕ 👆 */
+
+    /* Твои существующие стили остаются без изменений */
+    padding: 30px;
+    border: 1px solid #1e2a38;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 450px;
+    background-color: #ffffff;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    z-index: 1000;
+    /* Чтобы точно было поверх всего */
+}
+
+/* Затемненный фон (подложка) */
+#moderDialog_dialog::backdrop {
+    background-color: rgba(30, 42, 56, 0.85);
+    /* Почти черный, в тон body (#1e2a38) */
+    backdrop-filter: blur(8px);
+    /* Эффект матового стекла (очень стильно!) */
+    transition: opacity 0.3s ease;
+    /* Плавное появление */
+}
+
+/* Заголовок диалога (ОШИБКА) */
+#moderDialog_dialog h2 {
+    margin: 0 0 20px 0;
+    color: #b71c1c;
+    /* Ярко-красный цвет для ошибки */
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 0.5px;
+}
+
+/* Текст сообщения */
+#moderDialog_dialog p {
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+    color: #555;
+    text-align: center;
+}
+
+/* Кнопка закрытия (адаптирована под твой дизайн) */
+#closeBtn_moder_dialog {
+    display: block;
+    width: 100%;
+    /* На всю ширину блока диалога */
+    padding: 14px;
+    margin: 0;
+
+    background-color: #1e2a38;
+    /* Темный фон, как у шапки */
+    color: #f9f0da;
+    /* Текст как у кнопок .new_user_button */
+    border: none;
+    border-radius: 6px;
+
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#closeBtn_moder_dialog:hover {
+    background-color: #006064;
+    /* Цвет как у thead таблицы */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 96, 100, 0.4);
+}
+
+#closeBtn_moder_dialog:active {
+    transform: translateY(0);
+    background-color: #004D40;
+    /* Чуть темнее при нажатии */
+}
